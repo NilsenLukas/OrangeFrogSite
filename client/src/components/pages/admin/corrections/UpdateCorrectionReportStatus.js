@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
-import { HoverBorderGradient } from '../../../ui/hover-border-gradient';
+// import { HoverBorderGradient } from '../../../ui/hover-border-gradient';
 import { AuthContext } from "../../../../AuthContext";
 
 const CorrectionReport = () => {
@@ -14,8 +14,8 @@ const CorrectionReport = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
-  const [events, setEvents] = useState([]);
-  const [files, setFiles] = useState(null);
+  // const [events, setEvents] = useState([]);
+  const [files] = useState(null);
   const location = useLocation();
 
   useEffect(() => {

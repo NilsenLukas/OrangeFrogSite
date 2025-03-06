@@ -56,7 +56,24 @@ const eventSchema = new mongoose.Schema({
 
 const eventCollection = mongoose.model('eventCollection', eventSchema);
 
+// Time Tracking Schema
+const timeTrackingSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    eventId: { type: mongoose.Schema.Types.ObjectId, ref: "Event", required: true },
+    clockInTime: { type: Date, required: true },
+    clockOutTime: { type: Date, default: null },
+    isClockedIn: { type: Boolean, default: true },
+    isOnBreak: { type: Boolean, default: false },
+    breaks: [
+        {
+            breakStartTime: { type: Date, required: true },
+            breakEndTime: { type: Date, default: null },
+        }
+    ]
+}, { timestamps: true });
 
+// Create the Model
+const TimeTracking = mongoose.model("TimeTracking", timeTrackingSchema);
 
 const correctionReportSchema = new mongoose.Schema({
     correctionName: { type: String, required: true },
@@ -118,6 +135,7 @@ const collection = {
     correctionReportCollection,
     invoiceCollection,
     Admin,
+    TimeTracking,
 };
 
 module.exports = collection;

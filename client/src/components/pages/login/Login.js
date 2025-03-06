@@ -8,15 +8,15 @@ import { AuthContext } from '../../../AuthContext';
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [form, setForm] = useState({ email: '', password: '' });
-    const [email, setEmail] = useState('');
-    const [otp, setOtp] = useState(Array(6).fill('')); // Initial state for 6 digits
-    const [newPassword, setNewPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    // const [email, setEmail] = useState('');
+    // const [otp, setOtp] = useState(Array(6).fill('')); // Initial state for 6 digits
+    // const [newPassword, setNewPassword] = useState('');
+    const [errorMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const [view, setView] = useState('login'); // 'login', 'forgotPassword', 'verifyOtp', 'resetPassword'
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
-    const [confirmPassword, setConfirmPassword] = useState('');
+    // const [confirmPassword, setConfirmPassword] = useState('');
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);

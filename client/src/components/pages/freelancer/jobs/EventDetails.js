@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaInfoCircle, FaEdit, FaTrashAlt, FaUsers, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaInfoCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { HoverBorderGradient } from '../../../ui/hover-border-gradient';
-import { toast } from 'sonner';
-import Modal from '../../../Modal';
+// import { toast } from 'sonner';
+// import Modal from '../../../Modal';
 
 export default function EventDetails() {
     const { eventID } = useParams();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [showApprovalModal, setShowApprovalModal] = useState(false);
-    const [showDeletePopup, setShowDeletePopup] = useState(false);
+    // const [showApprovalModal, setShowApprovalModal] = useState(false);
+    // const [showDeletePopup, setShowDeletePopup] = useState(false);
 
     const fadeIn = {
         initial: { opacity: 0, y: 20 },

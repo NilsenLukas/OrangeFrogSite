@@ -9,13 +9,13 @@ export default function AdminProfile() {
         address: '',
     });
 
-    const [originalProfileData, setOriginalProfileData] = useState({});
+    // const [originalProfileData, setOriginalProfileData] = useState({});
     const [showPasswordPopup, setShowPasswordPopup] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const { auth } = useContext(AuthContext);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading] = useState(false);
 
     useEffect(() => {
         const fetchAdminProfile = async () => {

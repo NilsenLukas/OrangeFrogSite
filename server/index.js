@@ -27,6 +27,7 @@ const correctionReportRouter = require('./routes/correction-report');
 const invoicesRoute = require('./routes/invoices');
 const viewCorrectionsRoute = require("./routes/view-corrections");
 const adminRoutes = require("./routes/admin");
+const timeTrackingRoutes = require("./routes/timeTracking");
 
 app.use("/users", usersRoute);
 app.use("/update-user", userProfileRoute);
@@ -46,6 +47,7 @@ app.use("/logout", logoutRoute);
 app.use('/correction-report', correctionReportRouter);
 app.use('/invoices', invoicesRoute);
 app.use("/corrections", viewCorrectionsRoute);
+app.use("/time-tracking", timeTrackingRoutes);
 
 app.use("/admin", adminRoutes);
 

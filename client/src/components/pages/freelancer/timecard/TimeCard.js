@@ -14,10 +14,15 @@ const TimeCard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedDateEvents, setSelectedDateEvents] = useState([]);
+    // const [isClockedIn, setIsClockedIn] = useState(false);
+    // const [isOnBreak, setIsOnBreak] = useState(false);
+    // const [lastActivity, setLastActivity] = useState('');
+    const [setTimeline] = useState([]);
     const [isClockedIn, setIsClockedIn] = useState(false);
     const [isOnBreak, setIsOnBreak] = useState(false);
-    const [lastActivity, setLastActivity] = useState('');
-    const [timeline, setTimeline] = useState([]);
+    const [setClockInTime] = useState(null);
+    // const [breakStartTime, setBreakStartTime] = useState(null);
+    const [breaks, setBreaks] = useState([]); 
 
     useEffect(() => {
         const fetchApprovedEvents = async () => {
@@ -78,40 +83,136 @@ const TimeCard = () => {
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     };
     
-    const addToTimeline = (activity, time) => {
-        setTimeline((prevTimeline) => [
-            ...prevTimeline,
-            { activity, time: formatDateTime(time) }
-        ]);
+    // const addToTimeline = (activity, time) => {
+    //     setTimeline((prevTimeline) => [
+    //         ...prevTimeline,
+    //         { activity, time: formatDateTime(time) }
+    //     ]);
+    // };
+
+    useEffect(() => {
+        const fetchClockInStatus = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/status/${auth.userId}`);
+                const data = await response.json();
+    
+                if (data.isClockedIn) {
+                    setIsClockedIn(true);
+                    setBreaks(data.timeTracking.breaks || []);
+    
+                    if (data.timeTracking.isOnBreak) {
+                        setIsOnBreak(true);
+                    }
+                } else {
+                    setIsClockedIn(false);
+                    setBreaks([]);
+                }
+            } catch (error) {
+                console.error("Error fetching clock-in status:", error);
+            }
+        };
+    
+        if (auth.userId) {
+            fetchClockInStatus();
+        }
+    }, [auth.userId]);
+    
+    const handleClockIn = async () => {
+        if (selectedDateEvents.length === 0) {
+            toast.error("No event selected for clock-in.");
+            return;
+        }
+    
+        const eventToClockIn = selectedDateEvents[0]; // ✅ Use the first event for the selected date
+    
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/clock-in`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: auth.userId, eventId: eventToClockIn._id })
+            });
+    
+            const data = await response.json();
+    
+            if (response.status === 201) {
+                setIsClockedIn(true);
+                setClockInTime(new Date(data.timeTracking.clockInTime));
+            } else {
+                toast.error(data.message || "Failed to clock in.");
+            }
+        } catch (error) {
+            console.error("Error clocking in:", error);
+            toast.error("Server error while clocking in.");
+        }
     };
     
-    const handleClockIn = () => {
-        setIsClockedIn(true);
-        const now = new Date();
-        setLastActivity(`Clocked in at ${formatDateTime(now)}`);
-        addToTimeline("Clock In", now);
+    const handleClockOut = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/clock-out/${auth.userId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+            });
+    
+            const data = await response.json();
+    
+            if (response.status === 200) {
+                setIsClockedIn(false);
+                setClockInTime(null);
+            } else {
+                toast.error(data.message || "Failed to clock out.");
+            }
+        } catch (error) {
+            console.error("Error clocking out:", error);
+            toast.error("Server error while clocking out.");
+        }
     };
     
-    const handleClockOut = () => {
-        setIsClockedIn(false);
-        setIsOnBreak(false);
-        const now = new Date();
-        setLastActivity(`Clocked out at ${formatDateTime(now)}`);
-        addToTimeline("Clock Out", now);
+    const handleStartBreak = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/start-break/${auth.userId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+            });
+    
+            const data = await response.json();
+    
+            if (response.status === 200) {
+                setIsOnBreak(true);
+                setBreaks([...breaks, { breakStartTime: new Date() }]); // Add new break to local state
+            } else {
+                toast.error(data.message || "Failed to start break.");
+            }
+        } catch (error) {
+            console.error("Error starting break:", error);
+            toast.error("Server error while starting break.");
+        }
     };
     
-    const handleStartBreak = () => {
-        setIsOnBreak(true);
-        const now = new Date();
-        setLastActivity(`Started break at ${formatDateTime(now)}`);
-        addToTimeline("Break Start", now);
-    };
+    const handleEndBreak = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/end-break/${auth.userId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+            });
     
-    const handleEndBreak = () => {
-        setIsOnBreak(false);
-        const now = new Date();
-        setLastActivity(`Ended break at ${formatDateTime(now)}`);
-        addToTimeline("Break End", now);
+            const data = await response.json();
+    
+            if (response.status === 200) {
+                setIsOnBreak(false);
+    
+                // Update last break session with the end time
+                setBreaks((prevBreaks) => {
+                    const updatedBreaks = [...prevBreaks];
+                    updatedBreaks[updatedBreaks.length - 1].breakEndTime = new Date();
+                    return updatedBreaks;
+                });
+            } else {
+                toast.error(data.message || "Failed to end break.");
+            }
+        } catch (error) {
+            console.error("Error ending break:", error);
+            toast.error("Server error while ending break.");
+        }
     };
 
     return (
@@ -212,7 +313,7 @@ const TimeCard = () => {
                             <div className="mt-4 flex flex-wrap gap-2 justify-center">
                                 {!isClockedIn && (
                                     <button
-                                        onClick={isToday ? handleClockIn : null}
+                                        onClick={handleClockIn}
                                         disabled={!isToday}
                                         className={`px-4 py-2 rounded-full flex items-center justify-center gap-2 w-[160px] 
                                             ${isToday ? "bg-black text-white" : "bg-neutral-700 text-neutral-500 cursor-not-allowed"}`}
@@ -248,6 +349,29 @@ const TimeCard = () => {
                                     </>
                                 )}
                             </div>
+                            {/* Show Break History */}
+                            {breaks.length > 0 && (
+                                <> {/* ✅ Added Fragment to wrap multiple elements */}
+                                    {/* Separate Break History Title - Always Centered */}
+                                    <div className="w-full text-center mt-6">
+                                        <h4 className="text-white text-sm font-bold mb-2">Break History:</h4>
+                                    </div>
+
+                                    {/* Break List - Centered but on a New Line */}
+                                    <div className="mt-2 flex justify-center">
+                                        <ul className="text-neutral-400 text-sm space-y-1 text-center">
+                                            {breaks.map((breakSession, index) => (
+                                                <li key={index}>
+                                                    🕒 {new Date(breakSession.breakStartTime).toLocaleTimeString()}  
+                                                    {breakSession.breakEndTime
+                                                        ? ` → ${new Date(breakSession.breakEndTime).toLocaleTimeString()}`
+                                                        : " (Ongoing)"}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </>
+                            )}
                         </motion.div>
                     );
                 })}

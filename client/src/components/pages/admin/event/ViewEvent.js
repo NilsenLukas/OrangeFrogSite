@@ -73,73 +73,73 @@ export default function ViewEvent() {
     };
 
     // Sorting dropdown
-    const handleSortChange = (e) => {
-        const value = e.target.value;
-        if (!value) {
-            setSortConfig({ key: null, direction: 'ascending' });
-            return;
-        }
-        const [field, direction] = value.split('-');
+    // const handleSortChange = (e) => {
+    //     const value = e.target.value;
+    //     if (!value) {
+    //         setSortConfig({ key: null, direction: 'ascending' });
+    //         return;
+    //     }
+    //     const [field, direction] = value.split('-');
 
-        // Map dropdown values to sortConfig keys
-        let sortKey;
-        switch (field) {
-            case 'name':
-                sortKey = 'eventName';
-                break;
-            case 'createdAt':
-                sortKey = 'createdAt';
-                break;
-            case 'assignedContractors':
-                sortKey = 'assignedContractors';
-                break;
-            default:
-                sortKey = field;
-        }
+    //     // Map dropdown values to sortConfig keys
+    //     let sortKey;
+    //     switch (field) {
+    //         case 'name':
+    //             sortKey = 'eventName';
+    //             break;
+    //         case 'createdAt':
+    //             sortKey = 'createdAt';
+    //             break;
+    //         case 'assignedContractors':
+    //             sortKey = 'assignedContractors';
+    //             break;
+    //         default:
+    //             sortKey = field;
+    //     }
 
-        setSortConfig({
-            key: sortKey,
-            direction: direction === 'asc' ? 'ascending' : 'descending'
-        });
+    //     setSortConfig({
+    //         key: sortKey,
+    //         direction: direction === 'asc' ? 'ascending' : 'descending'
+    //     });
         
-        adjustSelectWidth();
-    };
+    //     adjustSelectWidth();
+    // };
 
-    const sortedEvents = [...events].sort((a, b) => {
-        if (sortConfig.key) {
-            const aVal = a[sortConfig.key];
-            const bVal = b[sortConfig.key];
+    // const sortedEvents = [...events].sort((a, b) => {
+    //     if (sortConfig.key) {
+    //         const aVal = a[sortConfig.key];
+    //         const bVal = b[sortConfig.key];
 
-            if (typeof aVal === 'string') {
-                return sortConfig.direction === 'ascending'
-                    ? aVal.localeCompare(bVal)
-                    : bVal.localeCompare(aVal);
-            }
+    //         if (typeof aVal === 'string') {
+    //             return sortConfig.direction === 'ascending'
+    //                 ? aVal.localeCompare(bVal)
+    //                 : bVal.localeCompare(aVal);
+    //         }
 
-            if (typeof aVal === 'number' || aVal instanceof Date) {
-                return sortConfig.direction === 'ascending' ? aVal - bVal : bVal - aVal;
-            }
-        }
-        return 0;
-    });
-    const getSortedEvents = () => {
-        return [...events].sort((a, b) => {
-            if (sortConfig.key) {
-                const aVal = a[sortConfig.key];
-                const bVal = b[sortConfig.key];
+    //         if (typeof aVal === 'number' || aVal instanceof Date) {
+    //             return sortConfig.direction === 'ascending' ? aVal - bVal : bVal - aVal;
+    //         }
+    //     }
+    //     return 0;
+    // });
+    // const getSortedEvents = () => {
+    //     return [...events].sort((a, b) => {
+    //         if (sortConfig.key) {
+    //             const aVal = a[sortConfig.key];
+    //             const bVal = b[sortConfig.key];
 
-                if (typeof aVal === 'string') {
-                    return sortConfig.direction === 'ascending'
-                        ? aVal.localeCompare(bVal)
-                        : bVal.localeCompare(aVal);
-                }
-                if (typeof aVal === 'number' || aVal instanceof Date) {
-                    return sortConfig.direction === 'ascending' ? aVal - bVal : bVal - aVal;
-                }
-            }
-            return 0;
-        });
-    };
+    //             if (typeof aVal === 'string') {
+    //                 return sortConfig.direction === 'ascending'
+    //                     ? aVal.localeCompare(bVal)
+    //                     : bVal.localeCompare(aVal);
+    //             }
+    //             if (typeof aVal === 'number' || aVal instanceof Date) {
+    //                 return sortConfig.direction === 'ascending' ? aVal - bVal : bVal - aVal;
+    //             }
+    //         }
+    //         return 0;
+    //     });
+    // };
 
     const getSortIcon = (key) => {
         if (sortConfig.key === key) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaInfoCircle, FaEdit, FaTrashAlt, FaUsers, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaInfoCircle, FaEdit } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import Modal from '../../../Modal';
@@ -40,17 +40,17 @@ export default function CorrectionDetails() {
         fetchCorrectionDetails();
     }, [correctionId]);
 
-    const handleEdit = (correction) => {
-        navigate(`/admin/corrections/edit/${correction._id}`, { state: { from: `/admin/corrections/${correction._id}` } });
-    };
+    // const handleEdit = (correction) => {
+    //     navigate(`/admin/corrections/edit/${correction._id}`, { state: { from: `/admin/corrections/${correction._id}` } });
+    // };
 
     const handleUpdateStatus = (correction) => {
         navigate(`/admin/corrections/update-status/${correction._id}`, { state: { from: `/admin/corrections/${correction._id}` } });
     };
 
-    const handleDelete = () => {
-        setShowDeletePopup(true);
-    };
+    // const handleDelete = () => {
+    //     setShowDeletePopup(true);
+    // };
 
     const confirmDelete = async () => {
         try {

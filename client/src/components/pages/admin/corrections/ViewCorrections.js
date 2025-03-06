@@ -1,8 +1,8 @@
 // src/components/admin/ViewEvent.js
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { FaList, FaEdit, FaTrashAlt, FaUsers, FaSort, FaTh, FaSortUp, FaSortDown } from 'react-icons/fa';
-import MultiSelect from './MultiSelect';
+import { FaList, FaSort, FaTh, FaSortUp, FaSortDown } from 'react-icons/fa';
+// import MultiSelect from './MultiSelect';
 import { toast } from 'sonner';
 import Modal from "../../../Modal";
 import { HoverEffect } from "../../../ui/card-hover-effect";
@@ -15,28 +15,26 @@ export default function ViewCorrections() {
     const [corrections, setCorrections] = useState([]);
     const [events, setEvents] = useState(null);
     const [users, setUsers] = useState(null);
-    const [contractors, setContractors] = useState([]);
+    // const [contractors, setContractors] = useState([]);
     // const [selectedContractors, setSelectedContractors] = useState([]);
     const [loading, setLoading] = useState(true);
     // const [setSaving] = useState(false);
     const [view, setView] = useState('grid');
     const [showDeletePopup, setShowDeletePopup] = useState(false);
-    const [correctionToDelete, setCorrectionToDelete] = useState(null);
+    const [correctionToDelete] = useState(null);
     const [nameFilter, setNameFilter] = useState('');
     const selectRef = useRef(null);
     // const [sortField, setSortField] = useState(null);
     // const [sortDirection, setSortDirection] = useState('asc');
-    const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-    const [filterField, setFilterField] = useState(null);
-    const [filterValues, setFilterValues] = useState({ name: '', location: '', startDate: '', endDate: '', contractor: [] });
+    const [setShowFilterDropdown] = useState(false);
+    // const [setFilterField] = useState(null);
+    // const [setFilterValues] = useState({ name: '', location: '', startDate: '', endDate: '', contractor: [] });
     const filterDropdownRef = useRef(null);
     // const [selectedEvent] = useState(null);
     // const [selectedContractor, setSelectedContractor] = useState([]);
     // const [error, setError] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [showSortOptions, setShowSortOptions] = useState(false);
-
-    
 
     useEffect(() => {
         fetchCorrections();
@@ -73,14 +71,14 @@ export default function ViewCorrections() {
         }
     };
 
-    const resetFilters = () => {
-        setFilterValues({ name: '', location: '', startDate: '', endDate: '', contractor: [] });
-    };
+    // const resetFilters = () => {
+    //     setFilterValues({ name: '', location: '', startDate: '', endDate: '', contractor: [] });
+    // };
 
-    const handleDelete = (correction) => {
-        setCorrectionToDelete(correction);
-        setShowDeletePopup(true);
-    };
+    // const handleDelete = (correction) => {
+    //     setCorrectionToDelete(correction);
+    //     setShowDeletePopup(true);
+    // };
 
     const confirmDelete = async () => {
         try {
@@ -95,42 +93,42 @@ export default function ViewCorrections() {
     };
 
     // Edit
-    const handleEdit = (correction) => {
-        navigate(`/admin/corrections/edit/${correction._id}`, { state: { from: '/admin/manage-corrections' } });
-    };
+    // const handleEdit = (correction) => {
+    //     navigate(`/admin/corrections/edit/${correction._id}`, { state: { from: '/admin/manage-corrections' } });
+    // };
 
-    const handleSortChange = (e) => {
-        const value = e.target.value;
-        if (!value) {
-            setSortConfig({ key: null, direction: 'ascending' });
-            return;
-        }
+    // const handleSortChange = (e) => {
+    //     const value = e.target.value;
+    //     if (!value) {
+    //         setSortConfig({ key: null, direction: 'ascending' });
+    //         return;
+    //     }
 
-        const [field, direction] = value.split('-');
+    //     const [field, direction] = value.split('-');
         
-        // Map dropdown values to sortConfig values
-        let sortKey;
-        switch (field) {
-            case 'name':
-                sortKey = 'eventName';
-                break;
-            case 'loadIn':
-                sortKey = 'eventLoadIn';
-                break;
-            case 'hours':
-                sortKey = 'eventLoadInHours';
-                break;
-            default:
-                sortKey = field;
-        }
+    //     // Map dropdown values to sortConfig values
+    //     let sortKey;
+    //     switch (field) {
+    //         case 'name':
+    //             sortKey = 'eventName';
+    //             break;
+    //         case 'loadIn':
+    //             sortKey = 'eventLoadIn';
+    //             break;
+    //         case 'hours':
+    //             sortKey = 'eventLoadInHours';
+    //             break;
+    //         default:
+    //             sortKey = field;
+    //     }
 
-        setSortConfig({
-            key: sortKey,
-            direction: direction === 'asc' ? 'ascending' : 'descending'
-        });
+    //     setSortConfig({
+    //         key: sortKey,
+    //         direction: direction === 'asc' ? 'ascending' : 'descending'
+    //     });
         
-        adjustSelectWidth();
-    };
+    //     adjustSelectWidth();
+    // };
 
     const adjustSelectWidth = () => {
         const selectElement = selectRef.current;
@@ -145,14 +143,14 @@ export default function ViewCorrections() {
         adjustSelectWidth(); // Set initial width
     }, []);
 
-    const handleFilterFieldChange = (field) => {
-        setFilterField(field);
-    };
+    // const handleFilterFieldChange = (field) => {
+    //     setFilterField(field);
+    // };
 
-    const handleFilterChange = (e) => {
-        const { name, value } = e.target;
-        setFilterValues((prev) => ({ ...prev, [name]: value }));
-    };
+    // const handleFilterChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setFilterValues((prev) => ({ ...prev, [name]: value }));
+    // };
 
     const getFilteredAndSortedCorrections = () => {
         let filtered = corrections.filter(correction => {

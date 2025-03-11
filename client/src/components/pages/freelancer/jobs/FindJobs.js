@@ -344,41 +344,36 @@ export default function FindJobs() {
                                 <span className="text-white whitespace-nowrap">Sort by:</span>
 
                                 <button
-                                    className="px-2 py-1 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
+                                    className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
+                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
                                     onClick={() => handleSort('eventName')}
                                 >
                                     Name
                                 </button>
 
                                 <button
-                                    className="px-2 py-1 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
+                                    className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
+                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
                                     onClick={() => handleSort('eventLoadIn')}
                                 >
                                     In Date
                                 </button>
 
                                 <button
-                                    className="px-2 py-1 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
+                                    className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
+                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
                                     onClick={() => handleSort('eventLoadOut')}
                                 >
                                     Out Date
                                 </button>
 
                                 <button
-                                    className="px-2 py-1 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
-                                    onClick={() => handleSort('eventLoadInHours')}
+                                    className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
+                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
+                                    onClick={() => handleSort('totalHours')}
                                 >
-                                    In Hours
+                                    Total Hours
                                 </button>
-
-                                <button
-                                    className="px-2 py-1 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
-                                    onClick={() => handleSort('eventLoadOutHours')}
-                                >
-                                    Out Hours
-                                </button>
-
-                                
 
                                 <motion.button
                                     initial={{ opacity: 0, x: -20 }}    
@@ -466,7 +461,12 @@ export default function FindJobs() {
                                                 <span className="ml-2">{getSortIcon('eventLoadOutHours')}</span>
                                             </div>
                                         </th>
-                                        
+                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('totalHours')}>
+                                            <div className="flex items-center">
+                                                Total Hours
+                                                <span className="ml-2">{getSortIcon('totalHours')}</span>
+                                            </div>
+                                        </th>
                                         <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('createdAt')}>
                                             <div className="flex items-center">
                                                 Created Date
@@ -490,6 +490,9 @@ export default function FindJobs() {
                                             <td className="p-4 text-white">{job.eventLoadInHours}</td>
                                             <td className="p-4 text-white">{new Date(job.eventLoadOut).toLocaleString()}</td>
                                             <td className="p-4 text-white">{job.eventLoadOutHours}</td>
+                                            <td className="p-4 text-white">
+                                                {job.eventLoadInHours + job.eventLoadOutHours}
+                                            </td>
                                             <td className="p-4 text-white">{new Date(job.createdAt).toLocaleString()}</td>
                                             <td className="p-4 text-white">{new Date(job.updatedAt).toLocaleString()}</td>
                                             <td className="p-4 text-white">

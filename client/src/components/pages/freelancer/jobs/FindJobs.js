@@ -345,7 +345,7 @@ export default function FindJobs() {
 
                                 <button
                                     className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
-                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
+                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm whitespace-nowrap"
                                     onClick={() => handleSort('eventName')}
                                 >
                                     Name
@@ -353,7 +353,7 @@ export default function FindJobs() {
 
                                 <button
                                     className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
-                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
+                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm whitespace-nowrap"
                                     onClick={() => handleSort('eventLoadIn')}
                                 >
                                     In Date
@@ -361,7 +361,7 @@ export default function FindJobs() {
 
                                 <button
                                     className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
-                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
+                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm whitespace-nowrap"
                                     onClick={() => handleSort('eventLoadOut')}
                                 >
                                     Out Date
@@ -369,7 +369,7 @@ export default function FindJobs() {
 
                                 <button
                                     className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
-                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm"
+                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm whitespace-nowrap"
                                     onClick={() => handleSort('totalHours')}
                                 >
                                     Total Hours
@@ -382,7 +382,7 @@ export default function FindJobs() {
                                     transition={{ delay: 0.2 }}
                                     type="button"
                                     onClick={cancelSortOptions}
-                                    className="h-9 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors mt-0"
+                                    className="h-9 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors mt-0 whitespace-nowrap"
                                 >
                                     Cancel
                                 </motion.button>

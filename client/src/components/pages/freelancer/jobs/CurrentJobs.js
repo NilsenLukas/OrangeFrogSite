@@ -2,10 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../../../AuthContext";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import { FaTh, FaList, FaRegSadTear, FaSort, FaSearch, FaFilter } from 'react-icons/fa';
+import { FaTh, FaList, FaRegSadTear, FaSort, FaSearch, FaFilter, FaSortUp, FaSortDown } from 'react-icons/fa';
 import { HoverEffect } from "../../../ui/card-hover-effect";
 import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 
 const LoadingSpinner = () => (
     <div className="flex flex-col items-center justify-center min-h-[400px]">
@@ -27,6 +28,8 @@ const CurrentJobs = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [timeFilter, setTimeFilter] = useState('future');
+    const [showSortOptions, setShowSortOptions] = useState(false);
+    const [animateSortOptions, setAnimateSortOptions] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
     const navigate = useNavigate();
 
@@ -176,78 +179,52 @@ const CurrentJobs = () => {
         }));
     };
 
-    const sortJobs = (jobs, sortConfig) => {
-        if (!sortConfig.key) return jobs;
-
-        return [...jobs].sort((a, b) => {
-            if (sortConfig.key === 'eventName') {
-                return sortConfig.direction === 'ascending' 
-                    ? a.eventName.localeCompare(b.eventName)
-                    : b.eventName.localeCompare(a.eventName);
-            }
-            if (sortConfig.key === 'eventLoadIn' || sortConfig.key === 'eventLoadOut') {
-                const dateA = new Date(a[sortConfig.key]);
-                const dateB = new Date(b[sortConfig.key]);
-                return sortConfig.direction === 'ascending' 
-                    ? dateA - dateB 
-                    : dateB - dateA;
-            }
-            return 0;
+    const handleSort = (key) => {
+        setSortConfig(prevConfig => {
+            const direction = prevConfig.key === key && prevConfig.direction === 'ascending'
+                ? 'descending'
+                : 'ascending';
+            return { key, direction };
         });
     };
 
-    const handleSort = (key) => {
-        setSortConfig(prevConfig => ({
-            key,
-            direction: prevConfig.key === key && prevConfig.direction === 'ascending' 
-                ? 'descending' 
-                : 'ascending'
-        }));
-    };
+    const sortedJobs = React.useMemo(() => {
+        let sortedArray = [...currentJobs];
+        if (sortConfig.key) {
+            sortedArray.sort((a, b) => {
+                const aVal = (sortConfig.key === 'totalHours') ? (a.eventLoadInHours + a.eventLoadOutHours) : a[sortConfig.key];
+                const bVal = (sortConfig.key === 'totalHours') ? (b.eventLoadInHours + b.eventLoadOutHours) : b[sortConfig.key];
 
-    const filteredAndSortedJobs = React.useMemo(() => {
-        let filtered = currentJobs;
-        const currentDate = new Date();
-
-        // Apply time filter
-        if (timeFilter !== 'all') {
-            filtered = filtered.filter(job => {
-                const loadOutDate = new Date(job.eventLoadOut);
-                if (timeFilter === 'future') {
-                    return loadOutDate >= currentDate;
-                } else if (timeFilter === 'past') {
-                    return loadOutDate < currentDate;
+                if (typeof aVal === 'string') {
+                    return sortConfig.direction === 'ascending'
+                        ? aVal.localeCompare(bVal)
+                        : bVal.localeCompare(aVal);
                 }
-                return true;
+                if (typeof aVal === 'number' || aVal instanceof Date) {
+                    return sortConfig.direction === 'ascending' ? aVal - bVal : bVal - aVal;
+                }
+                return 0;
             });
         }
+        return sortedArray;
+    }, [currentJobs, sortConfig]);
 
-        // Apply search filter
-        if (searchTerm) {
-            filtered = filtered.filter(job => 
-                job.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                job.eventLocation.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
-
-        // Apply status filter
-        if (statusFilter !== 'all') {
-            filtered = filtered.filter(job => job.status === statusFilter);
-        }
-
-        // Apply sorting
-        return sortJobs(filtered, sortConfig);
-    }, [currentJobs, searchTerm, statusFilter, timeFilter, sortConfig]);
-
+    
     const getSortIcon = (key) => {
         if (sortConfig.key === key) {
-            return (
-                <FaSort className={`ml-1 inline-block transition-transform duration-200 ${
-                    sortConfig.direction === 'ascending' ? 'rotate-0' : 'rotate-180'
-                }`} />
-            );
+            return sortConfig.direction === 'ascending' ? <FaSortUp /> : <FaSortDown />;
         }
-        return <FaSort className="ml-1 inline-block text-neutral-600" />;
+        return <FaSort />;
+    };
+
+    const toggleSortOptions = () => {
+        setShowSortOptions((prev) => !prev);
+        setAnimateSortOptions(true);
+    };
+
+    const cancelSortOptions = () => {
+        setAnimateSortOptions(false);
+        setShowSortOptions(false);
     };
 
     return (
@@ -269,7 +246,9 @@ const CurrentJobs = () => {
                 </svg>
                 Return to Dashboard
             </Link>
-
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6 text-center">
+                Current Jobs
+            </h1>
             <div className="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="flex items-center gap-4">
                     <div className="relative mt-5">
@@ -282,13 +261,83 @@ const CurrentJobs = () => {
                         />
                         <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
                     </div>
-                    <button
-                        onClick={() => setShowFilters(!showFilters)}
-                        className="px-4 py-2 bg-neutral-800 rounded-lg text-white hover:bg-neutral-700 transition-colors flex items-center gap-2"
-                    >
-                        <FaFilter />
-                        Filters
-                    </button>
+                    <AnimatePresence>
+                        {!showSortOptions && (
+                            <motion.button
+                                initial={{ opacity: 0, x: -20 }}      
+                                animate={{ opacity: 1, x: 0 }}         
+                                exit={{ opacity: 0, x: -20 }}         
+                                transition={{ duration: 0.3 }}
+                                onClick={toggleSortOptions}
+                                className={`flex items-center gap-2 px-4 py-2 rounded transition-colors mt-5 ${
+                                    showSortOptions
+                                        ? 'bg-neutral-700 text-white'
+                                        : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                                }`}
+                            >
+                                <FaSort className="text-xl" />
+                                <span className="whitespace-nowrap">Sort by</span>
+                            </motion.button>
+                        )}
+                    </AnimatePresence>
+
+                    <AnimatePresence>
+                        {showSortOptions && (
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}        
+                                animate={{ opacity: 1, x: 0 }}          
+                                exit={{ opacity: animateSortOptions ? 0 : 1, x: 20 }}
+                                transition={{ duration: 0.3 }}
+                                className="flex items-center gap-3 mt-5"
+                            >
+                                <span className="text-white whitespace-nowrap">Sort by:</span>
+
+                                <button
+                                    className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
+                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm whitespace-nowrap"
+                                    onClick={() => handleSort('eventName')}
+                                >
+                                    Name
+                                </button>
+
+                                <button
+                                    className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
+                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm whitespace-nowrap"
+                                    onClick={() => handleSort('eventLoadIn')}
+                                >
+                                    In Date
+                                </button>
+
+                                <button
+                                    className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
+                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm whitespace-nowrap"
+                                    onClick={() => handleSort('eventLoadOut')}
+                                >
+                                    Out Date
+                                </button>
+
+                                <button
+                                    className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
+                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm whitespace-nowrap"
+                                    onClick={() => handleSort('totalHours')}
+                                >
+                                    Total Hours
+                                </button>
+
+                                <motion.button
+                                    initial={{ opacity: 0, x: -20 }}    
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}       
+                                    transition={{ delay: 0.2 }}
+                                    type="button"
+                                    onClick={cancelSortOptions}
+                                    className="h-9 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors mt-0 whitespace-nowrap"
+                                >
+                                    Cancel
+                                </motion.button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
                 <div className="hidden md:flex gap-2">
                     <button
@@ -351,7 +400,7 @@ const CurrentJobs = () => {
 
             {isLoading ? (
                 <LoadingSpinner />
-            ) : filteredAndSortedJobs.length === 0 ? (
+            ) : sortedJobs.length === 0 ? (
                 <div className="flex flex-col items-center justify-center flex-1 min-h-[400px] text-center">
                     <FaRegSadTear className="w-16 h-16 text-neutral-400 dark:text-neutral-600 mb-4" />
                     <h2 className="text-xl font-semibold text-neutral-700 dark:text-neutral-300 mb-2">
@@ -378,98 +427,71 @@ const CurrentJobs = () => {
                     {isGridView ? (
                         <div className="w-full">
                             <HoverEffect 
-                                items={formatJobsForHoverEffect(filteredAndSortedJobs)} 
+                                items={formatJobsForHoverEffect(sortedJobs)} 
                                 className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
                             />
                         </div>
                     ) : (
-                        <div className="overflow-x-auto rounded-lg border border-neutral-800">
-                            <table className="min-w-full divide-y divide-neutral-800">
-                                <thead className="bg-neutral-800/50">
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
+                                <thead className="bg-neutral-700">
                                     <tr>
-                                        <th 
-                                            scope="col" 
-                                            className="px-6 py-4 text-left text-sm font-semibold text-neutral-300 cursor-pointer"
-                                            onClick={() => handleSort('eventName')}
-                                        >
-                                            Event Name {getSortIcon('eventName')}
+                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('eventName')}>
+                                            <div className="flex items-center">
+                                                Event Name
+                                                <span className="ml-2">{getSortIcon('eventName')}</span>
+                                            </div>
                                         </th>
-                                        <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-neutral-300">
-                                            Location
+                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('eventLoadIn')}>
+                                            <div className="flex items-center">
+                                                Load In Date
+                                                <span className="ml-2">{getSortIcon('eventLoadIn')}</span>
+                                            </div>
                                         </th>
-                                        <th 
-                                            scope="col" 
-                                            className="px-6 py-4 text-left text-sm font-semibold text-neutral-300 cursor-pointer"
-                                            onClick={() => handleSort('eventLoadIn')}
-                                        >
-                                            Load In {getSortIcon('eventLoadIn')}
+                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('eventLoadInHours')}>
+                                            <div className="flex items-center">
+                                                Load In Hours
+                                                <span className="ml-2">{getSortIcon('eventLoadInHours')}</span>
+                                            </div>
                                         </th>
-                                        <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-neutral-300">
-                                            Load In Hours
+                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('eventLoadOut')}>
+                                            <div className="flex items-center">
+                                                Load Out Date
+                                                <span className="ml-2">{getSortIcon('eventLoadOut')}</span>
+                                            </div>
                                         </th>
-                                        <th 
-                                            scope="col" 
-                                            className="px-6 py-4 text-left text-sm font-semibold text-neutral-300 cursor-pointer"
-                                            onClick={() => handleSort('eventLoadOut')}
-                                        >
-                                            Load Out {getSortIcon('eventLoadOut')}
+                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('eventLoadOutHours')}>
+                                            <div className="flex items-center">
+                                                Load Out Hours
+                                                <span className="ml-2">{getSortIcon('eventLoadOutHours')}</span>
+                                            </div>
                                         </th>
-                                        <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-neutral-300">
-                                            Load Out Hours
+                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('totalHours')}>
+                                            <div className="flex items-center">
+                                                Total Hours
+                                                <span className="ml-2">{getSortIcon('totalHours')}</span>
+                                            </div>
                                         </th>
-                                        <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-neutral-300">
-                                            Status
+                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('status')}>
+                                            <div className="flex items-center">
+                                                Status
+                                                <span className="ml-2">{getSortIcon('status')}</span>
+                                            </div>
                                         </th>
+                                        
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-neutral-800 bg-neutral-900">
-                                    {filteredAndSortedJobs.map((job) => (
-                                        <tr 
-                                            key={job._id} 
-                                            className="hover:bg-neutral-800/50 transition-colors"
-                                            onClick={() => handleEventClick(job._id)}
-                                        >
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-300">
-                                                {job.eventName.length > 25
-                                                    ? `${job.eventName.substring(0, 25)}...`
-                                                    : job.eventName}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-300">
-                                                {job.eventLocation.length > 25
-                                                    ? `${job.eventLocation.substring(0, 25)}...`
-                                                    : job.eventLocation}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-300">
-                                                <div className="flex flex-col">
-                                                    <span>{new Date(job.eventLoadIn).toLocaleDateString()}</span>
-                                                    <span className="text-neutral-500">
-                                                        {new Date(job.eventLoadIn).toLocaleTimeString([], { 
-                                                            hour: '2-digit', 
-                                                            minute: '2-digit'
-                                                        })}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-300">
-                                                {job.eventLoadInHours}h
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-300">
-                                                <div className="flex flex-col">
-                                                    <span>{new Date(job.eventLoadOut).toLocaleDateString()}</span>
-                                                    <span className="text-neutral-500">
-                                                        {new Date(job.eventLoadOut).toLocaleTimeString([], { 
-                                                            hour: '2-digit', 
-                                                            minute: '2-digit'
-                                                        })}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-300">
-                                                {job.eventLoadOutHours}h
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {getStatusBadge(job.status)}
-                                            </td>
+                                <tbody>
+                                    {sortedJobs.map((job) => (
+                                        <tr key={job._id} className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer">
+                                            <td className="p-4 text-white">{job.eventName}</td>
+                                            <td className="p-4 text-white">{new Date(job.eventLoadIn).toLocaleString()}</td>
+                                            <td className="p-4 text-white">{job.eventLoadInHours}</td>
+                                            <td className="p-4 text-white">{new Date(job.eventLoadOut).toLocaleString()}</td>
+                                            <td className="p-4 text-white">{job.eventLoadOutHours}</td>
+                                            <td className="p-4 text-white">{job.eventLoadInHours + job.eventLoadOutHours}</td>
+                                            <td className="p-4 text-white">{getStatusBadge(job.status)}</td>
+                                            
                                         </tr>
                                     ))}
                                 </tbody>

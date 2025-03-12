@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { FaTh, FaList, FaRegSadTear, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
+import { FaTh, FaList, FaRegSadTear, FaSort, FaSortUp, FaSortDown, FaSearch } from 'react-icons/fa';
 import { AuthContext } from "../../../../AuthContext";
 import { Link } from "react-router-dom";
 import { toast } from 'sonner';
@@ -302,15 +302,16 @@ export default function FindJobs() {
         <div className="flex flex-col items-center mb-8">
             <div className="flex justify-between items-center w-full mt-4">
                 <div className="flex gap-4">
-                    
-                    <input
-                        type="text"
-                        placeholder="Search by Job Name"
-                        value={nameFilter}
-                        onChange={(e) => setNameFilter(e.target.value)}
-                        className="px-4 py-2 bg-neutral-800 text-white rounded transition-colors outline-none w-7/9 mt-5"
-                    />
-                    
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Search by Job Name"
+                            value={nameFilter}
+                            onChange={(e) => setNameFilter(e.target.value)}
+                            className="px-4 py-2 bg-neutral-800 text-white rounded transition-colors outline-none w-7/9 mt-5"
+                        />
+                        
+                    </div>
                
                     <AnimatePresence>
                         {!showSortOptions && (

@@ -56,6 +56,16 @@ const eventSchema = new mongoose.Schema({
 
 const eventCollection = mongoose.model('eventCollection', eventSchema);
 
+const userJobCommentSchema = new mongoose.Schema({
+    userID: { type: String, required: true },
+    eventID: { type: String, required: true },
+    jobComments: { type: String, default: '' },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+});
+
+const userJobCommentCollection = mongoose.model('userJobCommentCollection', userJobCommentSchema);
+
 // Time Tracking Schema
 const timeTrackingSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -87,8 +97,6 @@ const correctionReportSchema = new mongoose.Schema({
     submittedAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });
-
-
 
 const correctionReportCollection = mongoose.model('correctionReportCollection', correctionReportSchema);
 
@@ -136,6 +144,7 @@ const collection = {
     invoiceCollection,
     Admin,
     TimeTracking,
+    userJobCommentCollection,
 };
 
 module.exports = collection;

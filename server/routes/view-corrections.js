@@ -24,7 +24,6 @@ const transporter = nodemailer.createTransport({
 // Route to get all corrections
 router.get('/', async (req, res) => {
     try {
-        console.log("aaaaaaaaaaaaaaaaaaaa")
         const corrections = await correctionReportCollection
             .find({})
             .select('-__v')  // Exclude version field
@@ -97,6 +96,55 @@ router.get('/:email', async (req, res) => {
         const events = await eventCollection.find({}).select('-__v').lean();
             
         console.log("Corrections fetched from DB:", corrections);
+        
+        res.status(200).json({
+            corrections,
+            events
+        });        
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).json({ message: 'Error fetching events' });
+    }
+});
+
+// Route to get all corrections of that event
+router.get('/event/:eventId', async (req, res) => {
+    try {
+        const eventID = req.params.eventId;
+
+        const corrections = await correctionReportCollection.find({
+            eventID: eventID,
+        });
+        
+        const users = await userCollection.find({}).select('-__v').lean();
+        const events = await eventCollection.find({}).select('-__v').lean();
+        
+        res.status(200).json({
+            corrections,
+            events,
+            users
+        });        
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).json({ message: 'Error fetching events' });
+    }
+});
+
+// Route to get all corrections of that user for that event
+router.get('/event/:email/:eventID', async (req, res) => {
+    try {
+        const eventID = { _id: req.params.eventID };
+        const contractor = await userCollection.findOne({ email: req.params.email });
+        if (!contractor) {
+            return res.status(404).json({ message: 'Contractor not found' });
+        }
+
+        const corrections = await correctionReportCollection.find({
+            userID: contractor._id,
+            eventID: eventID,
+        });
+        
+        const events = await eventCollection.find({}).select('-__v').lean();
         
         res.status(200).json({
             corrections,

@@ -46,7 +46,7 @@ const CorrectionReport = () => {
     setLoading(true);
 
     // Validate required fields
-    if (!formData.status || !formData.additionalComments) {
+    if (!formData.status) {
       toast.error("Please fill in all required fields.");
       setLoading(false);
       return;
@@ -143,7 +143,6 @@ const CorrectionReport = () => {
               value={formData.additionalComments}
               onChange={handleChange}
               className="w-full p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors h-32"
-              required
             />
           </div>
 

@@ -164,8 +164,7 @@ export default function FindJobs() {
       return jobs.map((job) => ({
           title: (
               <div>
-                  <span className="text-lg font-semibold">{job.eventName}</span>
-                  <span>
+                  <span className="text-lg font-semibold">
                       {job.eventName.length > 25
                           ? `${job.eventName.substring(0, 25)}...`
                           : job.eventName}

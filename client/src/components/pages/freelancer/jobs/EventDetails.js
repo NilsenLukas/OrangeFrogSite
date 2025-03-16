@@ -1,18 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaInfoCircle, FaTrashAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaTh, FaList, FaSortUp, FaSortDown, FaSort, FaInfoCircle, FaTrashAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { HoverBorderGradient } from '../../../ui/hover-border-gradient';
 import { AuthContext } from "../../../../AuthContext";
 import Modal from '../../../Modal';
+import { HoverEffect } from "../../../ui/card-hover-effect";
 
 export default function EventDetails() {
     const { auth } = useContext(AuthContext); // Get user authentication context
     const { eventID } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
+    const [jobs, setJobs] = useState([]);
+    const [jobStatuses, setJobStatuses] = useState({});
+    const [confirmationType, setConfirmationType] = useState(null);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [selectedJobId, setSelectedJobId] = useState(null);
     const [event, setEvent] = useState(null);
     const [comment, setComment] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -20,6 +26,13 @@ export default function EventDetails() {
     const [formData, setFormData] = useState({
         jobComments: '',
     });
+    const [view, setView] = useState('grid');
+    const [corrections, setCorrections] = useState([]);
+    const [nameFilter, setNameFilter] = useState('');
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+    const [events, setEvents] = useState(null);
+    const [ setShowFilterDropdown] = useState(false);
+    const filterDropdownRef = useRef(null);
     // const [showApprovalModal, setShowApprovalModal] = useState(false);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
 
@@ -55,8 +68,39 @@ export default function EventDetails() {
     };
 
     useEffect(() => {
+        const handleClickOutside = (correction) => {
+            if (filterDropdownRef.current && !filterDropdownRef.current.contains(correction.target)) {
+                setShowFilterDropdown(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const fetchCorrections = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections/event/${auth.email}/${eventID}`);
+            console.log(response.data); // Debug: Check what is actually returned
+    
+            // Ensure we're sorting the corrections array inside the response object
+            const sortedCorrections = response.data.corrections.sort((a, b) => {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+    
+            setCorrections(sortedCorrections);
+            setEvents(response.data.events);
+    
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching corrections:', error);
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchEventDetails();
         fetchJobCommentDetails();
+        fetchCorrections();
     }, [eventID]);
 
     if (loading) {
@@ -70,6 +114,12 @@ export default function EventDetails() {
     if (!event) {
         return <div className="text-white text-center mt-8">Event not found</div>;
     }
+
+    const openConfirmModal = (type, jobId) => {
+        setConfirmationType(type);
+        setSelectedJobId(jobId);
+        setShowConfirmModal(true);
+    };
 
     // Form submission handler
     const handleSubmit = async (e) => {
@@ -150,6 +200,135 @@ export default function EventDetails() {
         setFormData({
         ...formData,
         [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleConfirm = async () => {
+        if (confirmationType === 'apply') {
+            await handleApply(selectedJobId);
+        } else if (confirmationType === 'reject') {
+            await handleReject(selectedJobId);
+        }
+        setShowConfirmModal(false);
+    };
+
+    const handleApply = async (eventId) => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND}/events/${eventId}/apply`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contractorId: auth._id,
+                    email: auth.email
+                }),
+            });
+
+            if (response.ok) {
+                setJobs(prevJobs => prevJobs.filter(job => job._id !== eventId));
+                toast.success('Successfully applied to event');
+            } else {
+                toast.error('Failed to apply to event');
+            }
+        } catch (error) {
+            console.error('Error applying to event:', error);
+            toast.error('Error applying to event');
+        }
+    };
+
+    const handleReject = async (id) => {
+        try {
+            await axios.post(`${process.env.REACT_APP_BACKEND}/events/reject-application`, {
+                eventId: id,
+                userEmail: auth.email,
+            });
+            setJobStatuses((prev) => ({ ...prev, [id]: "Rejected" }));
+            setJobs((prevJobs) => prevJobs.filter((job) => job._id !== id));
+            navigate("/user/current-jobs")
+        } catch (error) {
+            console.error("Error rejecting job:", error);
+        }
+    };
+
+    const handleEventClick = (correctionId) => {
+        navigate(`/user/corrections/${correctionId}`);
+    };
+
+    const handleSort = (key) => {
+        setSortConfig(prevConfig => {
+            const direction = prevConfig.key === key && prevConfig.direction === 'ascending'
+                ? 'descending'
+                : 'ascending';
+            return { key, direction };
+        });
+    };
+
+    const getSortIcon = (key) => {
+        if (sortConfig.key === key) {
+            return sortConfig.direction === 'ascending' ? <FaSortUp /> : <FaSortDown />;
+        }
+        return <FaSort />;
+    };
+
+    // Filtering only by name
+    const getFilteredAndSortedCorrections = () => {
+        let filtered = corrections.filter(correction => {
+            return !nameFilter || correction.correctionName.toLowerCase().includes(nameFilter.toLowerCase());
+        });
+    
+        if (sortConfig.key) {
+            filtered.sort((a, b) => {
+                const aVal = a[sortConfig.key];
+                const bVal = b[sortConfig.key];
+    
+                if (typeof aVal === 'string') {
+                    return sortConfig.direction === 'ascending'
+                        ? aVal.localeCompare(bVal)
+                        : bVal.localeCompare(aVal);
+                }
+                if (typeof aVal === 'number' || aVal instanceof Date) {
+                    return sortConfig.direction === 'ascending' ? aVal - bVal : bVal - aVal;
+                }
+                return 0;
+            });
+        }
+        return filtered;
+    };
+
+    const formatEventsForHoverEffect = (corrections) => {
+        return corrections.map((correction) => {
+            // Ensure events and correction.eventID exist before accessing properties
+            const event = events?.find(e => e._id === correction.eventID);
+    
+            return {
+                title: (
+                    <div className="flex justify-between items-center">
+                        <span className="text-lg font-semibold">
+                            {correction.correctionName}
+                        </span>
+                    </div>
+                ),
+                description: (
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <span className="text-neutral-400 font-medium">Status:</span>
+                            <span className="ml-2 text-white">{correction.status}</span>
+                        </div>
+                        <div className="space-y-2">
+                            <span className="text-neutral-400 font-medium">Correction Type:</span>
+                            <span className="ml-2 text-white">{correction.requestType}</span>
+                        </div>
+                    </div>
+                ),
+                link: `/user/corrections/${correction._id}`,
+                _id: correction._id,
+                onClick: (e) => {
+                    if (!e.defaultPrevented) {
+                        handleEventClick(correction._id);
+                    }
+                }
+            };
         });
     };
 
@@ -246,6 +425,17 @@ export default function EventDetails() {
                         </div>
                     </motion.div>
                 </div>
+                <div className='flex justify-center'>
+                    <button
+                        onClick={(e) => {
+                        e.preventDefault();
+                            openConfirmModal('reject', event._id);
+                        }}
+                        className="text-red-500 bg-neutral-700 hover:bg-neutral-700 px-3 py-1.5 rounded-md transition-colors font-semibold whitespace-nowrap"
+                    >
+                        ✖ End Job Application
+                    </button>
+                </div>
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="col-span-2">
@@ -265,11 +455,11 @@ export default function EventDetails() {
                             </div>
                         </div>
                         <textarea
-                        name="jobComments"
-                        type="text"
-                        value={formData?.jobComments || ''}
-                        onChange={handleChange}
-                        className="w-full p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors h-32"
+                            name="jobComments"
+                            type="text"
+                            value={formData?.jobComments || ''}
+                            onChange={handleChange}
+                            className="w-full p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors h-32"
                         />
                     </div>
 
@@ -287,6 +477,109 @@ export default function EventDetails() {
                     </div>
                 </form>
 
+                <div className="mt-8">
+                    <h2 className="text-xl font-semibold text-white mb-4">Correction Reports</h2>
+                    <div className="w-full h-full overflow-auto px-5">
+                <div className="flex items-center gap-2 relative">
+                
+                <div className="hidden md:flex gap-2">
+                    <button
+                        onClick={() => setView('grid')}
+                        className={`p-2 mt-0 rounded transition-colors ${
+                            view === 'grid' 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                        }`}
+                    >
+                        <FaTh className="text-xl" />
+                    </button>
+                    <button
+                        onClick={() => setView('list')}
+                        className={`p-2 mt-0 rounded transition-colors ${
+                            view === 'list' 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                        }`}
+                    >
+                        <FaList className="text-xl" />
+                    </button>
+                </div>
+            </div>
+
+            <div className="relative z-0 pb-8">
+                {getFilteredAndSortedCorrections().length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-[50vh] text-neutral-400">
+                        <span className="text-6xl mb-4">😢</span>
+                        <p className="text-xl">No corrections found</p>
+                    </div>
+                ) : (
+                    view === 'grid' ? (
+                        <div className="max-w-full mx-auto">
+                            <HoverEffect 
+                                items={formatEventsForHoverEffect(getFilteredAndSortedCorrections())} 
+                                className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-auto"
+                            />
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
+                            <thead className="bg-neutral-700">
+                                <tr>
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('correctionName')}
+                                    >
+                                        <div className="flex items-center">
+                                            Correction Name
+                                            <span className="ml-2">{getSortIcon('correctionName')}</span>
+                                        </div>
+                                    </th>
+
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('status')}
+                                    >
+                                        <div className="flex items-center">
+                                            Status
+                                            <span className="ml-2">{getSortIcon('status')}</span>
+                                        </div>
+                                    </th>
+
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('requestType')}
+                                    >
+                                        <div className="flex items-center">
+                                            Correction Type
+                                            <span className="ml-2">{getSortIcon('requestType')}</span>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                                <tbody>
+                                    {getFilteredAndSortedCorrections().map((correction) => (
+                                        <tr 
+                                            key={correction._id} 
+                                            className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
+                                            onClick={() => handleEventClick(correction._id)}
+                                        >
+                                            <td className="p-4 text-white">
+                                                {correction.correctionName}
+                                            </td>
+                                            <td className="p-4 text-white">
+                                                {correction.status}
+                                            </td>
+                                            <td className="p-4 text-white">
+                                                {correction.requestType}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )
+                )}
+                
                 <div className="flex justify-center">
                     <Link to={`/user/corrections/create?eventID=${eventID}`}>
                         <HoverBorderGradient
@@ -298,6 +591,9 @@ export default function EventDetails() {
                         </HoverBorderGradient>
                     </Link>
                 </div>
+            </div>
+            </div>
+            </div>
             </motion.div>
 
             {showDeletePopup && (
@@ -324,6 +620,48 @@ export default function EventDetails() {
                     </div>
                 </Modal>
             )}
+
+            {/* Confirmation Modal */}
+        {showConfirmModal && (
+            <Modal>
+                <div className="bg-neutral-800 rounded-lg shadow-xl max-w-md w-full mx-4">
+                    <div className="p-6 border-b border-neutral-700">
+                        <h3 className="text-xl font-semibold text-white">
+                            {confirmationType === "apply"
+                                ? "Confirm Application"
+                                : "Confirm Rejection"}
+                        </h3>
+                    </div>
+
+                    <div className="p-6">
+                        <p className="text-neutral-300 mb-6">
+                            {confirmationType === "apply"
+                                ? "By applying to this event, you acknowledge that if approved, you will be required to work this event and cannot reject it later. Are you sure you want to apply?"
+                                : "Once your application to this event, it will be permanently removed from your available jobs. Are you sure you want to reject this event?"}
+                        </p>
+
+                        <div className="flex justify-end space-x-4">
+                            <button
+                                onClick={() => setShowConfirmModal(false)}
+                                className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleConfirm}
+                                className={`px-4 py-2 rounded-lg transition-colors ${
+                                    confirmationType === "apply"
+                                        ? "bg-green-500 hover:bg-green-600 text-white"
+                                        : "bg-red-500 hover:bg-red-600 text-white"
+                                }`}
+                            >
+                                {confirmationType === "apply" ? "Apply" : "Reject"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
+        )}
         </motion.div>
     );
 }

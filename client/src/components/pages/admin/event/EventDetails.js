@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaInfoCircle, FaEdit, FaTrashAlt, FaUsers, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaTh, FaList, FaInfoCircle, FaEdit, FaTrashAlt, FaUsers, FaCheck, FaTimes, FaSortUp, FaSortDown, FaSort, } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import Modal from '../../../Modal';
+import { HoverBorderGradient } from '../../../ui/hover-border-gradient';
+import { HoverEffect } from "../../../ui/card-hover-effect";
+import { AuthContext } from "../../../../AuthContext";
 
 export default function EventDetails() {
+    const { auth } = useContext(AuthContext);
     const { eventId } = useParams();
     const navigate = useNavigate();
     const [event, setEvent] = useState(null);
@@ -15,6 +19,14 @@ export default function EventDetails() {
     const [showApprovalModal, setShowApprovalModal] = useState(false);
     const [selectedContractor, setSelectedContractor] = useState(null);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
+    const [view, setView] = useState('grid');
+    const [corrections, setCorrections] = useState([]);
+    const [nameFilter, setNameFilter] = useState('');
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+    const [events, setEvents] = useState(null);
+    const [ setShowFilterDropdown] = useState(false);
+    const filterDropdownRef = useRef(null);
+    const [users, setUsers] = useState(null);
 
     const fadeIn = {
         initial: { opacity: 0, y: 20 },
@@ -34,19 +46,29 @@ export default function EventDetails() {
         }
     };
 
-    useEffect(() => {
-        const fetchEventDetails = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_BACKEND}/events/${eventId}`);
-                setEvent(response.data);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching event details:', error);
-                setError(error.response?.data?.message || 'Error fetching event details');
-                setLoading(false);
-            }
-        };
+    const fetchCorrections = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections/event/${eventId}`);
+            console.log(response.data); // Debug: Check what is actually returned
     
+            // Ensure we're sorting the corrections array inside the response object
+            const sortedCorrections = response.data.corrections.sort((a, b) => {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+    
+            setCorrections(sortedCorrections);
+            setEvents(response.data.events);
+            setUsers(response.data.users);
+    
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching corrections:', error);
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchCorrections();
         fetchEventDetails();
     }, [eventId]);
 
@@ -100,6 +122,92 @@ export default function EventDetails() {
             console.error('Error deleting event:', error);
             toast.error('Failed to delete event');
         }
+    };
+
+    const handleSort = (key) => {
+        setSortConfig(prevConfig => {
+            const direction = prevConfig.key === key && prevConfig.direction === 'ascending'
+                ? 'descending'
+                : 'ascending';
+            return { key, direction };
+        });
+    };
+
+    const getSortIcon = (key) => {
+        if (sortConfig.key === key) {
+            return sortConfig.direction === 'ascending' ? <FaSortUp /> : <FaSortDown />;
+        }
+        return <FaSort />;
+    };
+
+    // Filtering only by name
+    const getFilteredAndSortedCorrections = () => {
+        let filtered = corrections.filter(correction => {
+            return !nameFilter || correction.correctionName.toLowerCase().includes(nameFilter.toLowerCase());
+        });
+    
+        if (sortConfig.key) {
+            filtered.sort((a, b) => {
+                const aVal = a[sortConfig.key];
+                const bVal = b[sortConfig.key];
+    
+                if (typeof aVal === 'string') {
+                    return sortConfig.direction === 'ascending'
+                        ? aVal.localeCompare(bVal)
+                        : bVal.localeCompare(aVal);
+                }
+                if (typeof aVal === 'number' || aVal instanceof Date) {
+                    return sortConfig.direction === 'ascending' ? aVal - bVal : bVal - aVal;
+                }
+                return 0;
+            });
+        }
+        return filtered;
+    };
+
+    const formatEventsForHoverEffect = (corrections) => {
+        return corrections.map((correction) => {
+            // Ensure events and correction.eventId exist before accessing properties
+            const event = events?.find(e => e._id === correction.eventId);
+            const user = users?.find(e => e._id === correction.userID);
+    
+            return {
+                title: (
+                    <div className="flex justify-between items-center">
+                        <span className="text-lg font-semibold">
+                            {correction.correctionName}
+                        </span>
+                    </div>
+                ),
+                description: (
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <span className="text-neutral-400 font-medium">Status:</span>
+                            <span className="ml-2 text-white">{correction.status}</span>
+                        </div>
+                        <div className="space-y-2">
+                            <span className="text-neutral-400 font-medium">Created By:</span>
+                            <span className="ml-2 text-white">{user ? user.name : 'Unknown User'}</span>
+                        </div>
+                        <div className="space-y-2">
+                            <span className="text-neutral-400 font-medium">Correction Type:</span>
+                            <span className="ml-2 text-white">{correction.requestType}</span>
+                        </div>
+                    </div>
+                ),
+                link: `/admin/corrections/${correction._id}`,
+                _id: correction._id,
+                onClick: (e) => {
+                    if (!e.defaultPrevented) {
+                        handleEventClick(correction._id);
+                    }
+                }
+            };
+        });
+    };
+
+    const handleEventClick = (correctionId) => {
+        navigate(`/admin/corrections/${correctionId}`);
     };
 
     if (loading) {
@@ -308,6 +416,137 @@ export default function EventDetails() {
                         <p className="text-neutral-400 text-center">No approved freelancers yet.</p>
                     )}
                 </div>
+            </div>
+
+            <div className="mt-8">
+                    <h2 className="text-xl font-semibold text-white mb-4">Correction Reports</h2>
+                    <div className="w-full h-full overflow-auto px-5">
+                <div className="flex items-center gap-2 relative">
+                
+                <div className="hidden md:flex gap-2">
+                    <button
+                        onClick={() => setView('grid')}
+                        className={`p-2 mt-0 rounded transition-colors ${
+                            view === 'grid' 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                        }`}
+                    >
+                        <FaTh className="text-xl" />
+                    </button>
+                    <button
+                        onClick={() => setView('list')}
+                        className={`p-2 mt-0 rounded transition-colors ${
+                            view === 'list' 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                        }`}
+                    >
+                        <FaList className="text-xl" />
+                    </button>
+                </div>
+            </div>
+
+            <div className="relative z-0 pb-8">
+                {getFilteredAndSortedCorrections().length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-[50vh] text-neutral-400">
+                        <span className="text-6xl mb-4">😢</span>
+                        <p className="text-xl">No corrections found</p>
+                    </div>
+                ) : (
+                    view === 'grid' ? (
+                        <div className="max-w-full mx-auto">
+                            <HoverEffect 
+                                items={formatEventsForHoverEffect(getFilteredAndSortedCorrections())} 
+                                className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-auto"
+                            />
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
+                            <thead className="bg-neutral-700">
+                                <tr>
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('correctionName')}
+                                    >
+                                        <div className="flex items-center">
+                                            Correction Name
+                                            <span className="ml-2">{getSortIcon('correctionName')}</span>
+                                        </div>
+                                    </th>
+
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('status')}
+                                    >
+                                        <div className="flex items-center">
+                                            Status
+                                            <span className="ml-2">{getSortIcon('status')}</span>
+                                        </div>
+                                    </th>
+
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('userID')}
+                                    >
+                                        <div className="flex items-center">
+                                            Created By
+                                            <span className="ml-2">{getSortIcon('userID')}</span>
+                                        </div>
+                                    </th>
+
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('requestType')}
+                                    >
+                                        <div className="flex items-center">
+                                            Correction Type
+                                            <span className="ml-2">{getSortIcon('requestType')}</span>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                                <tbody>
+                                    {getFilteredAndSortedCorrections().map((correction) => (
+                                        <tr 
+                                            key={correction._id} 
+                                            className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
+                                            onClick={() => handleEventClick(correction._id)}
+                                        >
+                                            <td className="p-4 text-white">
+                                                {correction.correctionName}
+                                            </td>
+                                            <td className="p-4 text-white">
+                                                {correction.status}
+                                            </td>
+                                            <td className="p-4 text-white">
+                                                {users?.find(user => user._id === correction.userID)?.name}
+                                            </td>
+                                            <td className="p-4 text-white">
+                                                {correction.requestType}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )
+                )}
+                
+                <div className="flex justify-center">
+                    <Link to={`/user/corrections/create?eventId=${eventId}`}>
+                        <HoverBorderGradient
+                            containerClassName="rounded-full"
+                            className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2"
+                        >
+                            <span className="text-lg mr-1">+</span> 
+                            <span>Create Correction Report</span>
+                        </HoverBorderGradient>
+                    </Link>
+                </div>
+            </div>
+            </div>
             </div>
 
             {showApprovalModal && (

@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require("mongoose");
 const { invoiceCollection, userCollection, eventCollection } = require('../mongo');
 const router = express.Router();
 const { parseDate } = require("../utils/dateUtils"); 
@@ -29,9 +30,19 @@ router.get('/user/:userId', async (req, res) => {
 
 // Route to fetch a single invoice by ID with populated user data
 router.get('/:id', async (req, res) => {
-    try {
+  try {
       const { id } = req.params;
-  
+
+      // Prevent "count" from being treated as an ObjectId
+      if (!id || id === "count") {
+          return res.status(400).json({ message: "Invalid invoice ID" });
+      }
+
+      // Validate if id is a valid MongoDB ObjectId before querying
+      if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+          return res.status(400).json({ message: "Invalid ObjectId format" });
+      }
+
       // Find the invoice and populate user details
       const invoice = await invoiceCollection.findById(id).populate('user', 'name address phone email');
       
@@ -87,7 +98,7 @@ router.get('/:id', async (req, res) => {
             id,
             {
                 $set: {
-                    items: formattedItems,
+                    items: Array.isArray(items) ? items : [],
                     billableHours,
                     rate,
                     totals,
@@ -200,18 +211,23 @@ router.post("/", async (req, res) => {
           total,
           notes,
           createdAt,
-          eventId, // Passed when generating an invoice
+          eventId
       } = req.body;
 
-      // Ensure required fields exist
+      // ✅ Ensure required fields exist
       if (!user || !show || !dateOfWork || !eventId) {
           return res.status(400).json({ message: "Missing required fields" });
       }
 
+      // ✅ Validate eventId
+      if (!mongoose.Types.ObjectId.isValid(eventId)) {
+          return res.status(400).json({ message: "Invalid event ID" });
+      }
+
       // ✅ Convert and Validate Numeric Fields
-      const validBillableHours = billableHours.map(bh => Number(bh) || 0);
+      const validBillableHours = (billableHours || []).map(bh => Number(bh) || 0);
       const validRate = Array.isArray(rate) ? rate.map(r => Number(r) || 0) : [Number(rate) || 0];
-      const validTotals = totals.map(t => Number(t) || 0);
+      const validTotals = (totals || []).map(t => Number(t) || 0);
       const validSubtotal = Number(subtotal) || validTotals.reduce((sum, t) => sum + t, 0);
       const validTaxPercentage = Number(taxPercentage) || 0;
       const validTaxAmount = Number(taxAmount) || (validSubtotal * (validTaxPercentage / 100));
@@ -219,7 +235,29 @@ router.post("/", async (req, res) => {
 
       // ✅ Ensure invoiceNumber is set
       const invoiceCount = await invoiceCollection.countDocuments();
-      const newInvoiceNumber = invoiceNumber || invoiceCount + 1; // Auto-generate if missing
+      const newInvoiceNumber = Number.isInteger(Number(invoiceNumber)) ? Number(invoiceNumber) : invoiceCount + 1;
+
+      // ✅ Debugging Log Before Saving
+      console.log("Saving invoice with data:", {
+          invoiceNumber: newInvoiceNumber,
+          lpoNumber,
+          user,
+          show,
+          venue,
+          dateOfWork,
+          actualHoursWorked,
+          billableHours: validBillableHours,
+          rate: validRate,
+          totals: validTotals,
+          items: Array.isArray(items) ? items : [],
+          subtotal: validSubtotal,
+          taxPercentage: validTaxPercentage,
+          taxAmount: validTaxAmount,
+          total: validTotal,
+          notes,
+          createdAt: createdAt || new Date(),
+          eventId
+      });
 
       // ✅ Create and save the invoice
       const newInvoice = new invoiceCollection({
@@ -233,7 +271,7 @@ router.post("/", async (req, res) => {
           billableHours: validBillableHours,
           rate: validRate,
           totals: validTotals,
-          items,
+          items: Array.isArray(items) ? items : [],
           subtotal: validSubtotal,
           taxPercentage: validTaxPercentage,
           taxAmount: validTaxAmount,
@@ -251,7 +289,7 @@ router.post("/", async (req, res) => {
 
   } catch (error) {
       console.error("Error saving invoice:", error);
-      res.status(500).json({ message: "Server error while saving invoice" });
+      res.status(500).json({ message: "Server error while saving invoice", error: error.message || "Unknown error" });
   }
 });
 

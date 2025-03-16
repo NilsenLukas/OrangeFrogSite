@@ -31,6 +31,7 @@ const Invoice = ({invoiceData}) => {
   const queryParams = new URLSearchParams(location.search);
   const eventId = queryParams.get("eventId");
   const isNewInvoice = !id && !!eventId;
+  
 
   // If neither ID nor eventId is present, log an error for debugging
   useEffect(() => {
@@ -47,21 +48,28 @@ const Invoice = ({invoiceData}) => {
         }
 
           try {
-              // Fetch event details
-              const eventRes = await fetch(`${process.env.REACT_APP_BACKEND}/events/${eventId}`);
-              const eventData = await eventRes.json();
+            const eventRes = await fetch(`${process.env.REACT_APP_BACKEND}/events/${eventId}`);
+            const eventData = await eventRes.json();
+            // console.log("Fetched Event Data:", eventData);
 
-              // Fetch user data (Assuming user is logged in)
-              const userRes = await fetch(`${process.env.REACT_APP_BACKEND}/users/${auth.userId}`);
-              const userData = await userRes.json();
+            // Fetch user data (Assuming user is logged in)
+            const userRes = await fetch(`${process.env.REACT_APP_BACKEND}/users/${auth.userId}`);
+            if (userRes.status === 401) {
+                console.warn("Session expired. Staying on current page.");
+                return; // Prevents redirecting to login
+            }
+            const userData = await userRes.json();
+            // console.log("Fetched User Data:", userData);
 
-              // Fetch admin data (Company info)
-              const adminRes = await fetch(`${process.env.REACT_APP_BACKEND}/admin/admin-profile`);
-              const adminData = await adminRes.json();
+            // Fetch admin data (Company info)
+            const adminRes = await fetch(`${process.env.REACT_APP_BACKEND}/admin/admin-profile`);
+            const adminData = await adminRes.json();
+            // console.log("Fetched Admin Data:", adminData);
 
-              // Fetch time tracking records for this event
-              const timeRes = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/event/${eventId}/${auth.userId}`);
-              const timeData = await timeRes.json();
+            // Fetch time tracking records for this event
+            const timeRes = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/event/${eventId}/${auth.userId}`);
+            const timeData = await timeRes.json();
+            console.log("Fetched Time Tracking Data:", timeData);
 
               // Pre-fill invoice data
               // Ensure items array is populated correctly from time tracking data
@@ -72,23 +80,61 @@ const Invoice = ({invoiceData}) => {
       show: eventData.eventName,
       venue: eventData.eventLocation || "Detroit Mercy", // Default if missing
       dateOfWork: timeData.map(entry => entry.clockInTime), // Dates of shifts
-      actualHoursWorked: timeData.map(entry => `${new Date(entry.clockInTime).toLocaleTimeString()} - ${entry.clockOutTime ? new Date(entry.clockOutTime).toLocaleTimeString() : "Ongoing"}`),
-      billableHours: timeData.map(entry => entry.billableHours || "0"),
+      // actualHoursWorked: timeData.map(entry => {
+      //   const formatTime = (date) => new Date(date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+      //   return `${formatTime(entry.clockInTime)} - ${entry.clockOutTime ? formatTime(entry.clockOutTime) : "Ongoing"}`;
+      // }),
+      // billableHours: timeData.map(entry => {
+      //   if (!entry.clockOutTime) return "0.00"; // Handle ongoing shift
+      
+      //   const workedMinutes = Math.max((new Date(entry.clockOutTime) - new Date(entry.clockInTime)) / (1000 * 60), 0);
+      
+      //   const breakMinutes = entry.breaks?.reduce((total, breakPeriod) => {
+      //     if (breakPeriod.breakStartTime && breakPeriod.breakEndTime) {
+      //       return total + Math.max((new Date(breakPeriod.breakEndTime) - new Date(breakPeriod.breakStartTime)) / (1000 * 60), 0);
+      //     }
+      //     return total;
+      //   }, 0) || 0;
+      
+      //   const billableMinutes = workedMinutes - breakMinutes;
+      //   return (billableMinutes / 60).toFixed(2); // Convert to hours
+      // }),
       rate: [Number(userData.hourlyRate) || 0],// Assuming rate is stored in user profile
       totals: timeData.map(entry => (entry.billableHours * (userData.hourlyRate || 0)).toFixed(2)),
-      items: timeData.map((entry, index) => ({
-          date: entry.clockInTime ? new Date(entry.clockInTime).toLocaleDateString() : "N/A",
-          actualHours: `${new Date(entry.clockInTime).toLocaleTimeString()} - ${entry.clockOutTime ? new Date(entry.clockOutTime).toLocaleTimeString() : "Ongoing"}`,
-          notes: "", // Leave empty for user input
-          billableHours: entry.billableHours || "0",
-          rate: userData.hourlyRate || "0",
-          total: (entry.billableHours * (userData.hourlyRate || 0)).toFixed(2),
-      })),
+      items: timeData.map((entry, index) => {
+        const formatTime = (date) => new Date(date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    
+        // Format actual hours worked
+        const actualHours = `${formatTime(entry.clockInTime)} - ${entry.clockOutTime ? formatTime(entry.clockOutTime) : "Ongoing"}`;
+    
+        // Calculate billable hours
+        let workedMinutes = entry.clockOutTime ? Math.max((new Date(entry.clockOutTime) - new Date(entry.clockInTime)) / (1000 * 60), 0) : 0;
+        let breakMinutes = entry.breaks?.reduce((total, breakPeriod) => {
+            if (breakPeriod.breakStartTime && breakPeriod.breakEndTime) {
+                return total + Math.max((new Date(breakPeriod.breakEndTime) - new Date(breakPeriod.breakStartTime)) / (1000 * 60), 0);
+            }
+            return total;
+        }, 0) || 0;
+    
+        const billableHours = ((workedMinutes - breakMinutes) / 60).toFixed(2);
+    
+        // Calculate total
+        const rate = parseFloat(userData.hourlyRate) || 0;
+        const total = (parseFloat(billableHours) * rate).toFixed(2);
+    
+        return {
+            date: entry.clockInTime ? new Date(entry.clockInTime).toLocaleDateString() : "N/A",
+            actualHours,
+            notes: "", // Keep empty for user input
+            billableHours,
+            rate,
+            total,
+        };
+      }),
       subtotal: timeData.reduce((sum, entry) => sum + (entry.billableHours * (userData.hourlyRate || 0)), 0),
       taxPercentage: 10, // Default tax percentage
       taxAmount: (timeData.reduce((sum, entry) => sum + (entry.billableHours * (userData.hourlyRate || 0)), 0) * 0.1).toFixed(2),
-      total: (timeData.reduce((sum, entry) => sum + (entry.billableHours * (userData.hourlyRate || 0)), 0) * 1.1).toFixed(2),
-      notes: [],
+      total: (timeData.reduce((sum, entry) => sum + ((parseFloat(entry.billableHours) || 0) * (parseFloat(userData.hourlyRate) || 0)), 0) * 1.1).toFixed(2),      notes: [],
       createdAt: new Date(),
     });
 
@@ -449,35 +495,128 @@ const confirmDelete = async () => {
 
   const handleSaveInvoice = async () => {
     try {
-        // Ensure numeric fields are properly formatted
+        if (!invoice || !invoice.items) {
+            console.error("Invoice or items is undefined.");
+            toast.error("Invoice data is missing.");
+            return;
+        }
+
+        // Ensure all fields are extracted from `items`
+        const formattedItems = invoice.items.map(item => ({
+            ...item,
+            date: item.date ? new Date(item.date).toISOString() : "N/A",
+            actualHours: item.actualHours || "",
+            notes: item.notes || "",
+            billableHours: parseFloat(item.billableHours) || 0,
+            rate: parseFloat(item.rate) || 0,
+            total: parseFloat(item.total) || 0,
+        }));
+
+        // Extract values from items
+        const dateOfWork = formattedItems.map(item => item.date);
+        const actualHoursWorked = formattedItems.map(item => item.actualHours);
+        const billableHours = formattedItems.map(item => item.billableHours);
+        const rate = formattedItems.map(item => item.rate);
+        const totals = formattedItems.map(item => item.total);
+        const notes = formattedItems.map(item => item.notes);
+
+        // Recalculate totals
+        const newSubtotal = totals.reduce((sum, t) => sum + t, 0);
+        const taxAmount = (newSubtotal * (invoice.taxPercentage || 0) / 100).toFixed(2);
+        const newTotal = (newSubtotal + parseFloat(taxAmount)).toFixed(2);
+
+        // Ensure `invoiceNumber` is a valid number
+        const generatedInvoiceNumber = id ? invoice.invoiceNumber : await fetchInvoiceCount();
+
+        // Prepare payload for saving
         const formattedInvoice = {
-            ...invoice,
-            billableHours: invoice.billableHours.map(bh => Number(bh) || 0),
-            rate: Array.isArray(invoice.rate) ? invoice.rate.map(r => Number(r) || 0) : [Number(invoice.rate) || 0],
-            totals: invoice.totals.map(t => Number(t) || 0),
-            subtotal: Number(invoice.subtotal) || 0,
-            taxPercentage: Number(invoice.taxPercentage) || 0,
-            taxAmount: Number(invoice.taxAmount) || 0,
-            total: Number(invoice.total) || 0,
+            invoiceNumber: generatedInvoiceNumber, // Ensure it's a number
+            lpoNumber: invoice.lpoNumber || "",
+            user: invoice.user._id || auth.userId, // Ensure user ID is attached
+            show: invoice.show,
+            venue: invoice.venue,
+            dateOfWork,
+            actualHoursWorked,
+            billableHours,
+            rate,
+            totals,
+            notes,
+            subtotal: newSubtotal,
+            taxPercentage: invoice.taxPercentage || 0,
+            taxAmount,
+            total: newTotal,
+            items: formattedItems,
+            createdAt: invoice.createdAt || new Date().toISOString(),
+            eventId: invoice.eventId || eventId, // Attach event ID
         };
 
-        const response = await fetch(`${process.env.REACT_APP_BACKEND}/invoices`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formattedInvoice),
-        });
+        console.log("Saving invoice data:", formattedInvoice);
 
-        if (response.status === 201) {
-            toast.success("Invoice saved successfully!");
-            window.location.href = "/user-invoices"; // Redirect back to invoices list
+        let response;
+        if (id) {
+            // Existing invoice → UPDATE (PUT)
+            response = await fetch(`${process.env.REACT_APP_BACKEND}/invoices/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formattedInvoice),
+            });
         } else {
-            toast.error("Failed to save invoice.");
+            // New invoice → CREATE (POST)
+            response = await fetch(`${process.env.REACT_APP_BACKEND}/invoices`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(formattedInvoice),
+            });
+            
+            if (!response.ok) {
+                console.error("Error saving invoice:", response.status, response.statusText);
+            }
+        }
+
+        let responseData;
+        try {
+            responseData = await response.clone().json(); // Read the response only once
+        } catch (err) {
+            console.error("Error parsing JSON response:", err);
+            toast.error("Error processing server response.");
+            return;
+        }
+
+        if (response.ok) {
+            toast.success("Invoice saved successfully!");
+
+            if (!id) {
+              setInvoice(prev => ({ ...prev, _id: responseData.invoice._id }));
+          }
+          
+          // ✅ Redirect to `/user-invoices` after saving
+          const redirectPath = auth.role === "admin" ? "/admin/invoices" : "/user/invoices";
+          window.location.href = redirectPath;  
+        } else {
+            console.error("Failed to save invoice:", response.status, response.statusText, responseData);
+            toast.error(`Server error: ${responseData.message || "Unable to save invoice."}`);
         }
     } catch (error) {
         console.error("Error saving invoice:", error);
         toast.error("Server error while saving invoice.");
     }
-};
+  };
+
+  const fetchInvoiceCount = async () => {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND}/invoices/count`);
+        const data = await response.json();
+
+        if (!data.count || isNaN(data.count)) {
+            throw new Error("Invalid count response from server.");
+        }
+
+        return data.count + 1; // Ensure invoiceNumber is numeric
+    } catch (error) {
+        console.error("Error fetching invoice count:", error);
+        return Math.floor(Date.now() / 1000); // Fallback unique number
+    }
+  };
 
   const calculateTotals = () => {
     if (!invoice || !invoice.items) return;

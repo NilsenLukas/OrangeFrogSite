@@ -99,14 +99,19 @@ const UserInvoices = () => {
       </Link>
 
       <div className="flex justify-between items-center mb-8">
+        <div>
         <h1 className="text-3xl font-bold text-white">Manage Invoices</h1>
 
-        <button
-            onClick={() => setShowModal(true)}
-            className="px-4 py-2 mb-4 bg-gray-700 hover:bg-gray-600 text-white rounded-full transition-colors"
-        >
-            Generate Invoice
-        </button>
+        <div className="flex justify-center">
+            <button
+                onClick={() => setShowModal(true)}
+                className="px-4 py-2 bg-neutral-900 dark:bg-black text-white flex items-center space-x-2 rounded-full transition-colors hover:bg-gray-700"
+            >
+                <span className="text-lg mr-1">+</span> 
+                <span>Generate Invoice</span>
+            </button>
+        </div>
+        </div>
 
         <div className="flex justify-end mb-4 space-x-2">
             <button

@@ -20,9 +20,10 @@ const TimeCard = () => {
     const [setTimeline] = useState([]);
     const [isClockedIn, setIsClockedIn] = useState(false);
     const [isOnBreak, setIsOnBreak] = useState(false);
-    const [setClockInTime] = useState(null);
+    const [clockInTime, setClockInTime] = useState(null);
     // const [breakStartTime, setBreakStartTime] = useState(null);
     const [breaks, setBreaks] = useState([]); 
+    const [clockHistory, setClockHistory] = useState([]);
 
     useEffect(() => {
         const fetchApprovedEvents = async () => {
@@ -123,7 +124,7 @@ const TimeCard = () => {
             return;
         }
     
-        const eventToClockIn = selectedDateEvents[0]; // ✅ Use the first event for the selected date
+        const eventToClockIn = selectedDateEvents[0];
     
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/clock-in`, {
@@ -135,8 +136,16 @@ const TimeCard = () => {
             const data = await response.json();
     
             if (response.status === 201) {
+                const newClockInTime = new Date(data.timeTracking.clockInTime);
                 setIsClockedIn(true);
-                setClockInTime(new Date(data.timeTracking.clockInTime));
+                setClockInTime(newClockInTime);
+                
+                setClockHistory((prevHistory) => [
+                    ...prevHistory,
+                    { type: "Clock In", time: newClockInTime }
+                ]);
+    
+                toast.success("Clocked in successfully at " + newClockInTime.toLocaleTimeString());
             } else {
                 toast.error(data.message || "Failed to clock in.");
             }
@@ -156,10 +165,17 @@ const TimeCard = () => {
             const data = await response.json();
     
             if (response.status === 200) {
+                const newClockOutTime = new Date();
                 setIsClockedIn(false);
-                setIsOnBreak(false); // Ensure break status is reset
-                setBreaks([]); // Clear any ongoing breaks
-                toast.success(data.message); // Show success message
+                setIsOnBreak(false);
+                setBreaks([]);
+    
+                setClockHistory((prevHistory) => [
+                    ...prevHistory,
+                    { type: "Clock Out", time: newClockOutTime }
+                ]);
+    
+                toast.success(data.message);
             } else {
                 toast.error(data.message || "Failed to clock out.");
             }
@@ -352,19 +368,25 @@ const TimeCard = () => {
                                 )}
                             </div>
                             {/* Show Break History */}
-                            {breaks.length > 0 && (
-                                <> {/* ✅ Added Fragment to wrap multiple elements */}
-                                    {/* Separate Break History Title - Always Centered */}
+                            {/* {breaks.length > 0 && ( */}
+                                <>
                                     <div className="w-full text-center mt-6">
-                                        <h4 className="text-white text-sm font-bold mb-2">Break History:</h4>
+                                        <h4 className="text-white text-sm font-bold mb-2">Break & Time History:</h4>
                                     </div>
 
-                                    {/* Break List - Centered but on a New Line */}
                                     <div className="mt-2 flex justify-center">
                                         <ul className="text-neutral-400 text-sm space-y-1 text-center">
+                                            {/* ✅ Add clock-in & clock-out history */}
+                                            {clockHistory.map((entry, index) => (
+                                                <li key={index}>
+                                                    🕒 {entry.type}: {entry.time.toLocaleTimeString()}
+                                                </li>
+                                            ))}
+
+                                            {/* ✅ Existing break history */}
                                             {breaks.map((breakSession, index) => (
                                                 <li key={index}>
-                                                    🕒 {new Date(breakSession.breakStartTime).toLocaleTimeString()}  
+                                                    ☕ Break: {new Date(breakSession.breakStartTime).toLocaleTimeString()}  
                                                     {breakSession.breakEndTime
                                                         ? ` → ${new Date(breakSession.breakEndTime).toLocaleTimeString()}`
                                                         : " (Ongoing)"}
@@ -373,7 +395,7 @@ const TimeCard = () => {
                                         </ul>
                                     </div>
                                 </>
-                            )}
+                            {/* )} */}
                         </motion.div>
                     );
                 })}

@@ -468,7 +468,6 @@ router.get('/contractor/corrections/:email', async (req, res) => {
     }
 });
 
-
 router.get('/approved-events/:userId', async (req, res) => {
     try {
         const userId = req.params.userId;
@@ -480,113 +479,23 @@ router.get('/approved-events/:userId', async (req, res) => {
     }
 });
 
-router.post('/job-comments/:eventID/:email', async (req, res) => {
-    const { jobComments } = req.body;
-    const eventID = req.params.eventID;
-
-    if (!jobComments) {
-        return res.status(400).json({ message: 'All fields are required.' });
-    }
-
-    console.log('Request Params:', req.params);
-    console.log('Request Body:', req.body);
-
+router.get("/eligible-events/:userId", async (req, res) => {
     try {
-        // First, find the contractor by email
-        const user = await userCollection.findOne({ email: req.params.email });
-        if (!user) {
-            console.error('Contractor not found');
-            return res.status(404).json({ message: 'Contractor not found' });
-        }
-        const userID = user._id
+        const { userId } = req.params;
+        const fiftyDaysAgo = new Date();
+        fiftyDaysAgo.setDate(fiftyDaysAgo.getDate() - 50);
 
-        const newJobComment = new userJobCommentCollection({
-            eventID,
-            userID,
-            jobComments,
-            createdAt: new Date(),
-          });
-      
-          await newJobComment.save();
-          res.status(201).json({ message: 'Comment added successfully' });
+        // Find events within the last 50 days, without an invoice, and assigned to the user
+        const eligibleEvents = await eventCollection.find({
+            eventLoadIn: { $gte: fiftyDaysAgo }, // Only events within last 50 days
+            invoiceGenerated: false, // No invoice has been generated yet
+            assignedContractors: userId, // Ensure the user was part of the event
+        }).sort({ eventLoadIn: -1 }); // Sort by latest events first
+
+        res.status(200).json(eligibleEvents);
     } catch (error) {
-        console.error('Error fetching job comment information:', error);
-        res.status(500).json({ message: 'Error fetching job comment information' });
-    }
-});
-
-router.get('/job-comments/:eventID/:email', async (req, res) => {
-    const eventID = req.params.eventID;
-
-    try {
-        // First, find the contractor by email
-        const user = await userCollection.findOne({ email: req.params.email });
-        if (!user) {
-            console.error('Contractor not found');
-            return res.status(404).json({ message: 'Contractor not found' });
-        }
-
-        const jobComment = await userJobCommentCollection.findOne({
-            eventID: eventID,
-            userID: user._id
-        });
-        
-        if (!jobComment) {
-            return res.status(404).json({ message: 'Job comment not found' });
-        }
-        res.status(200).json(jobComment);
-    } catch (error) {
-        console.error('Error fetching job comment information:', error);
-        res.status(500).json({ message: 'Error fetching job comment information' });
-    }
-});
-
-router.put('/job-comments/:id', async (req, res) => {
-    const { id } = req.params;
-    const { jobComments } = req.body;
-
-    if (!jobComments) {
-        return res.status(400).json({ message: 'All fields are required.' });
-    }
-
-    console.log('Request Params:', req.params);
-    console.log('Request Body:', req.body);
-
-    try {
-        const updatedData = {
-            ...req.body,
-            updatedAt: new Date()
-        };
-
-        const updatedComment = await userJobCommentCollection.findByIdAndUpdate(
-            id,
-            updatedData,
-            { 
-                new: true,
-                overwrite: false,
-                returnDocument: 'after'
-            }
-        );
-
-        if (!updatedComment) {
-            return res.status(404).json({ message: 'Event not found' });
-        }
-      
-        res.status(200).json(updatedComment);
-    } catch (error) {
-        console.error('Error updating job comment information:', error);
-        res.status(500).json({ message: 'Error updating job comment information' });
-    }
-});
-
-router.delete('/job-comments/:id', async (req, res) => {
-    try {
-        console.log(req.params.id)
-        await userJobCommentCollection.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: 'Comment deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting comment:', error);
-        res.status(500).json({ message: 'Error deleting comment' });
+        console.error("Error fetching eligible events:", error);
+        res.status(500).json({ message: "Server error while fetching eligible events." });
     }
 });
 

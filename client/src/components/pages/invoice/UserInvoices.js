@@ -10,6 +10,8 @@ const UserInvoices = () => {
   const [sortField, setSortField] = useState(null); // Field to sort by
   const [sortDirection, setSortDirection] = useState("asc"); // Sorting direction
   const navigate = useNavigate(); // Navigation hook for redirects
+  const [showModal, setShowModal] = useState(false);
+  const [eligibleEvents, setEligibleEvents] = useState([]);
 
   useEffect(() => {
     const fetchInvoices = async () => {
@@ -36,6 +38,23 @@ const UserInvoices = () => {
     fetchInvoices();
   }, [auth.userId]); // Fetch invoices whenever `auth.userId` changes
 
+  useEffect(() => {
+      if (showModal) {
+          fetch(`${process.env.REACT_APP_BACKEND}/events/eligible-events/${auth.userId}`, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+          })
+              .then((res) => {
+                  if (!res.ok) {
+                      throw new Error(`HTTP error! Status: ${res.status}`);
+                  }
+                  return res.json();
+              })
+              .then((data) => setEligibleEvents(data))
+              .catch((error) => console.error("Error fetching eligible events:", error));
+      }
+  }, [showModal]);
+
   const handleSort = (field) => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -43,6 +62,11 @@ const UserInvoices = () => {
       setSortField(field);
       setSortDirection("asc");
     }
+  };
+
+  const handleEventSelection = (event) => {
+    setShowModal(false);
+    navigate(`/user/invoices/new?eventId=${event._id}`);
   };
 
   const sortedInvoices = [...invoices].sort((a, b) => {
@@ -77,6 +101,13 @@ const UserInvoices = () => {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-white">Manage Invoices</h1>
 
+        <button
+            onClick={() => setShowModal(true)}
+            className="px-4 py-2 mb-4 bg-gray-700 hover:bg-gray-600 text-white rounded-full transition-colors"
+        >
+            Generate Invoice
+        </button>
+
         <div className="flex justify-end mb-4 space-x-2">
             <button
             onClick={() => setIsGridView(false)}
@@ -104,7 +135,13 @@ const UserInvoices = () => {
             <div
               key={invoice._id}
               className="p-4 bg-neutral-800 text-white rounded shadow cursor-pointer"
-              onClick={() => navigate(`/user/invoices/${invoice._id}`)}
+              onClick={() => {
+                if (invoice._id) {
+                    navigate(`/user/invoices/${invoice._id}`);
+                } else {
+                    navigate(`/user/invoices/new?eventId=${invoice.eventId}`);
+                }
+            }}
             >
               <h3 className="text-lg font-bold">{invoice.show}</h3>
               <p className="text-sm text-gray-400">Venue: {invoice.venue}</p>
@@ -157,7 +194,13 @@ const UserInvoices = () => {
                 <tr
                   key={invoice._id}
                   className="hover:bg-gray-800 text-gray-400 cursor-pointer"
-                  onClick={() => navigate(`/user/invoices/${invoice._id}`)}
+                  onClick={() => {
+                    if (invoice._id) {
+                        navigate(`/user/invoices/${invoice._id}`);
+                    } else {
+                        navigate(`/user/invoices/new?eventId=${invoice.eventId}`);
+                    }
+                }}
                 >
                   <td className="p-2 border border-gray-700">{invoice.show}</td>
                   <td className="p-2 border border-gray-700">{invoice.venue}</td>
@@ -168,8 +211,45 @@ const UserInvoices = () => {
           </table>
         </div>
       )}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-neutral-900 p-6 rounded-lg w-full max-w-lg shadow-lg flex justify-center flex-col">
+                <h2 className="text-xl text-white font-bold mb-4">Select an Event to Generate Invoice</h2>
+
+                <div className="flex justify-between items-center flex-col mb-4">
+                  {/* List of Events */}
+                  <div className="max-h-60 overflow-y-auto">
+                      {eligibleEvents.length > 0 ? (
+                          eligibleEvents.map((event) => (
+                              <div
+                                  key={event._id}
+                                  className="p-3 bg-neutral-800 hover:bg-neutral-700 text-white rounded-md cursor-pointer mb-2"
+                                  onClick={() => handleEventSelection(event)}
+                              >
+                                  <p className="font-bold">{event.eventName}</p>
+                                  <p className="text-sm text-neutral-400">{new Date(event.eventLoadIn).toLocaleDateString()}</p>
+                              </div>
+                          ))
+                      ) : (
+                          <p className="text-neutral-400">No eligible events found.</p>
+                      )}
+                  </div>
+
+                  {/* Close Button */}
+                  <button
+                      onClick={() => setShowModal(false)}
+                      className="mt-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-full transition-colors flex justify-center"
+                  >
+                      Close
+                  </button>
+                </div>
+            </div>
+        </div>
+    )}
     </div>
+    
   );
+  
 };
 
 export default UserInvoices;

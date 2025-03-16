@@ -157,7 +157,9 @@ const TimeCard = () => {
     
             if (response.status === 200) {
                 setIsClockedIn(false);
-                setClockInTime(null);
+                setIsOnBreak(false); // Ensure break status is reset
+                setBreaks([]); // Clear any ongoing breaks
+                toast.success(data.message); // Show success message
             } else {
                 toast.error(data.message || "Failed to clock out.");
             }

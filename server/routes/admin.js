@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const Admin = require('../mongo'); // Import the Admin schema
+const { Admin } = require('../mongo'); // Import the Admin schema
 const router = express.Router();
 
 // ✅ Get Admin Profile
@@ -14,19 +14,14 @@ router.get('/admin-profile/:email', async (req, res) => {
     }
 });
 
-// ✅ Update Admin Profile (Email & Address)
-router.put('/update-admin-profile/:email', async (req, res) => {
+router.get('/admin-profile', async (req, res) => {
     try {
-        const { email, address } = req.body;
-        const admin = await Admin.findOneAndUpdate(
-            { email: req.params.email },
-            { email, address },
-            { new: true }
-        );
+        const admin = await Admin.findOne().select('-password'); // Exclude password
         if (!admin) return res.status(404).json({ message: 'Admin not found' });
         res.json(admin);
     } catch (error) {
-        res.status(500).json({ message: 'Error updating admin profile' });
+        console.error("Error fetching admin profile:", error);
+        res.status(500).json({ message: "Error fetching admin profile" });
     }
 });
 

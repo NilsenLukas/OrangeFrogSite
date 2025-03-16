@@ -9,11 +9,12 @@ import Modal from "../../Modal";
 import { AuthContext } from "../../../AuthContext";
 import { parseDate } from "../../../utils/dateUtils"; 
 import { toast } from 'sonner';
+import { useLocation } from "react-router-dom";
 
 pdfMake.vfs = pdfFonts.vfs;
 
 const Invoice = ({invoiceData}) => {
-  const { id } = useParams(); // Extract invoice ID from URL params
+  const { id } = useParams();
   const [invoice, setInvoice] = useState(null); // Invoice state
   const invoiceRef = useRef(); // Reference for PDF generation
   const [editingRow, setEditingRow] = useState(null);
@@ -26,6 +27,78 @@ const Invoice = ({invoiceData}) => {
   const [total, setTotal] = useState(0);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const eventId = queryParams.get("eventId");
+  const isNewInvoice = !id && !!eventId;
+
+  // If neither ID nor eventId is present, log an error for debugging
+  useEffect(() => {
+      if (!id && !eventId) {
+          console.error("Invoice ID and Event ID are both undefined.");
+      }
+  }, [id, eventId]);
+
+  useEffect(() => {
+      const fetchInvoiceData = async () => {
+        if (!eventId) {
+          console.warn("Event ID is missing, using default mode");
+          return;
+        }
+
+          try {
+              // Fetch event details
+              const eventRes = await fetch(`${process.env.REACT_APP_BACKEND}/events/${eventId}`);
+              const eventData = await eventRes.json();
+
+              // Fetch user data (Assuming user is logged in)
+              const userRes = await fetch(`${process.env.REACT_APP_BACKEND}/users/${auth.userId}`);
+              const userData = await userRes.json();
+
+              // Fetch admin data (Company info)
+              const adminRes = await fetch(`${process.env.REACT_APP_BACKEND}/admin/admin-profile`);
+              const adminData = await adminRes.json();
+
+              // Fetch time tracking records for this event
+              const timeRes = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/event/${eventId}/${auth.userId}`);
+              const timeData = await timeRes.json();
+
+              // Pre-fill invoice data
+              // Ensure items array is populated correctly from time tracking data
+    setInvoice({
+      invoiceNumber: "", // Editable field for new invoices
+      lpoNumber: "", // Editable field
+      user: userData,
+      show: eventData.eventName,
+      venue: eventData.eventLocation || "Detroit Mercy", // Default if missing
+      dateOfWork: timeData.map(entry => entry.clockInTime), // Dates of shifts
+      actualHoursWorked: timeData.map(entry => `${new Date(entry.clockInTime).toLocaleTimeString()} - ${entry.clockOutTime ? new Date(entry.clockOutTime).toLocaleTimeString() : "Ongoing"}`),
+      billableHours: timeData.map(entry => entry.billableHours || "0"),
+      rate: [Number(userData.hourlyRate) || 0],// Assuming rate is stored in user profile
+      totals: timeData.map(entry => (entry.billableHours * (userData.hourlyRate || 0)).toFixed(2)),
+      items: timeData.map((entry, index) => ({
+          date: entry.clockInTime ? new Date(entry.clockInTime).toLocaleDateString() : "N/A",
+          actualHours: `${new Date(entry.clockInTime).toLocaleTimeString()} - ${entry.clockOutTime ? new Date(entry.clockOutTime).toLocaleTimeString() : "Ongoing"}`,
+          notes: "", // Leave empty for user input
+          billableHours: entry.billableHours || "0",
+          rate: userData.hourlyRate || "0",
+          total: (entry.billableHours * (userData.hourlyRate || 0)).toFixed(2),
+      })),
+      subtotal: timeData.reduce((sum, entry) => sum + (entry.billableHours * (userData.hourlyRate || 0)), 0),
+      taxPercentage: 10, // Default tax percentage
+      taxAmount: (timeData.reduce((sum, entry) => sum + (entry.billableHours * (userData.hourlyRate || 0)), 0) * 0.1).toFixed(2),
+      total: (timeData.reduce((sum, entry) => sum + (entry.billableHours * (userData.hourlyRate || 0)), 0) * 1.1).toFixed(2),
+      notes: [],
+      createdAt: new Date(),
+    });
+
+          } catch (error) {
+              console.error("Error fetching invoice data:", error);
+          }
+      };
+
+      fetchInvoiceData();
+  }, [eventId]);
 
   const generatePDF = () => {
     const invoiceElement = invoiceRef.current;
@@ -201,44 +274,38 @@ const confirmDelete = async () => {
 };
 
   useEffect(() => {
-    const fetchInvoice = async () => {
-      if (!id) {
-        console.error("Invoice ID is undefined");
+  if (!id) return; // Prevents fetching if invoice ID is missing
+
+  const fetchInvoice = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND}/invoices/${id}`);
+      if (!response.ok) {
+        console.error(`Error fetching invoice: ${response.statusText}`);
         return;
       }
 
-      try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND}/invoices/${id}`);
-        if (!response.ok) {
-          console.error(`Error fetching invoice: ${response.statusText}`);
-          return;
-        }
+      const data = await response.json();
 
-        const data = await response.json();
-        // console.log("Fetched invoice data:", data); // Debugging
-
-        // Manually construct items array if it does not exist
-        if (!data.items) {
-          data.items = data.dateOfWork.map((date, index) => ({
-            date: date || "N/A",
-            actualHours: data.actualHoursWorked[index] || "N/A",
-            notes: data.notes[index] || "N/A",
-            billableHours: data.billableHours[index] || "N/A",
-            rate: data.rate[index] || 0,
-            total: data.totals[index] || 0
-          }));
-        }
-
-        setInvoice(data);
-      } catch (error) {
-        console.error("Error fetching invoice:", error);
+      // Ensure items array exists
+      if (!data.items) {
+        data.items = data.dateOfWork.map((date, index) => ({
+          date: date || "N/A",
+          actualHours: data.actualHoursWorked[index] || "N/A",
+          notes: data.notes[index] || "N/A",
+          billableHours: data.billableHours[index] || "N/A",
+          rate: data.rate[index] || 0,
+          total: data.totals[index] || 0
+        }));
       }
 
-      
-    };
+      setInvoice(data);
+    } catch (error) {
+      console.error("Error fetching invoice:", error);
+    }
+  };
 
-    fetchInvoice();
-  }, [id]);
+  fetchInvoice();
+}, [id]);
 
   const handleEdit = (index) => {
     setEditingRow(index);
@@ -275,7 +342,7 @@ const confirmDelete = async () => {
             actualHours: editedData.actualHours ?? "",
             notes: editedData.notes ?? "",
             billableHours: Number(editedData.billableHours),
-            rate: Number(editedData.rate),
+            rate: Array.isArray(invoice.rate) ? invoice.rate.map(r => Number(r) || 0) : [Number(invoice.rate) || 0],
             total: (Number(editedData.billableHours) * Number(editedData.rate)).toFixed(2),
         };
 
@@ -380,6 +447,38 @@ const confirmDelete = async () => {
     }
   };
 
+  const handleSaveInvoice = async () => {
+    try {
+        // Ensure numeric fields are properly formatted
+        const formattedInvoice = {
+            ...invoice,
+            billableHours: invoice.billableHours.map(bh => Number(bh) || 0),
+            rate: Array.isArray(invoice.rate) ? invoice.rate.map(r => Number(r) || 0) : [Number(invoice.rate) || 0],
+            totals: invoice.totals.map(t => Number(t) || 0),
+            subtotal: Number(invoice.subtotal) || 0,
+            taxPercentage: Number(invoice.taxPercentage) || 0,
+            taxAmount: Number(invoice.taxAmount) || 0,
+            total: Number(invoice.total) || 0,
+        };
+
+        const response = await fetch(`${process.env.REACT_APP_BACKEND}/invoices`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formattedInvoice),
+        });
+
+        if (response.status === 201) {
+            toast.success("Invoice saved successfully!");
+            window.location.href = "/user-invoices"; // Redirect back to invoices list
+        } else {
+            toast.error("Failed to save invoice.");
+        }
+    } catch (error) {
+        console.error("Error saving invoice:", error);
+        toast.error("Server error while saving invoice.");
+    }
+};
+
   const calculateTotals = () => {
     if (!invoice || !invoice.items) return;
 
@@ -459,11 +558,50 @@ const confirmDelete = async () => {
 
             {/* Invoice Details */}
             <h2 className="text-2xl font-bold text-white mb-4">Show: {invoice.show}</h2>
-            <p className="text-sm text-gray-400 mb-2">Venue: {invoice.venue}</p>
-            <p className="text-sm text-gray-400 mb-2">Invoice #: {invoice.invoiceNumber}</p>
-            <p className="text-sm text-gray-400 mb-2">LPO #: {invoice.lpoNumber || "N/A"}</p>
+
+            {/* Editable Venue */}
+            <p className="text-sm text-gray-400 mb-2">
+                Venue: {isNewInvoice ? (
+                    <input 
+                        className="bg-transparent border border-gray-500 p-1 text-white w-full"
+                        value={invoice.venue}
+                        onChange={(e) => setInvoice({ ...invoice, venue: e.target.value })}
+                    />
+                ) : invoice.venue}
+            </p>
+
+            {/* Editable Invoice Number */}
+            <p className="text-sm text-gray-400 mb-2">
+                Invoice #: {isNewInvoice ? (
+                    <input 
+                        className="bg-transparent border border-gray-500 p-1 text-white w-full"
+                        value={invoice.invoiceNumber}
+                        onChange={(e) => setInvoice({ ...invoice, invoiceNumber: e.target.value })}
+                    />
+                ) : invoice.invoiceNumber}
+            </p>
+
+            {/* Editable LPO Number */}
+            <p className="text-sm text-gray-400 mb-2">
+                LPO #: {isNewInvoice ? (
+                    <input 
+                        className="bg-transparent border border-gray-500 p-1 text-white w-full"
+                        value={invoice.lpoNumber}
+                        onChange={(e) => setInvoice({ ...invoice, lpoNumber: e.target.value })}
+                    />
+                ) : invoice.lpoNumber || "N/A"}
+            </p>
+
+            {/* Editable Invoice Date */}
             <p className="text-sm text-gray-400 mb-6">
-              Invoice Date: {new Date(invoice.createdAt).toLocaleDateString()}
+                Invoice Date: {isNewInvoice ? (
+                    <input 
+                        type="date"
+                        className="bg-transparent border border-gray-500 p-1 text-white w-full"
+                        value={invoice.createdAt ? new Date(invoice.createdAt).toISOString().split('T')[0] : ""}
+                        onChange={(e) => setInvoice({ ...invoice, createdAt: new Date(e.target.value) })}
+                    />
+                ) : new Date(invoice.createdAt).toLocaleDateString()}
             </p>
 
             {/* Invoice Table */}
@@ -593,6 +731,19 @@ const confirmDelete = async () => {
                 <strong>Total:</strong> ${total}
               </p>
             </div>
+
+            {/* Action Buttons Section */}
+            {isNewInvoice && (
+              <div className="flex justify-center items-center mt-6">
+                  {/* Save Invoice Button */}
+                  <button
+                      onClick={handleSaveInvoice}
+                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-full transition-colors"
+                  >
+                      Save Invoice
+                  </button>
+              </div>
+          )}
           </div>
         ) : (
           <p className="text-white text-center">Loading invoice details...</p>

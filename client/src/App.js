@@ -107,6 +107,7 @@ function App() {
             <Route path="corrections/create" element={<CorrectionReport />} />
             <Route path="manage-corrections" element={<ViewCorrections />} />
             <Route path="invoices" element={<UserInvoices />} />
+            <Route path="invoices/new" element={<Invoice />} />
             <Route path="invoices/:id" element={<Invoice />} />
             <Route path="corrections/:correctionId" element={<FreelancerCorrectionDetails />} />
             <Route path="corrections/edit/:id" element={<EditCorrectionReport />} />

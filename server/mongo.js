@@ -50,6 +50,7 @@ const eventSchema = new mongoose.Schema({
     acceptedContractors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'userCollection' }],
     rejectedContractors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'userCollection' }],
     approvedContractors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'userCollection' }],
+    invoiceGenerated: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });

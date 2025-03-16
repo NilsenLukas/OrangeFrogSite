@@ -1,5 +1,5 @@
 const express = require('express');
-const { invoiceCollection, userCollection } = require('../mongo');
+const { invoiceCollection, userCollection, eventCollection } = require('../mongo');
 const router = express.Router();
 const { parseDate } = require("../utils/dateUtils"); 
 
@@ -176,6 +176,82 @@ router.delete('/:invoiceId/item/:itemIndex', async (req, res) => {
   } catch (error) {
       console.error("Error deleting invoice item:", error);
       res.status(500).json({ message: "Failed to delete invoice item" });
+  }
+});
+
+// ✅ Create and Save a New Invoice
+router.post("/", async (req, res) => {
+  try {
+      const {
+          invoiceNumber,
+          lpoNumber,
+          user,
+          show,
+          venue,
+          dateOfWork,
+          actualHoursWorked,
+          billableHours,
+          rate,
+          totals,
+          items,
+          subtotal,
+          taxPercentage,
+          taxAmount,
+          total,
+          notes,
+          createdAt,
+          eventId, // Passed when generating an invoice
+      } = req.body;
+
+      // Ensure required fields exist
+      if (!user || !show || !dateOfWork || !eventId) {
+          return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      // ✅ Convert and Validate Numeric Fields
+      const validBillableHours = billableHours.map(bh => Number(bh) || 0);
+      const validRate = Array.isArray(rate) ? rate.map(r => Number(r) || 0) : [Number(rate) || 0];
+      const validTotals = totals.map(t => Number(t) || 0);
+      const validSubtotal = Number(subtotal) || validTotals.reduce((sum, t) => sum + t, 0);
+      const validTaxPercentage = Number(taxPercentage) || 0;
+      const validTaxAmount = Number(taxAmount) || (validSubtotal * (validTaxPercentage / 100));
+      const validTotal = Number(total) || (validSubtotal + validTaxAmount);
+
+      // ✅ Ensure invoiceNumber is set
+      const invoiceCount = await invoiceCollection.countDocuments();
+      const newInvoiceNumber = invoiceNumber || invoiceCount + 1; // Auto-generate if missing
+
+      // ✅ Create and save the invoice
+      const newInvoice = new invoiceCollection({
+          invoiceNumber: newInvoiceNumber,
+          lpoNumber,
+          user,
+          show,
+          venue,
+          dateOfWork,
+          actualHoursWorked,
+          billableHours: validBillableHours,
+          rate: validRate,
+          totals: validTotals,
+          items,
+          subtotal: validSubtotal,
+          taxPercentage: validTaxPercentage,
+          taxAmount: validTaxAmount,
+          total: validTotal,
+          notes,
+          createdAt: createdAt || new Date(),
+      });
+
+      await newInvoice.save();
+
+      // ✅ Update the event to mark invoice as generated
+      await eventCollection.findByIdAndUpdate(eventId, { invoiceGenerated: true });
+
+      res.status(201).json({ message: "Invoice saved successfully", invoice: newInvoice });
+
+  } catch (error) {
+      console.error("Error saving invoice:", error);
+      res.status(500).json({ message: "Server error while saving invoice" });
   }
 });
 

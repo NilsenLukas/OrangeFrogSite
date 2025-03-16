@@ -30,6 +30,7 @@ router.post("/clock-in", async (req, res) => {
 });
 
 // ✅ 2. Clock Out
+// ✅ 2. Clock Out (Handles 24-Hour Limit)
 router.put("/clock-out/:userId", async (req, res) => {
     try {
         const { userId } = req.params;
@@ -45,10 +46,17 @@ router.put("/clock-out/:userId", async (req, res) => {
         const now = new Date();
         const clockInDuration = (now - clockInEntry.clockInTime) / (1000 * 60 * 60); // Convert ms to hours
         if (clockInDuration > 24) {
-            return res.status(400).json({ message: "Clock-in session exceeded 24 hours. Clocking out automatically." });
+            console.log("User exceeded 24-hour clock-in period. Auto clocking out.");
+
+            // ✅ Automatically force clock-out
+            clockInEntry.clockOutTime = now;
+            clockInEntry.isClockedIn = false;
+            await clockInEntry.save();
+
+            return res.status(200).json({ message: "User was automatically clocked out due to exceeding 24 hours.", timeTracking: clockInEntry });
         }
 
-        // Update clock-out time
+        // Normal clock-out process
         clockInEntry.clockOutTime = now;
         clockInEntry.isClockedIn = false;
         await clockInEntry.save();
@@ -127,6 +135,23 @@ router.get("/status/:userId", async (req, res) => {
     } catch (error) {
         console.error("Error checking clock-in status:", error);
         res.status(500).json({ message: "Server error while checking status." });
+    }
+});
+
+// ✅ Get Time Tracking Records for a Specific Event and User
+router.get("/event/:eventId/:userId", async (req, res) => {
+    try {
+        const { eventId, userId } = req.params;
+        const timeEntries = await TimeTracking.find({ eventId, userId });
+
+        if (!timeEntries || timeEntries.length === 0) {
+            return res.status(404).json({ message: "No time tracking records found for this event and user." });
+        }
+
+        res.status(200).json(timeEntries);
+    } catch (error) {
+        console.error("Error fetching time tracking data:", error);
+        res.status(500).json({ message: "Server error while fetching time tracking data." });
     }
 });
 

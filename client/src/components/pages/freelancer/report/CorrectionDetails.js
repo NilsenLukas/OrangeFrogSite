@@ -11,7 +11,7 @@ export default function CorrectionDetails() {
     const navigate = useNavigate();
     const [correction, setCorrection] = useState(null);
     const [event, setEvent] = useState(null);
-    const [setUser] = useState(null);
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showDeletePopup, setShowDeletePopup] = useState(false);

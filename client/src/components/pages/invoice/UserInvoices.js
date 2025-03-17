@@ -100,10 +100,13 @@ const UserInvoices = () => {
     return <FaSort />;
   };
 
-  // Filter invoices based on the nameFilter (search by show)
-  const filteredInvoices = invoices.filter(invoice =>
-    invoice.show.toLowerCase().includes(nameFilter.toLowerCase()) // Assuming 'show' is the field to search
-  );
+  // Update the filteredInvoices function to match FindJobs.js style
+  const getFilteredInvoices = () => {
+    return sortedInvoices.filter(invoice => {
+      const matchesName = invoice.show.toLowerCase().includes(nameFilter.toLowerCase());
+      return matchesName;
+    });
+  };
 
   if (isLoading) {
     return <p>Loading invoices...</p>;
@@ -269,17 +272,15 @@ const UserInvoices = () => {
 
         {/* Main content area */}
         <AnimatePresence>
-          {sortedInvoices && sortedInvoices.length > 0 ? (
+          {getFilteredInvoices().length > 0 ? (
             <>
               {isGridView ? (
                 // GRID VIEW
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {sortedInvoices.map((invoice) => (
+                  {getFilteredInvoices().map((invoice) => (
                     <div
                       key={invoice._id}
                       className="bg-neutral-800 p-4 rounded shadow hover:bg-neutral-700/50 transition-colors cursor-pointer"
-                      // If you have a navigation handler:
-                      // onClick={() => handleInvoiceClick(invoice._id)}
                     >
                       <h3 className="text-lg font-semibold text-white mb-2">
                         {invoice.show}
@@ -341,11 +342,10 @@ const UserInvoices = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {sortedInvoices.map((invoice) => (
+                      {getFilteredInvoices().map((invoice) => (
                         <tr
                           key={invoice._id}
                           className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
-                          // onClick={() => handleInvoiceClick(invoice._id)}
                         >
                           <td className="p-4 text-white">{invoice.show}</td>
                           <td className="p-4 text-white">{invoice.venue}</td>

@@ -227,6 +227,23 @@ const CurrentJobs = () => {
         setShowSortOptions(false);
     };
 
+    // Add this function to filter jobs based on search term
+    const getFilteredJobs = () => {
+        return sortedJobs.filter(job => {
+            const matchesSearch = job.eventName.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
+            
+            // Time filter logic
+            const currentDate = new Date();
+            const loadInDate = new Date(job.eventLoadIn);
+            const matchesTime = timeFilter === 'all' || 
+                (timeFilter === 'future' && loadInDate >= currentDate) ||
+                (timeFilter === 'past' && loadInDate < currentDate);
+
+            return matchesSearch && matchesStatus && matchesTime;
+        });
+    };
+
     return (
         <div className="flex flex-col w-full min-h-screen h-full p-8 bg-neutral-900">
             <Link 
@@ -400,18 +417,20 @@ const CurrentJobs = () => {
 
             {isLoading ? (
                 <LoadingSpinner />
-            ) : sortedJobs.length === 0 ? (
+            ) : getFilteredJobs().length === 0 ? (
                 <div className="flex flex-col items-center justify-center flex-1 min-h-[400px] text-center">
                     <FaRegSadTear className="w-16 h-16 text-neutral-400 dark:text-neutral-600 mb-4" />
                     <h2 className="text-xl font-semibold text-neutral-700 dark:text-neutral-300 mb-2">
                         No Events Found
                     </h2>
                     <p className="text-neutral-600 dark:text-neutral-400">
-                        {timeFilter === 'future' 
-                            ? "You don't have any upcoming events."
-                            : timeFilter === 'past'
-                            ? "No past events found."
-                            : "No events match your current filters."}
+                        {searchTerm 
+                            ? `No events found matching "${searchTerm}"`
+                            : timeFilter === 'future' 
+                                ? "You don't have any upcoming events."
+                                : timeFilter === 'past'
+                                    ? "No past events found."
+                                    : "No events match your current filters."}
                     </p>
                     {timeFilter !== 'future' && (
                         <button 
@@ -427,7 +446,7 @@ const CurrentJobs = () => {
                     {isGridView ? (
                         <div className="w-full">
                             <HoverEffect 
-                                items={formatJobsForHoverEffect(sortedJobs)} 
+                                items={formatJobsForHoverEffect(getFilteredJobs())} 
                                 className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
                             />
                         </div>
@@ -482,7 +501,7 @@ const CurrentJobs = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {sortedJobs.map((job) => (
+                                    {getFilteredJobs().map((job) => (
                                         <tr key={job._id} className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer">
                                             <td className="p-4 text-white">{job.eventName}</td>
                                             <td className="p-4 text-white">{new Date(job.eventLoadIn).toLocaleString()}</td>

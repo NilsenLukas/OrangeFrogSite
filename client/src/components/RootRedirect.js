@@ -8,6 +8,7 @@ const RootRedirect = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        // Check if the token exists and is valid
         const token = localStorage.getItem('authToken');
 
         if (!token) {
@@ -15,21 +16,29 @@ const RootRedirect = () => {
             return;
         }
 
+        let decodedToken;
         try {
-            const decodedToken = jwt_decode(token);
-            const currentTime = Date.now() / 1000;
+            decodedToken = jwt_decode(token);
+            const currentTime = Date.now() / 1000; // Current time in seconds
 
             if (decodedToken.exp < currentTime) {
+                // Token expired, redirect to login
                 localStorage.removeItem('authToken');
                 navigate('/login');
                 return;
             }
 
+            // Set the role and authentication status based on the decoded token
             if (auth.isAuthenticated) {
-                navigate(decodedToken.role === 'admin' ? '/admin/dashboard' : '/user/dashboard');
+                if (decodedToken.role === 'admin') {
+                    navigate('/admin/dashboard');
+                } else {
+                    navigate('/user/dashboard');
+                }
             }
 
         } catch (error) {
+            // Invalid token, clear it from localStorage
             localStorage.removeItem('authToken');
             navigate('/login');
         }

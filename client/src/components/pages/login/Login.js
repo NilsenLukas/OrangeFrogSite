@@ -34,7 +34,9 @@ export default function Login() {
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/login`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(form)
             });
 
@@ -42,16 +44,19 @@ export default function Login() {
             setLoading(false);
 
             if (response.status === 200) {
-                // Store token securely
-                document.cookie = `authToken=${data.token}; Path=/; Secure; HttpOnly; SameSite=Strict`;
-
-                // Store session ID to prevent token reuse
-                sessionStorage.setItem('sessionId', data.sessionId);
-
+                // ✅ Save user role, ID, and token
                 login(form.email, data.role, data.userId, data.token);
                 toast.success('Login successful!');
-                
-                navigate(data.role === 'admin' ? '/admin/dashboard' : '/user/dashboard');
+                console.log("Login Response:", data);
+
+                // ✅ Redirect users correctly based on role
+                if (data.role === 'admin') {
+                    navigate('/admin/dashboard');
+                } else if (data.role === 'user') {
+                    navigate('/user/dashboard');
+                } else {
+                    toast.error('Unexpected role. Please contact support.');
+                }
             } else {
                 toast.error('Invalid credentials, please try again.');
             }

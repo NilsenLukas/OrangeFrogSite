@@ -281,6 +281,13 @@ const UserInvoices = () => {
                     <div
                       key={invoice._id}
                       className="bg-neutral-800 p-4 rounded shadow hover:bg-neutral-700/50 transition-colors cursor-pointer"
+                      onClick={() => {
+                        if (invoice._id) {
+                            navigate(`/user/invoices/${invoice._id}`);
+                        } else {
+                            navigate(`/user/invoices/new?eventId=${invoice.eventId}`);
+                        }
+                    }}
                     >
                       <h3 className="text-lg font-semibold text-white mb-2">
                         {invoice.show}
@@ -303,6 +310,7 @@ const UserInvoices = () => {
                         <th
                           className="p-4 text-left text-white cursor-pointer"
                           onClick={() => handleSort("show")}
+                          
                         >
                           <div className="flex items-center">
                             Show
@@ -346,6 +354,13 @@ const UserInvoices = () => {
                         <tr
                           key={invoice._id}
                           className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
+                          onClick={() => {
+                            if (invoice._id) {
+                                navigate(`/user/invoices/${invoice._id}`);
+                            } else {
+                                navigate(`/user/invoices/new?eventId=${invoice.eventId}`);
+                            }
+                          }}
                         >
                           <td className="p-4 text-white">{invoice.show}</td>
                           <td className="p-4 text-white">{invoice.venue}</td>

@@ -477,6 +477,7 @@ export default function EventDetails() {
                     </div>
                 </form>
 
+                <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 mt-8'>
                 <div className="mt-8">
                     <h2 className="text-xl font-semibold text-white mb-4">Correction Reports</h2>
                     <div className="w-full h-full overflow-auto px-5">
@@ -503,6 +504,7 @@ export default function EventDetails() {
                     >
                         <FaList className="text-xl" />
                     </button>
+                </div>
                 </div>
             </div>
 

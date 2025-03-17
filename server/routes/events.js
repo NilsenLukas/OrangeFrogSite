@@ -322,6 +322,26 @@ router.put('/assign-contractor/:eventId', async (req, res) => {
     }
 });
 
+router.get("/eligible-events/:userId", async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const fiftyDaysAgo = new Date();
+        fiftyDaysAgo.setDate(fiftyDaysAgo.getDate() - 50);
+
+        // Find events within the last 50 days, without an invoice, and assigned to the user
+        const eligibleEvents = await eventCollection.find({
+            eventLoadIn: { $gte: fiftyDaysAgo },
+            invoiceGenerated: false,
+            assignedContractors: userId,
+        }).sort({ eventLoadIn: -1 });
+
+        res.status(200).json(eligibleEvents);
+    } catch (error) {
+        console.error("Error fetching eligible events:", error);
+        res.status(500).json({ message: "Server error while fetching eligible events." });
+    }
+});
+
 // Add this new route to handle contractor applications
 router.post('/:eventId/apply', async (req, res) => {
     const { eventId } = req.params;

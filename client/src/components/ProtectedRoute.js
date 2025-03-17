@@ -8,37 +8,27 @@ export default function ProtectedRoute() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Check if the token exists and is valid
         const token = localStorage.getItem('authToken');
-        
-        if (!token) {
+        const sessionId = sessionStorage.getItem('sessionId');
+
+        if (!token || !sessionId) {
+            navigate('/login');
             return;
         }
 
-        let decodedToken;
         try {
-            decodedToken = jwt_decode(token);
-            const currentTime = Date.now() / 1000; // Current time in seconds
+            const decodedToken = jwt_decode(token);
+            const currentTime = Date.now() / 1000;
 
-            if (decodedToken.exp < currentTime) {
-                // Token expired, redirect to login
+            if (decodedToken.exp < currentTime || decodedToken.sessionId !== sessionId) {
                 localStorage.removeItem('authToken');
+                sessionStorage.removeItem('sessionId');
                 navigate('/login');
                 return;
             }
-            
-            // Set the role from the decoded token
-            if (auth.isAuthenticated) {
-                if (decodedToken.role === 'admin') {
-                    navigate('/admin/dashboard');
-                } else {
-                    navigate('/user/dashboard');
-                }
-            }
-
         } catch (error) {
-            // Invalid token, clear it from localStorage
             localStorage.removeItem('authToken');
+            sessionStorage.removeItem('sessionId');
             navigate('/login');
         }
     }, [auth, navigate]);

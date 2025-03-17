@@ -1,6 +1,7 @@
 require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const { userCollection, eventCollection, Admin } = require('./mongo');
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -59,6 +60,29 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
+app.post('/validate-session', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1]; // Extract token
+  const { sessionId } = req.body;
 
+  if (!token || !sessionId) {
+      return res.status(401).json({ valid: false, message: "Unauthorized" });
+  }
+
+  try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      
+      // Find user by ID
+      const user = await userCollection.findOne({ _id: decoded.userId });
+
+      if (!user || user.sessionId !== sessionId) {
+          return res.status(401).json({ valid: false, message: "Session mismatch" });
+      }
+
+      res.json({ valid: true });
+
+  } catch (error) {
+      res.status(401).json({ valid: false, message: "Invalid token" });
+  }
+});
 
 

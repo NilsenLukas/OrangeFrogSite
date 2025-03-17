@@ -629,7 +629,7 @@ export default function EventDetails() {
                         <h3 className="text-xl font-semibold text-white">
                             {confirmationType === "apply"
                                 ? "Confirm Application"
-                                : "Confirm Rejection"}
+                                : "End Job Application"}
                         </h3>
                     </div>
 
@@ -637,7 +637,7 @@ export default function EventDetails() {
                         <p className="text-neutral-300 mb-6">
                             {confirmationType === "apply"
                                 ? "By applying to this event, you acknowledge that if approved, you will be required to work this event and cannot reject it later. Are you sure you want to apply?"
-                                : "Once your application to this event, it will be permanently removed from your available jobs. Are you sure you want to reject this event?"}
+                                : "Once your end your application to this event, it will be permanently removed from your available jobs. Are you sure you want to end your application to this event?"}
                         </p>
 
                         <div className="flex justify-end space-x-4">

@@ -79,8 +79,8 @@ router.get('/:id', async (req, res) => {
 
             actualHours: item.actualHours ? item.actualHours.trim() : "",
             notes: item.notes ? item.notes.trim() : "",
-            billableHours: Number(item.billableHours),
-            rate: Number(item.rate),
+            billableHours: isNaN(Number(item.billableHours)) ? 0 : Number(item.billableHours),            
+            rate: Array.isArray(item.rate) ? item.rate.flat().map(r => Number(r) || 0) : Number(item.rate) || 0,            
             total: Number(item.total)
         }));
 

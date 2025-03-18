@@ -126,10 +126,12 @@ const Invoice = ({invoiceData}) => {
             date: entry.clockInTime ? new Date(entry.clockInTime).toLocaleDateString() : "N/A",
             actualHours,
             notes: "", // Keep empty for user input
+            
             billableHours,
             rate,
             total,
         };
+        
       }),
       subtotal: timeData.reduce((sum, entry) => sum + (entry.billableHours * (userData.hourlyRate || 0)), 0),
       taxPercentage: 10, // Default tax percentage
@@ -297,9 +299,19 @@ const confirmDelete = async () => {
   }
 
   try {
-      const response = await axios.delete(
-          `${process.env.REACT_APP_BACKEND}/invoices/${id}/item/${itemToDelete}`
-      );
+    if (isNewInvoice) {
+      // Locally remove the item
+      const updatedItems = invoice.items.filter((_, i) => i !== itemToDelete);
+      setInvoice((prev) => ({ ...prev, items: updatedItems }));
+      setShowDeletePopup(false);
+      toast.success("Row removed locally!");
+      return;
+    }
+    
+    // Existing Invoice → Delete from Database
+    const response = await axios.delete(
+        `${process.env.REACT_APP_BACKEND}/invoices/${id}/item/${itemToDelete}`
+    );
 
       if (response.status === 200) {
           // console.log("Item deleted successfully:", response.data);
@@ -310,6 +322,10 @@ const confirmDelete = async () => {
 
           setShowDeletePopup(false);
           toast.success("Row deleted successfully!");
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
       } else {
           toast.error("Failed to delete row. Please try again.");
       }
@@ -331,6 +347,8 @@ const confirmDelete = async () => {
       }
 
       const data = await response.json();
+
+      console.log("Notes:", data.notes);
 
       // Ensure items array exists
       if (!data.items) {
@@ -387,13 +405,22 @@ const confirmDelete = async () => {
             date: parseDate(editedData.date, "MM/DD/YYYY", true), // Convert only if necessary
             actualHours: editedData.actualHours ?? "",
             notes: editedData.notes ?? "",
-            billableHours: Number(editedData.billableHours),
-            rate: Array.isArray(invoice.rate) ? invoice.rate.map(r => Number(r) || 0) : [Number(invoice.rate) || 0],
+            billableHours: isNaN(Number(editedData.billableHours)) ? 0 : Number(editedData.billableHours),            
+            rate: Number(Array.isArray(editedData.rate) ? editedData.rate.flat()[0] : editedData.rate) || 0,            
             total: (Number(editedData.billableHours) * Number(editedData.rate)).toFixed(2),
         };
 
-        console.log("Sending update request:", { items: updatedItems });
+        console.log("Formatted Items before updating:", updatedItems);
+        console.log("Rate values being sent:", updatedItems.map(item => item.rate));
 
+        if (isNewInvoice) {
+          setInvoice((prev) => ({ ...prev, items: updatedItems }));
+          setEditingRow(null);
+          toast.success("Row updated locally!");
+          return;
+        }
+        
+        // Existing Invoice → Update in Database
         const response = await axios.put(
             `${process.env.REACT_APP_BACKEND}/invoices/${id}`,
             { items: updatedItems }
@@ -473,7 +500,15 @@ const confirmDelete = async () => {
     const updatedItems = [...invoice.items, formattedNewRow];
 
     try {
-        const response = await axios.put(`${process.env.REACT_APP_BACKEND}/invoices/${id}`, { items: updatedItems });
+      if (isNewInvoice) {
+        setInvoice((prev) => ({ ...prev, items: updatedItems }));
+        setNewRow(null);
+        toast.success("New row added locally!");
+        return;
+      }
+      
+      // Existing Invoice → Save to Database
+      const response = await axios.put(`${process.env.REACT_APP_BACKEND}/invoices/${id}`, { items: updatedItems });
 
         if (response.status === 200) {
             console.log("New row added successfully:", response.data);
@@ -747,11 +782,11 @@ const confirmDelete = async () => {
             <table className="w-full border-collapse border border-gray-700">
               <thead>
                 <tr className="bg-gray-700">
-                  <th className="p-2 border border-gray-700 text-white w-56">Date of Work</th>
-                  <th className="p-2 border border-gray-700 text-white w-40">Actual Hours Worked</th>
+                  <th className="p-2 border border-gray-700 text-white w-44">Date of Work</th>
+                  <th className="p-2 border border-gray-700 text-white w-64">Actual Hours Worked</th>
                   <th className="p-2 border border-gray-700 text-white w-64">Notes</th>
                   <th className="p-2 border border-gray-700 text-white w-24">Billable Hours</th>
-                  <th className="p-2 border border-gray-700 text-white w-32">Rate</th>
+                  <th className="p-2 border border-gray-700 text-white w-20">Rate</th>
                   <th className="p-2 border border-gray-700 text-white w-32">Total</th>
                   <th className="p-2 border border-gray-700 text-white w-28 text-center">Actions</th>
                 </tr>
@@ -773,8 +808,8 @@ const confirmDelete = async () => {
                             />
                           </td>
                           <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full" value={editedData.actualHours || ''} onChange={(e) => handleChange(e, 'actualHours')} placeholder="HH:MM - HH:MM" /></td>
-                          <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full" value={editedData.notes || ''} onChange={(e) => handleChange(e, 'notes')} /></td>
-                          <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full" value={editedData.billableHours || ''} onChange={(e) => handleChange(e, 'billableHours')} /></td>
+                          <td><input className="bg-transparent border border-gray-500 p-1 pl-2 text-white w-full" value={editedData.notes ?? '-'} onChange={(e) => handleChange(e, 'notes')} /></td>
+                          <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full" value={editedData.billableHours ?? '0'} onChange={(e) => handleChange(e, 'billableHours')} /></td>
                           <td>$ <input className="bg-transparent border border-gray-500 p-1 text-white w-3/4" value={editedData.rate || ''} onChange={(e) => handleChange(e, 'rate')} /></td>
                           <td className="text-center w-32">${(editedData.billableHours * editedData.rate).toFixed(2)}</td>
                           <td className="w-28 border border-gray-700 text-center flex justify-center gap-2">
@@ -789,10 +824,10 @@ const confirmDelete = async () => {
                       ) : (
                         <>
                           {/* Read-Only Display */}
-                          <td className="w-56">{parseDate(invoice.dateOfWork[index] || "")}</td>
+                          <td className="w-44">{parseDate(invoice.dateOfWork[index] || "")}</td>
                           <td className="w-40">{item.actualHours}</td>
-                          <td className="w-64">{item.notes}</td>
-                          <td className="w-24">{item.billableHours}</td>
+                          <td className="w-64 pl-4">{item.notes && item.notes.trim() ? item.notes : "-"}</td>
+                          <td className="w-24">{item.billableHours && item.billableHours > 0 ? item.billableHours : "0"}</td>
                           <td className="w-32">${Number(item.rate).toFixed(2)}</td>
                           <td className="text-center w-32 whitespace-nowrap">${Number(item.total).toFixed(2)}</td>
                           <td className="w-28 border-none text-center flex justify-center gap-2">

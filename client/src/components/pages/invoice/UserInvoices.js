@@ -3,6 +3,8 @@ import { FaTh, FaList, FaRegSadTear, FaSort, FaSortUp, FaSortDown } from "react-
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../../AuthContext";
+import { HoverBorderGradient } from '../../ui/hover-border-gradient';
+
 
 const UserInvoices = () => {
   const { auth } = useContext(AuthContext); // Access user authentication context
@@ -116,7 +118,7 @@ const UserInvoices = () => {
     <div className="p-8 bg-gray-100 dark:bg-neutral-900 min-h-screen">
       <Link
         to="/user/dashboard"
-        className="mb-8 flex items-center text-gray-300 hover:text-white transition-colors"
+        className="mb-0 flex items-center text-gray-300 hover:text-white transition-colors"
       >
         <svg
           className="w-5 h-5 mr-2"
@@ -137,23 +139,12 @@ const UserInvoices = () => {
           Generate Invoices
         </h1>
 
-        <div className="flex flex-col items-center mb-8">
+        <div className="flex flex-col items-center mb-2">
             <div className="flex justify-between items-center w-full mt-4">
                      
             {/* Left side: Search + Sort button */}
             <div className="flex gap-4">
-                <div>
-                  
-                  {/* Generate Invoice Button */}
-                  <button
-                      onClick={() => setShowModal(true)}
-                      className="px-4 py-2 bg-neutral-900 dark:bg-black text-white flex items-center space-x-2 rounded-full transition-colors hover:bg-gray-700 whitespace-nowrap"
-                  >
-                      <span className="text-lg mr-1">+</span> 
-                      <span>Generate Invoice</span>
-                  </button>
-                  
-                </div>
+                
               <div className="relative">
                 <input
                   type="text"
@@ -244,6 +235,8 @@ const UserInvoices = () => {
               </AnimatePresence>
             </div>
 
+            
+
             {/* Right side: Toggle view */}
             <div className="flex items-center gap-3 mt-2">
               <button
@@ -268,6 +261,20 @@ const UserInvoices = () => {
               </button>
             </div>
           </div>
+          
+        </div>
+        <div className="flex items-center gap-4 mb-4">
+          {/* <button onClick={() => setShowModal(true)} className="mt-0 bg-none"> */}
+              <HoverBorderGradient
+                  containerClassName="rounded-full mt-0"
+                  className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0"
+              >
+                  <button onClick={() => setShowModal(true)} className=" dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0">
+                    <span className="text-lg mr-1 mt-0">+</span> 
+                    <span>Generate Invoice</span>
+                  </button>
+              </HoverBorderGradient>
+          {/* </button> */}
         </div>
 
         {/* Main content area */}

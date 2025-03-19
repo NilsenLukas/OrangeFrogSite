@@ -286,20 +286,12 @@ export default function ViewEvent() {
 
     return (
         <div className="w-full h-full overflow-auto px-5">
-            <div className="flex justify-between items-center mb-5 sticky top-0 bg-neutral-900 py-4 z-50">
+            <div className="flex justify-between items-center mb-2 sticky top-0 bg-neutral-900 py-4 z-50">
                 
                 {/* Left section: Filter & Sort */}
                 <div className="flex items-center gap-3 mt-2">
                     {/* Right section: Create Event button */}
-                    <Link to="/admin/events/create">
-                        <HoverBorderGradient
-                            containerClassName="rounded-full"
-                            className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2"
-                        >
-                            <span className="text-lg mr-1">+</span> 
-                            <span>Create Event</span>
-                        </HoverBorderGradient>
-                    </Link>
+                    
                     
                     <div className='flex items-center gap-3 mt-3'>
                         {/* Name filter input */}
@@ -410,6 +402,16 @@ export default function ViewEvent() {
                         </button>
                 </div>
             </div>
+
+            <Link to="/admin/events/create" className=''>
+                <HoverBorderGradient
+                    containerClassName="rounded-full mt-0"
+                    className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0"
+                >
+                    <span className="text-lg mr-1">+</span> 
+                    <span>Create Event</span>
+                </HoverBorderGradient>
+            </Link>
 
             <div className="relative z-0 pb-8">
                 {getFilteredAndSortedEvents().length === 0 ? (

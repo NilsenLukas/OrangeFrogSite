@@ -280,17 +280,8 @@ export default function ViewCorrections() {
 
     return (
         <div className="w-full h-full overflow-auto px-5">
-            <div className="flex justify-between items-center mb-5 sticky top-0 bg-neutral-900 py-4 z-50">
+            <div className="flex justify-between items-center sticky top-0 bg-neutral-900 py-4 z-50">
                 <div className="flex items-center gap-4">
-                    <Link to="/user/corrections/create">
-                        <HoverBorderGradient
-                            containerClassName="rounded-full"
-                            className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2"
-                        >
-                            <span className="text-lg mr-1">+</span> 
-                            <span>Create Correction Report</span>
-                        </HoverBorderGradient>
-                    </Link>
 
                     <div className='flex items-center gap-3 mt-3'>
                         {/* Name filter input */}
@@ -388,6 +379,8 @@ export default function ViewCorrections() {
                         </div>
                     </div>
                 </div>
+
+                
                 
                 <div className="flex items-center gap-2 relative">
 
@@ -415,6 +408,18 @@ export default function ViewCorrections() {
                     </div>
                 </div>
             </div>
+
+            <div className="flex items-center gap-4 ">
+                    <Link to="/user/corrections/create" className='mt-0 bg-none'>
+                        <HoverBorderGradient
+                            containerClassName="rounded-full "
+                            className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0"
+                        >
+                            <span className="text-lg mr-1 mt-0">+</span> 
+                            <span>Create Correction Report</span>
+                        </HoverBorderGradient>
+                    </Link>
+                </div>
 
             <div className="relative z-0 pb-8">
                 {getFilteredAndSortedCorrections().length === 0 ? (

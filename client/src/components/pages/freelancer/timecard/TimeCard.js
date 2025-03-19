@@ -59,9 +59,10 @@ const TimeCard = () => {
         return null;
     };
 
-    const handleDateClick = (date) => {
+    const handleDateClick = async (date) => {
         setSelectedDate(date);
-        
+    
+        // Filter events for the selected date
         const eventsForDate = approvedEvents.filter(event => {
             const loadInDate = new Date(event.eventLoadIn).toDateString();
             const loadOutDate = new Date(event.eventLoadOut).toDateString();
@@ -76,8 +77,28 @@ const TimeCard = () => {
                 ? new Date(event.eventLoadIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 : new Date(event.eventLoadOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }));
-
+    
         setSelectedDateEvents(eventsForDate);
+    
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/history/${auth.userId}?date=${date.toISOString()}`);
+            if (response.ok) {
+                const data = await response.json();
+                
+                // ✅ Populate the clock-in and break history for the selected date
+                setClockHistory(data.clockHistory || []);
+                setBreaks(data.breaks || []);
+            } else {
+                toast.error("Failed to load time history for the selected date.");
+                setClockHistory([]);
+                setBreaks([]);
+            }
+        } catch (error) {
+            console.error("Error fetching time history:", error);
+            toast.error("Server error while loading history.");
+            setClockHistory([]);
+            setBreaks([]);
+        }
     };
 
     const formatDateTime = (date) => {
@@ -370,30 +391,30 @@ const TimeCard = () => {
                             {/* Show Break History */}
                             {/* {breaks.length > 0 && ( */}
                                 <>
-                                    <div className="w-full text-center mt-6">
-                                        <h4 className="text-white text-sm font-bold mb-2">Break & Time History:</h4>
-                                    </div>
+                                <div className="w-full text-center mt-6">
+                                    <h4 className="text-white text-sm font-bold mb-2">Clock & Break History for {selectedDate?.toLocaleDateString()}:</h4>
+                                </div>
 
-                                    <div className="mt-2 flex justify-center">
-                                        <ul className="text-neutral-400 text-sm space-y-1 text-center">
-                                            {/* ✅ Add clock-in & clock-out history */}
-                                            {clockHistory.map((entry, index) => (
-                                                <li key={index}>
-                                                    🕒 {entry.type}: {entry.time.toLocaleTimeString()}
-                                                </li>
-                                            ))}
+                                <div className="mt-2 flex justify-center">
+                                    <ul className="text-neutral-400 text-sm space-y-1 text-center">
+                                        {/* ✅ Show clock-in & clock-out times */}
+                                        {clockHistory.map((entry, index) => (
+                                            <li key={index}>
+                                                🕒 {entry.type}: {new Date(entry.time).toLocaleTimeString()}
+                                            </li>
+                                        ))}
 
-                                            {/* ✅ Existing break history */}
-                                            {breaks.map((breakSession, index) => (
-                                                <li key={index}>
-                                                    ☕ Break: {new Date(breakSession.breakStartTime).toLocaleTimeString()}  
-                                                    {breakSession.breakEndTime
-                                                        ? ` → ${new Date(breakSession.breakEndTime).toLocaleTimeString()}`
-                                                        : " (Ongoing)"}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
+                                        {/* ✅ Show break sessions */}
+                                        {breaks.map((breakSession, index) => (
+                                            <li key={index}>
+                                                ☕ Break: {new Date(breakSession.breakStartTime).toLocaleTimeString()}  
+                                                {breakSession.breakEndTime
+                                                    ? ` → ${new Date(breakSession.breakEndTime).toLocaleTimeString()}`
+                                                    : " (Ongoing)"}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
                                 </>
                             {/* )} */}
                         </motion.div>

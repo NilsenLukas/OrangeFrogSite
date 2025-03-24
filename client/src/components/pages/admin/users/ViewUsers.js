@@ -191,8 +191,6 @@ export default function ViewUsers() {
     const [sortField, setSortField] = useState(null);
     const [sortDirection, setSortDirection] = useState('asc');
     const [searchText, setSearchText] = useState(""); 
-    const [showSearchBox, setShowSearchBox] = useState(false);
-
 
     const formParent = useRef(null);
 
@@ -428,27 +426,19 @@ export default function ViewUsers() {
             <div className="w-full flex justify-between items-center mb-3 mt-5">
                 
                 <div className="flex items-center space-x-2">
-                    
-                    {<span
-                        onClick={() => setShowSearchBox(!showSearchBox)}
-                        className="cursor-pointer text-white/60 hover:text-white transition-colors flex items-center px-2"
-                    >
-                        <FaSearch className="text-lg" title='Search for a user'/>
-                    </span> }
                     <div className="relative flex items-center">
                         <input
                             type="text"
                             placeholder="Search by name"
                             value={searchText}
                             onChange={(e) => setSearchText(e.target.value)}
-                            className={`${
-                                showSearchBox ? 'w-40 md:w-54 lg:w-64 px-4 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40' : 'hidden'
-                            }`}
+                            className="w-40 md:w-54 lg:w-64 px-4 pr-10 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40"
                             style={{
                                 transition: 'width 0.3s ease',
                                 height: '2.5rem', 
                             }}
                         />
+                        <FaSearch className="absolute right-3 text-white/50" />
                     </div>
                 </div>
 

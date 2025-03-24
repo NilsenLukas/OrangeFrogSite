@@ -1,7 +1,7 @@
 // src/components/admin/ViewEvent.js
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { FaList, FaSort, FaTh, FaSortUp, FaSortDown } from 'react-icons/fa';
+import { FaList, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch } from 'react-icons/fa';
 // import MultiSelect from './MultiSelect';
 import { toast } from 'sonner';
 import Modal from "../../../Modal";
@@ -264,14 +264,20 @@ export default function ViewCorrections() {
                 <div className="flex items-center gap-4">
                     <div className='flex items-center gap-3 mt-3'>
                         {/* Name filter input */}
-                        <input
-                            type="text"
-                            placeholder="Search by Name"
-                            value={nameFilter}
-                            onChange={(e) => setNameFilter(e.target.value)}
-                            className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded transition-colors outline-none mt-2"
-                            style={{ minWidth: "150px" }}
-                        />
+                        <div className="relative flex items-center mt-2">
+                            <input
+                                type="text"
+                                placeholder="Search by name"
+                                value={nameFilter}
+                                onChange={(e) => setNameFilter(e.target.value)}
+                                className="w-40 md:w-54 lg:w-64 px-4 pr-10 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40"
+                                style={{
+                                    transition: 'width 0.3s ease',
+                                    height: '2.5rem', 
+                                }}
+                            />
+                            <FaSearch className="absolute right-3 text-white/50" />
+                        </div>
 
                         {/* Sort dropdown */}
                         <div className="flex items-center gap-3 mt-2">
@@ -360,7 +366,7 @@ export default function ViewCorrections() {
                 </div>
                 <div className="flex items-center gap-2 relative">
 
-                    <div className="hidden md:flex gap-2">
+                    <div className="hidden md:flex gap-2 mt-5">
                         <button
                             onClick={() => setView('grid')}
                             className={`p-2 mt-0 rounded transition-colors ${

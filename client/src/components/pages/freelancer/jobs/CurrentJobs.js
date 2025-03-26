@@ -145,14 +145,14 @@ const CurrentJobs = () => {
                 <div className="flex flex-col space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <p className="text-neutral-400 font-medium">Load In</p>
+                            <p className="text-neutral-400 font-medium">Load In:</p>
                             <div className="pl-2 border-l-2 border-neutral-700">
                                 <p className="text-white">{new Date(job.eventLoadIn).toLocaleString()}</p>
                                 <p className="text-neutral-300">Hours: {job.eventLoadInHours}h</p>
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <p className="text-neutral-400 font-medium">Load Out</p>
+                            <p className="text-neutral-400 font-medium">Load Out:</p>
                             <div className="pl-2 border-l-2 border-neutral-700">
                                 <p className="text-white">{new Date(job.eventLoadOut).toLocaleString()}</p>
                                 <p className="text-neutral-300">Hours: {job.eventLoadOutHours}h</p>
@@ -160,11 +160,11 @@ const CurrentJobs = () => {
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <p className="text-neutral-400 font-medium">Location</p>
+                        <p className="text-neutral-400 font-medium">Location:</p>
                         <p className="text-white">{job.eventLocation}</p>
                     </div>
                     <div className="space-y-2">
-                        <p className="text-neutral-400 font-medium">Description</p>
+                        <p className="text-neutral-400 font-medium">Descriptio:</p>
                         <p className="text-white line-clamp-3">{job.eventDescription}</p>
                     </div>
                 </div>

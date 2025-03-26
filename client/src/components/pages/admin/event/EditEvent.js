@@ -191,7 +191,7 @@ export default function EditEvent() {
                                 name="eventLoadIn"
                                 value={formData.eventLoadIn}
                                 onChange={handleInputChange}
-                                min={getCurrentDateTime()}
+                                // min={getCurrentDateTime()}
                                 className="w-full px-4 py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
                                 required
                             />

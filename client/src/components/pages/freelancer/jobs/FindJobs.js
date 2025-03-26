@@ -176,7 +176,7 @@ export default function FindJobs() {
                   <div className="grid grid-cols-2 gap-4">
                       {/* Load In Section */}
                       <div className="space-y-2">
-                          <p className="text-neutral-400 font-medium">Load In</p>
+                          <p className="text-neutral-400 font-medium">Load In:</p>
                           <div className="pl-2 border-l-2 border-neutral-700">
                               <p className="text-white">
                                   {new Date(job.eventLoadIn).toLocaleString()}
@@ -189,7 +189,7 @@ export default function FindJobs() {
   
                       {/* Load Out Section */}
                       <div className="space-y-2">
-                          <p className="text-neutral-400 font-medium">Load Out</p>
+                          <p className="text-neutral-400 font-medium">Load Out:</p>
                           <div className="pl-2 border-l-2 border-neutral-700">
                               <p className="text-white">
                                   {new Date(job.eventLoadOut).toLocaleString()}
@@ -211,15 +211,15 @@ export default function FindJobs() {
                                   : job.eventLocation}
                           </span>
                       </div>
-                      <div className="space-y-2">
+                      {/* <div className="space-y-2">
                           <p className="text-neutral-400 font-medium">Location</p>
                           <p className="text-white">{job.eventLocation}</p>
-                      </div>
+                      </div> */}
                   </div>
   
                   {/* Description Section */}
                   <div className="space-y-2">
-                      <p className="text-neutral-400 font-medium">Description</p>
+                      <p className="text-neutral-400 font-medium">Description:</p>
                       <p className="text-white line-clamp-3">{job.eventDescription}</p>
                   </div>
   

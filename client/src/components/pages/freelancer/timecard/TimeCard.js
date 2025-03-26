@@ -17,10 +17,10 @@ const TimeCard = () => {
     // const [isClockedIn, setIsClockedIn] = useState(false);
     // const [isOnBreak, setIsOnBreak] = useState(false);
     // const [lastActivity, setLastActivity] = useState('');
-    const [setTimeline] = useState([]);
+    // const [setTimeline] = useState([]);
     const [isClockedIn, setIsClockedIn] = useState(false);
     const [isOnBreak, setIsOnBreak] = useState(false);
-    const [clockInTime, setClockInTime] = useState(null);
+    const [clockInTime, setClockInTime] = useState(null);    // 
     // const [breakStartTime, setBreakStartTime] = useState(null);
     const [breaks, setBreaks] = useState([]); 
     const [clockHistory, setClockHistory] = useState([]);
@@ -85,9 +85,20 @@ const TimeCard = () => {
             if (response.ok) {
                 const data = await response.json();
                 
-                // ✅ Populate the clock-in and break history for the selected date
-                setClockHistory(data.clockHistory || []);
-                setBreaks(data.breaks || []);
+                const mergedTimeline = [
+                    ...data.clockHistory.map(entry => ({
+                        type: entry.type,
+                        time: new Date(entry.time),
+                    })),
+                    ...data.breaks.flatMap(breakSession => [
+                        { type: "Break Start", time: new Date(breakSession.breakStartTime) },
+                        breakSession.breakEndTime
+                            ? { type: "Break End", time: new Date(breakSession.breakEndTime) }
+                            : null
+                    ]).filter(Boolean) // Remove null values
+                ].sort((a, b) => a.time - b.time); // ✅ Sort by time
+    
+                setClockHistory(mergedTimeline); // ✅ Now, all events are in order
             } else {
                 toast.error("Failed to load time history for the selected date.");
                 setClockHistory([]);
@@ -101,9 +112,9 @@ const TimeCard = () => {
         }
     };
 
-    const formatDateTime = (date) => {
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-    };
+    // const formatDateTime = (date) => {
+    //     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    // };
     
     // const addToTimeline = (activity, time) => {
     //     setTimeline((prevTimeline) => [
@@ -350,12 +361,17 @@ const TimeCard = () => {
 
                             {/* Clock In/Out and Break Buttons */}
                             <div className="mt-4 flex flex-wrap gap-2 justify-center">
+                                {/* Clock In Button - Disabled if Not Today's Event */}
                                 {!isClockedIn && (
                                     <button
                                         onClick={handleClockIn}
-                                        disabled={!isToday}
+                                        disabled={!(new Date(event.eventLoadIn).toDateString() === new Date().toDateString() ||
+                                                    new Date(event.eventLoadOut).toDateString() === new Date().toDateString())}
                                         className={`px-4 py-2 rounded-full flex items-center justify-center gap-2 w-[160px] 
-                                            ${isToday ? "bg-black text-white" : "bg-neutral-700 text-neutral-500 cursor-not-allowed"}`}
+                                            ${(new Date(event.eventLoadIn).toDateString() === new Date().toDateString() ||
+                                            new Date(event.eventLoadOut).toDateString() === new Date().toDateString())
+                                                ? "bg-black text-white"
+                                                : "bg-neutral-700 text-neutral-500 cursor-not-allowed"}`}
                                     >
                                         <FaClock /> Clock In
                                     </button>
@@ -391,26 +407,22 @@ const TimeCard = () => {
                             {/* Show Break History */}
                             {/* {breaks.length > 0 && ( */}
                                 <>
+                                {/* Show Clock-In, Break, and Clock-Out History in Order */}
                                 <div className="w-full text-center mt-6">
                                     <h4 className="text-white text-sm font-bold mb-2">Clock & Break History for {selectedDate?.toLocaleDateString()}:</h4>
                                 </div>
 
                                 <div className="mt-2 flex justify-center">
                                     <ul className="text-neutral-400 text-sm space-y-1 text-center">
-                                        {/* ✅ Show clock-in & clock-out times */}
+                                        {/* ✅ Sorted timeline display */}
                                         {clockHistory.map((entry, index) => (
                                             <li key={index}>
-                                                🕒 {entry.type}: {new Date(entry.time).toLocaleTimeString()}
-                                            </li>
-                                        ))}
+                                                {entry.type === "Clock In" && "⏰"} 
+                                                {entry.type === "Clock Out" && "🚪"} 
+                                                {entry.type === "Break Start" && "☕"} 
+                                                {entry.type === "Break End" && "🔙"} 
 
-                                        {/* ✅ Show break sessions */}
-                                        {breaks.map((breakSession, index) => (
-                                            <li key={index}>
-                                                ☕ Break: {new Date(breakSession.breakStartTime).toLocaleTimeString()}  
-                                                {breakSession.breakEndTime
-                                                    ? ` → ${new Date(breakSession.breakEndTime).toLocaleTimeString()}`
-                                                    : " (Ongoing)"}
+                                                {` ${entry.type}: ${entry.time.toLocaleTimeString()}`}
                                             </li>
                                         ))}
                                     </ul>

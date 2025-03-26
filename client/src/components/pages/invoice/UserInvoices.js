@@ -60,6 +60,7 @@ const UserInvoices = () => {
         .then((data) => setEligibleEvents(data))
         .catch((error) => console.error("Error fetching eligible events:", error));
     }
+    
   }, [showModal]);
 
   const handleSort = (field) => {
@@ -264,17 +265,16 @@ const UserInvoices = () => {
           
         </div>
         <div className="flex items-center gap-4 mb-4">
-          {/* <button onClick={() => setShowModal(true)} className="mt-0 bg-none"> */}
-              <HoverBorderGradient
-                  containerClassName="rounded-full mt-0"
-                  className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0"
-              >
-                  <button onClick={() => setShowModal(true)} className=" dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0">
-                    <span className="text-lg mr-1 mt-0">+</span> 
-                    <span>Generate Invoice</span>
-                  </button>
-              </HoverBorderGradient>
-          {/* </button> */}
+          <div onClick={() => setShowModal(true)} className="cursor-pointer">
+          {/* <div onClick={() => { console.log("clicked!"); setShowModal(true); }} className="cursor-pointer"> */}
+            <HoverBorderGradient
+              containerClassName="rounded-full mt-0"
+              className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0 px-4 py-2"
+            >
+              <span className="text-lg mr-1 mt-0">+</span> 
+              <span>Generate Invoice</span>
+            </HoverBorderGradient>
+          </div>
         </div>
 
         {/* Main content area */}
@@ -384,41 +384,7 @@ const UserInvoices = () => {
                   </table>
                 </div>
               )}
-              {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-neutral-900 p-6 rounded-lg w-full max-w-lg shadow-lg flex justify-center flex-col">
-                        <h2 className="text-xl text-white font-bold mb-4">Select an Event to Generate Invoice</h2>
-        
-                        <div className="flex justify-between items-center flex-col mb-4">
-                          {/* List of Events */}
-                          <div className="max-h-60 overflow-y-auto">
-                              {eligibleEvents.length > 0 ? (
-                                  eligibleEvents.map((event) => (
-                                      <div
-                                          key={event._id}
-                                          className="p-3 bg-neutral-800 hover:bg-neutral-700 text-white rounded-md cursor-pointer mb-2"
-                                          onClick={() => handleEventSelection(event)}
-                                      >
-                                          <p className="font-bold">{event.eventName}</p>
-                                          <p className="text-sm text-neutral-400">{new Date(event.eventLoadIn).toLocaleDateString()}</p>
-                                      </div>
-                                  ))
-                              ) : (
-                                  <p className="text-neutral-400">No eligible events found.</p>
-                              )}
-                          </div>
-        
-                          {/* Close Button */}
-                          <button
-                              onClick={() => setShowModal(false)}
-                              className="mt-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-full transition-colors flex justify-center"
-                          >
-                              Close
-                          </button>
-                        </div>
-                    </div>
-                </div>
-              )}
+              
             </>
           ) : (
             // NO ITEMS
@@ -440,6 +406,47 @@ const UserInvoices = () => {
           )}
         </AnimatePresence>
       </div>
+      <div className="p-8 bg-gray-100 dark:bg-neutral-900 min-h-screen">
+
+  {/* All your return content here */}
+
+  {/* MODAL: Move it outside conditionally filtered sections */}
+  {showModal && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-neutral-900 p-6 rounded-lg w-full max-w-lg shadow-lg flex justify-center flex-col">
+        <h2 className="text-xl text-white font-bold mb-4">Select an Event to Generate Invoice</h2>
+
+        <div className="flex justify-between items-center flex-col mb-4">
+          <div className="max-h-60 overflow-y-auto">
+            {eligibleEvents.length > 0 ? (
+              eligibleEvents.map((event) => (
+                <div
+                  key={event._id}
+                  className="p-3 bg-neutral-800 hover:bg-neutral-700 text-white rounded-md cursor-pointer mb-2"
+                  onClick={() => handleEventSelection(event)}
+                >
+                  <p className="font-bold">{event.eventName}</p>
+                  <p className="text-sm text-neutral-400">{new Date(event.eventLoadIn).toLocaleDateString()}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-neutral-400 text-center mt-4">
+                No eligible events found. You may have already generated invoices for all of them.
+              </p>
+            )}
+          </div>
+
+          <button
+            onClick={() => setShowModal(false)}
+            className="mt-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-full transition-colors flex justify-center"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
 
       
     </div>

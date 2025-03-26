@@ -119,11 +119,11 @@ const invoiceSchema = new mongoose.Schema({
     total: { type: Number, required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-  });
+});
 
-  const invoiceCollection = mongoose.model('invoiceCollection', invoiceSchema);
+const invoiceCollection = mongoose.model('invoiceCollection', invoiceSchema);
 
-  const adminSchema = new mongoose.Schema({
+const adminSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     address: { type: String }
@@ -135,6 +135,14 @@ adminSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, 10);
     next();
 });
+
+// console log out this password / dehash it: $2b$10$9pfpSZBITZ.FSimdN3xVOudytCB9mPEJm/IP7gKseK3A8PgzIQagW
+// const adminPassword = '$2b$10$9pfpSZBITZ.FSimdN3xVOudytCB9mPEJm/IP7gKseK3A8PgzIQagW';
+// // try to do this with the correct dehash function console.log( bcrypt.dehash(adminPassword)); 
+// // const bcrypt = require('bcrypt');
+// const dehashedPassword = bcrypt.compare(adminPassword, adminPassword);
+// console.log(dehashedPassword);
+
 
 const Admin = mongoose.model('Admin', adminSchema);
 

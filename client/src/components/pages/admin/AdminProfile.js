@@ -19,18 +19,31 @@ export default function AdminProfile() {
 
     useEffect(() => {
         const fetchAdminProfile = async () => {
+            if (!auth.email) {
+                console.error("No email found in auth context.");
+                return;
+            }
+    
+            const apiUrl = `${process.env.REACT_APP_BACKEND}/admin/admin-profile/${encodeURIComponent(auth.email)}`;
+            // console.log("Fetching admin profile from:", apiUrl);
+    
             try {
-                const response = await fetch(`${process.env.REACT_APP_BACKEND}/admin-profile/${auth.email}`);
+                const response = await fetch(apiUrl);
+    
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Error ${response.status}: ${errorText}`);
+                }
+    
                 const data = await response.json();
                 setProfileData({ email: data.email || '', address: data.address || '' });
             } catch (error) {
+                console.error("Failed to load admin profile:", error);
                 toast.error('Failed to load admin profile.');
             }
         };
-
-        if (auth.email) {
-            fetchAdminProfile();
-        }
+    
+        fetchAdminProfile();
     }, [auth.email]);
 
     const handleInputChange = (e) => {
@@ -39,19 +52,24 @@ export default function AdminProfile() {
 
     const handleProfileUpdate = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND}/update-admin-profile/${auth.email}`, {
+            const apiUrl = `${process.env.REACT_APP_BACKEND}/admin/admin-profile/${encodeURIComponent(auth.email)}`;
+            console.log("Updating admin profile at:", apiUrl);
+    
+            const response = await fetch(apiUrl, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(profileData),
             });
-
+    
             if (response.ok) {
                 toast.success('Profile updated successfully.');
             } else {
-                toast.error('Failed to update profile.');
+                const errorText = await response.text();
+                throw new Error(`Error ${response.status}: ${errorText}`);
             }
         } catch (error) {
-            toast.error('Error updating profile.');
+            console.error("Failed to update admin profile:", error);
+            toast.error('Failed to update profile.');
         }
     };
 
@@ -62,7 +80,7 @@ export default function AdminProfile() {
         }
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND}/update-admin-profile/${auth.email}/password`, {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND}/admin/update-admin-profile/${auth.email}/password`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ currentPassword, newPassword }),
@@ -99,13 +117,16 @@ export default function AdminProfile() {
 
                 {/* Address */}
                 <div className="mb-4">
-                    <label className="block text-neutral-600 dark:text-neutral-400 text-sm">Company Address (Used for Invoices)</label>
-                    <input
-                        type="text"
+                    <label className="block text-neutral-600 dark:text-neutral-400 text-sm mb-1">
+                        Company Address (Used for Invoices)
+                    </label>
+                    <textarea
                         name="address"
                         value={profileData.address}
                         onChange={handleInputChange}
-                        className="w-full p-3 rounded-lg bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                        rows={5}
+                        placeholder={`Orange Frog Productions\n#280 2880 45 Ave SE\nCalgary, AB T2B 3M1\nPhone: 403-703-9218`}
+                        className="w-full p-3 rounded-lg bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white resize-y focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                     />
                 </div>
 

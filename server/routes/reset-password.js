@@ -5,8 +5,6 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const { userCollection } = require('../mongo');
 
-
-
 // Password reset route
 router.post('/', async (req, res) => {
     const { email, tempPassword, newPassword } = req.body;

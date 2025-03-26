@@ -49,7 +49,6 @@ app.use('/correction-report', correctionReportRouter);
 app.use('/invoices', invoicesRoute);
 app.use("/corrections", viewCorrectionsRoute);
 app.use("/time-tracking", timeTrackingRoutes);
-
 app.use("/admin", adminRoutes);
 
 app.use("/health", (req, res) => {

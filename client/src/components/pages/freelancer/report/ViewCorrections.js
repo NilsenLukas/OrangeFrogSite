@@ -412,7 +412,7 @@ export default function ViewCorrections() {
             <div className="flex items-center gap-4 ">
                     <Link to="/user/corrections/create" className='mt-0 bg-none'>
                         <HoverBorderGradient
-                            containerClassName="rounded-full "
+                            containerClassName="rounded-full"
                             className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0"
                         >
                             <span className="text-lg mr-1 mt-0">+</span> 

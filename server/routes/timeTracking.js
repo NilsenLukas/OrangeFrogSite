@@ -160,12 +160,30 @@ router.get('/history/:userId', async (req, res) => {
     const { date } = req.query;
 
     try {
-        const records = await TimeTracking.find({ userId, date: new Date(date).toISOString().split("T")[0] });
-        
-        res.json({
-            clockHistory: records.map(r => ({ type: r.type, time: r.time })),
-            breaks: records.flatMap(r => r.breaks)
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        // ✅ Fetch all time-tracking records within the selected date range
+        const records = await TimeTracking.find({
+            userId,
+            clockInTime: { $gte: startOfDay, $lte: endOfDay }
         });
+
+        res.json({
+            clockHistory: records.map(record => ({
+                type: "Clock In",
+                time: record.clockInTime
+            })).concat(
+                records.filter(record => record.clockOutTime).map(record => ({
+                    type: "Clock Out",
+                    time: record.clockOutTime
+                }))
+            ),
+            breaks: records.flatMap(record => record.breaks || [])
+        });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error fetching time-tracking history." });

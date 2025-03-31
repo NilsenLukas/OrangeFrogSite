@@ -375,7 +375,7 @@ const confirmDelete = async () => {
     setEditingRow(index);
     setEditedData({
       ...invoice.items[index],
-      date: parseDate(invoice.items[index].date), // Convert to MM/DD/YYYY format when entering edit mode
+      date: invoice.items[index].date || "", // Convert to MM/DD/YYYY format when entering edit mode
     });
   };
 
@@ -691,13 +691,15 @@ const confirmDelete = async () => {
 
       <div className="relative">
         {/* Download Button */}
-        <button
-          onClick={generatePDF}
-          className="absolute top-0 right-0 px-6 py-2 w-auto bg-neutral-800 hover:bg-neutral-700 text-white rounded transition-colors flex items-center"
-        >
-          <FaDownload className="mr-2" />
-          Download PDF
-        </button>
+        {!isNewInvoice && (
+          <button
+            onClick={generatePDF}
+            className="absolute top-0 right-0 px-6 py-2 w-auto bg-neutral-800 hover:bg-neutral-700 text-white rounded transition-colors flex items-center"
+          >
+            <FaDownload className="mr-2" />
+            Download PDF
+          </button>
+        )}
 
         <h1 className="text-3xl font-bold text-white mb-8">Invoice Details</h1>
 
@@ -757,7 +759,7 @@ const confirmDelete = async () => {
 
             {/* Editable LPO Number */}
             <p className="text-sm text-gray-400 mb-2">
-                LPO #: {isNewInvoice ? (
+                Show #: {isNewInvoice ? (
                     <input 
                         className="bg-transparent border border-gray-500 p-1 text-white w-full"
                         value={invoice.lpoNumber}

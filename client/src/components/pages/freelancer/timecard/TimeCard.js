@@ -33,6 +33,9 @@ const TimeCard = () => {
                     const data = await response.json();
                     const approved = data.filter(event => event.status === 'approved');
                     setApprovedEvents(approved);
+                    const today = new Date();
+                    setSelectedDate(today);           // ✅ This visually highlights today on calendar
+                    handleDateClick(today);           // ✅ This loads today's events
                 } else {
                     toast.error("Failed to fetch events");
                 }
@@ -228,7 +231,8 @@ const TimeCard = () => {
     
             if (response.status === 200) {
                 setIsOnBreak(true);
-                setBreaks([...breaks, { breakStartTime: new Date() }]); // Add new break to local state
+                setBreaks([...breaks, { breakStartTime: new Date() }]);
+                handleDateClick(selectedDate); // ✅ refresh timeline
             } else {
                 toast.error(data.message || "Failed to start break.");
             }
@@ -256,6 +260,7 @@ const TimeCard = () => {
                     updatedBreaks[updatedBreaks.length - 1].breakEndTime = new Date();
                     return updatedBreaks;
                 });
+                handleDateClick(selectedDate);
             } else {
                 toast.error(data.message || "Failed to end break.");
             }

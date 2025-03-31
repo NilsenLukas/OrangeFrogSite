@@ -364,6 +364,17 @@ export default function EventDetails() {
                     >
                         {event.eventName}
                     </motion.h1>
+                    <div className='flex space-x-4 -mt-6'>
+                    <button
+                        onClick={(e) => {
+                        e.preventDefault();
+                            openConfirmModal('reject', event._id);
+                        }}
+                        className="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                    >
+                        ✖ End Job Application
+                    </button>
+                </div>
                 </div>
                 
                 <div className="grid md:grid-cols-2 gap-8">
@@ -424,17 +435,6 @@ export default function EventDetails() {
                             </p>
                         </div>
                     </motion.div>
-                </div>
-                <div className='flex justify-center'>
-                    <button
-                        onClick={(e) => {
-                        e.preventDefault();
-                            openConfirmModal('reject', event._id);
-                        }}
-                        className="text-red-500 bg-neutral-700 hover:bg-neutral-700 px-3 py-1.5 rounded-md transition-colors font-semibold whitespace-nowrap"
-                    >
-                        ✖ End Job Application
-                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">

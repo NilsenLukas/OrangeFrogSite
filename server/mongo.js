@@ -101,6 +101,16 @@ const correctionReportSchema = new mongoose.Schema({
 
 const correctionReportCollection = mongoose.model('correctionReportCollection', correctionReportSchema);
 
+const notificationSchema = new mongoose.Schema({
+    userID: { type: String, required: true },
+    subject: { type: String, required: true },
+    description: { type: String, required: true },
+    hasBeenOpened: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now },
+});
+
+const notificationCollection = mongoose.model('notificationCollection', notificationSchema);
+
 const invoiceSchema = new mongoose.Schema({
     invoiceNumber: { type: Number, required: true, unique: true },
     lpoNumber: { type: String, default: '' },
@@ -154,6 +164,7 @@ const collection = {
     Admin,
     TimeTracking,
     userJobCommentCollection,
+    notificationCollection,
 };
 
 module.exports = collection;

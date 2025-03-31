@@ -6,6 +6,7 @@ import {
   IconBrandTabler,
   IconUserBolt,
   IconHome,
+  IconBell,
   // IconCalendarEvent,
   // IconUsers,
 } from "@tabler/icons-react";
@@ -38,7 +39,15 @@ export default function SidebarDemo({ role }) {
       ),
     },
     {
-      label: "Logout",
+      label: "Notifications",
+      key: "notifiications",
+      path: "/admin/notifications",
+      icon: (
+        <IconBell className="h-5 w-5 text-neutral-700 dark:text-neutral-200 flex-shrink-0" />
+      ),
+    },
+    {
+      label: "Logaout",
       key: "logout",
       path: "/",
       icon: (
@@ -63,6 +72,14 @@ export default function SidebarDemo({ role }) {
       path: "/user/profile",
       icon: (
         <IconUserBolt className="h-5 w-5 text-neutral-700 dark:text-neutral-200 flex-shrink-0" />
+      ),
+    },
+    {
+      label: "Notifications",
+      key: "notifiications",
+      path: "/user/notifications",
+      icon: (
+        <IconBell className="h-5 w-5 text-neutral-700 dark:text-neutral-200 flex-shrink-0" />
       ),
     },
     {

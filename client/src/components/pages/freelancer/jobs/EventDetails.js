@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaTh, FaList, FaSortUp, FaSortDown, FaSort, FaInfoCircle, FaTrashAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaTh, FaList, FaSortUp, FaSortDown, FaSort, FaInfoCircle, FaTrashAlt, FaSave } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { HoverBorderGradient } from '../../../ui/hover-border-gradient';
 import { AuthContext } from "../../../../AuthContext";
@@ -385,28 +385,24 @@ export default function EventDetails() {
                         {event.eventName}
                     </motion.h1>
 
+                <div className='flex space-x-4 -mt-6 '>
                     {isInvoiceEligible && (
-                        <div className="flex items-center gap-4 mb-4">
-                        <div onClick={() => navigate(`/user/invoices/new?eventId=${event._id}`)} className="cursor-pointer">                            
-                            <HoverBorderGradient
-                                containerClassName="rounded-full mt-0"
-                                className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0 px-4 py-2"
-                            >
-                                <span className="text-lg mr-1 mt-0">+</span> 
-                                <span>Generate Invoice</span>
-                            </HoverBorderGradient>
-                            </div>
-                        </div>
-                    )}
-                    <div className='flex space-x-4 -mt-6'>
+                        <button
+                            onClick={() => navigate(`/user/invoices/new?eventId=${event._id}`)}
+                            className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors "
+                        >
+                            <span className="text-lg">+</span>
+                            <span className='w-36'>Generate Invoice</span>
+                        </button>
+                        )}
                     <button
                         onClick={(e) => {
                         e.preventDefault();
                             openConfirmModal('reject', event._id);
                         }}
-                        className="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                        className="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors "
                     >
-                        ✖ End Job Application
+                        ✖ End Application
                     </button>
                 </div>
                 </div>
@@ -473,11 +469,19 @@ export default function EventDetails() {
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="col-span-2">
-                        <div className='flex justify-between items-center'>
+                        <div className='flex justify-between items-center mt-8'>
                             <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-                                Job Comments
+                                Job Comments:
                             </h2>
                             <div className="flex space-x-4 -mt-6">
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <FaSave />
+                                    <span>{loading ? 'Saving...' : 'Save'}</span>
+                                </button>
                                 <button
                                     type="button"
                                     onClick={handleDelete}
@@ -493,14 +497,14 @@ export default function EventDetails() {
                             type="text"
                             value={formData?.jobComments || ''}
                             onChange={handleChange}
-                            className="w-full p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors h-32"
+                            className="w-full p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors h-32 mt-1"
                         />
                     </div>
 
                     
 
                     {/* Submit Button */}
-                    <div className="col-span-2 flex justify-center space-x-4">
+                    {/*<div className="col-span-2 flex justify-center space-x-4">
                         <button
                             type="submit"
                             disabled={loading}
@@ -508,17 +512,27 @@ export default function EventDetails() {
                             >
                             {loading ? 'Saving...' : 'Save Comment'}
                         </button>
-                    </div>
+                    </div> */}
                 </form>
 
-                <h2 className="text-xl font-semibold text-white mb-4">Correction Reports</h2>
+                <div className="flex items-center justify-between mb-0 mt-8">
+                    <h2 className="text-xl font-semibold text-white">Correction Reports:</h2>
+                    <Link to={`/user/corrections/create?eventID=${eventID}`}>
+                        <button
+                        className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                        >
+                        <span className="text-lg">+</span>
+                        <span className="whitespace-nowrap">Create Correction Report</span>
+                        </button>
+                    </Link>
+                </div>
 
-                <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-8'>
-                <div className="mt-8">
+                <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-0'>
+                <div className="mt-2">
                     <div className="w-full h-full overflow-auto px-5">
                 <div className="flex items-center gap-2 relative">
                 
-                <div className="hidden md:flex gap-2">
+                <div className="hidden md:flex gap-2 mt-4">
                     <button
                         onClick={() => setView('grid')}
                         className={`p-2 mt-0 rounded transition-colors ${
@@ -617,17 +631,6 @@ export default function EventDetails() {
                     )
                 )}
                 
-                <div className="flex justify-center">
-                    <Link to={`/user/corrections/create?eventID=${eventID}`}>
-                        <HoverBorderGradient
-                            containerClassName="rounded-full"
-                            className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2"
-                        >
-                            <span className="text-lg mr-1">+</span> 
-                            <span>Create Correction Report</span>
-                        </HoverBorderGradient>
-                    </Link>
-                </div>
             </div>
             </div>
             </div>

@@ -71,74 +71,102 @@ const Invoice = ({invoiceData}) => {
             const timeData = await timeRes.json();
             console.log("Fetched Time Tracking Data:", timeData);
 
+            // If no clock-in data exists, fallback to an empty row to let users enter manually
+            const hasTimeData = Array.isArray(timeData) && timeData.length > 0;
+
               // Pre-fill invoice data
               // Ensure items array is populated correctly from time tracking data
-    setInvoice({
-      invoiceNumber: "", // Editable field for new invoices
-      lpoNumber: "", // Editable field
-      user: userData,
-      show: eventData.eventName,
-      venue: eventData.eventLocation || "Detroit Mercy", // Default if missing
-      dateOfWork: timeData.map(entry => entry.clockInTime), // Dates of shifts
-      // actualHoursWorked: timeData.map(entry => {
-      //   const formatTime = (date) => new Date(date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-      //   return `${formatTime(entry.clockInTime)} - ${entry.clockOutTime ? formatTime(entry.clockOutTime) : "Ongoing"}`;
-      // }),
-      // billableHours: timeData.map(entry => {
-      //   if (!entry.clockOutTime) return "0.00"; // Handle ongoing shift
-      
-      //   const workedMinutes = Math.max((new Date(entry.clockOutTime) - new Date(entry.clockInTime)) / (1000 * 60), 0);
-      
-      //   const breakMinutes = entry.breaks?.reduce((total, breakPeriod) => {
-      //     if (breakPeriod.breakStartTime && breakPeriod.breakEndTime) {
-      //       return total + Math.max((new Date(breakPeriod.breakEndTime) - new Date(breakPeriod.breakStartTime)) / (1000 * 60), 0);
-      //     }
-      //     return total;
-      //   }, 0) || 0;
-      
-      //   const billableMinutes = workedMinutes - breakMinutes;
-      //   return (billableMinutes / 60).toFixed(2); // Convert to hours
-      // }),
-      rate: [Number(userData.hourlyRate) || 0],// Assuming rate is stored in user profile
-      totals: timeData.map(entry => (entry.billableHours * (userData.hourlyRate || 0)).toFixed(2)),
-      items: timeData.map((entry, index) => {
-        const formatTime = (date) => new Date(date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-    
-        // Format actual hours worked
-        const actualHours = `${formatTime(entry.clockInTime)} - ${entry.clockOutTime ? formatTime(entry.clockOutTime) : "Ongoing"}`;
-    
-        // Calculate billable hours
-        let workedMinutes = entry.clockOutTime ? Math.max((new Date(entry.clockOutTime) - new Date(entry.clockInTime)) / (1000 * 60), 0) : 0;
-        let breakMinutes = entry.breaks?.reduce((total, breakPeriod) => {
-            if (breakPeriod.breakStartTime && breakPeriod.breakEndTime) {
-                return total + Math.max((new Date(breakPeriod.breakEndTime) - new Date(breakPeriod.breakStartTime)) / (1000 * 60), 0);
-            }
-            return total;
-        }, 0) || 0;
-    
-        const billableHours = ((workedMinutes - breakMinutes) / 60).toFixed(2);
-    
-        // Calculate total
-        const rate = parseFloat(userData.hourlyRate) || 0;
-        const total = (parseFloat(billableHours) * rate).toFixed(2);
-    
-        return {
-            date: entry.clockInTime ? new Date(entry.clockInTime).toLocaleDateString() : "N/A",
-            actualHours,
-            notes: "", // Keep empty for user input
-            
-            billableHours,
-            rate,
-            total,
-        };
-        
-      }),
-      subtotal: timeData.reduce((sum, entry) => sum + (entry.billableHours * (userData.hourlyRate || 0)), 0),
-      taxPercentage: 10, // Default tax percentage
-      taxAmount: (timeData.reduce((sum, entry) => sum + (entry.billableHours * (userData.hourlyRate || 0)), 0) * 0.1).toFixed(2),
-      total: (timeData.reduce((sum, entry) => sum + ((parseFloat(entry.billableHours) || 0) * (parseFloat(userData.hourlyRate) || 0)), 0) * 1.1).toFixed(2),      notes: [],
-      createdAt: new Date(),
-    });
+              setInvoice({
+                invoiceNumber: "", 
+                lpoNumber: "", 
+                user: userData,
+                show: eventData.eventName,
+                venue: eventData.eventLocation || "Detroit Mercy",
+                dateOfWork: hasTimeData ? timeData.map(entry => entry.clockInTime) : [new Date().toISOString()],
+                rate: [Number(userData.hourlyRate) || 0],
+                totals: hasTimeData ? timeData.map(entry => (entry.billableHours * (userData.hourlyRate || 0)).toFixed(2)) : [0],
+                items: hasTimeData
+                  ? timeData.map((entry) => {
+                      const formatTime = (date) =>
+                        new Date(date).toLocaleTimeString('en-US', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: true,
+                        });
+              
+                      const actualHours = `${formatTime(entry.clockInTime)} - ${
+                        entry.clockOutTime ? formatTime(entry.clockOutTime) : 'Ongoing'
+                      }`;
+              
+                      let workedMinutes = entry.clockOutTime
+                        ? Math.max(
+                            (new Date(entry.clockOutTime) - new Date(entry.clockInTime)) / (1000 * 60),
+                            0
+                          )
+                        : 0;
+              
+                      let breakMinutes =
+                        entry.breaks?.reduce((total, b) => {
+                          if (b.breakStartTime && b.breakEndTime) {
+                            return (
+                              total +
+                              Math.max(
+                                (new Date(b.breakEndTime) - new Date(b.breakStartTime)) / (1000 * 60),
+                                0
+                              )
+                            );
+                          }
+                          return total;
+                        }, 0) || 0;
+              
+                      const billableHours = ((workedMinutes - breakMinutes) / 60).toFixed(2);
+                      const rate = parseFloat(userData.hourlyRate) || 0;
+                      const total = (parseFloat(billableHours) * rate).toFixed(2);
+              
+                      return {
+                        date: entry.clockInTime
+                          ? new Date(entry.clockInTime).toLocaleDateString()
+                          : 'N/A',
+                        actualHours,
+                        notes: '',
+                        billableHours,
+                        rate,
+                        total,
+                      };
+                    })
+                    : [
+                      {
+                        date: new Date().toLocaleDateString(),
+                        actualHours: '',
+                        notes: '',
+                        billableHours: '',
+                        rate: Number(userData.hourlyRate) || 0,
+                        total: 0,
+                      },
+                    ],
+                subtotal: hasTimeData
+                  ? timeData.reduce((sum, e) => sum + (e.billableHours * (userData.hourlyRate || 0)), 0)
+                  : 0,
+                taxPercentage: 10,
+                taxAmount: hasTimeData
+                  ? (
+                      timeData.reduce((sum, e) => sum + (e.billableHours * (userData.hourlyRate || 0)), 0) *
+                      0.1
+                    ).toFixed(2)
+                  : 0,
+                total: hasTimeData
+                  ? (
+                      timeData.reduce(
+                        (sum, e) =>
+                          sum +
+                          ((parseFloat(e.billableHours) || 0) * (parseFloat(userData.hourlyRate) || 0)),
+                        0
+                      ) * 1.1
+                    ).toFixed(2)
+                  : 0,
+                notes: [],
+                createdAt: new Date(),
+              });
 
           } catch (error) {
               console.error("Error fetching invoice data:", error);

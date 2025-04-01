@@ -27,7 +27,7 @@ const CurrentJobs = () => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
-    const [timeFilter, setTimeFilter] = useState('future');
+    const [timeFilter, setTimeFilter] = useState('all');
     const [showSortOptions, setShowSortOptions] = useState(false);
     const [animateSortOptions, setAnimateSortOptions] = useState(false);
     const [showFilters, setShowFilters] = useState(false);

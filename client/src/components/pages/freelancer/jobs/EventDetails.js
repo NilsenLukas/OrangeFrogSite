@@ -8,6 +8,8 @@ import { HoverBorderGradient } from '../../../ui/hover-border-gradient';
 import { AuthContext } from "../../../../AuthContext";
 import Modal from '../../../Modal';
 import { HoverEffect } from "../../../ui/card-hover-effect";
+// import { HoverBorderGradient } from '../../ui/hover-border-gradient';
+// import { useNavigate } from "react-router-dom";
 
 export default function EventDetails() {
     const { auth } = useContext(AuthContext); // Get user authentication context
@@ -35,6 +37,8 @@ export default function EventDetails() {
     const filterDropdownRef = useRef(null);
     // const [showApprovalModal, setShowApprovalModal] = useState(false);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
+    const [isInvoiceEligible, setIsInvoiceEligible] = useState(false);
+    // const navigate = useNavigate();
 
     const fadeIn = {
         initial: { opacity: 0, y: 20 },
@@ -45,8 +49,22 @@ export default function EventDetails() {
     const fetchEventDetails = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/events/${eventID}`);
+
+            
             setEvent(response.data);
+            if (auth?.userId && response.data?._id) {
+                try {
+                  const eligibleRes = await fetch(`${process.env.REACT_APP_BACKEND}/events/eligible-events/${auth.userId}`);
+                  const eligibleData = await eligibleRes.json();
+                  const isEligible = eligibleData.some(e => e._id === response.data._id);
+                  setIsInvoiceEligible(isEligible);
+                } catch (err) {
+                  console.error("Error checking invoice eligibility", err);
+                }
+              }
             setLoading(false);
+
+            
         } catch (error) {
             console.error('Error fetching event details:', error);
             setError(error.response?.data?.message || 'Error fetching event details');
@@ -101,6 +119,8 @@ export default function EventDetails() {
         fetchEventDetails();
         fetchJobCommentDetails();
         fetchCorrections();
+
+        
     }, [eventID]);
 
     if (loading) {
@@ -364,6 +384,20 @@ export default function EventDetails() {
                     >
                         {event.eventName}
                     </motion.h1>
+
+                    {isInvoiceEligible && (
+                        <div className="flex items-center gap-4 mb-4">
+                        <div onClick={() => navigate(`/user/invoices/new?eventId=${event._id}`)} className="cursor-pointer">                            
+                            <HoverBorderGradient
+                                containerClassName="rounded-full mt-0"
+                                className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0 px-4 py-2"
+                            >
+                                <span className="text-lg mr-1 mt-0">+</span> 
+                                <span>Generate Invoice</span>
+                            </HoverBorderGradient>
+                            </div>
+                        </div>
+                    )}
                     <div className='flex space-x-4 -mt-6'>
                     <button
                         onClick={(e) => {
@@ -477,9 +511,10 @@ export default function EventDetails() {
                     </div>
                 </form>
 
-                <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 mt-8'>
+                <h2 className="text-xl font-semibold text-white mb-4">Correction Reports</h2>
+
+                <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-8'>
                 <div className="mt-8">
-                    <h2 className="text-xl font-semibold text-white mb-4">Correction Reports</h2>
                     <div className="w-full h-full overflow-auto px-5">
                 <div className="flex items-center gap-2 relative">
                 

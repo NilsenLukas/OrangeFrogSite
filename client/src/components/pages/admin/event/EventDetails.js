@@ -418,32 +418,36 @@ export default function EventDetails() {
                 </div>
             </div>
 
-            <div className="mt-8">
-                    <h2 className="text-xl font-semibold text-white mb-4">Correction Reports</h2>
-                    <div className="w-full h-full overflow-auto px-5">
-                <div className="flex items-center gap-2 relative">
-                
-                <div className="hidden md:flex gap-2">
-                    <button
-                        onClick={() => setView('grid')}
-                        className={`p-2 mt-0 rounded transition-colors ${
-                            view === 'grid' 
-                                ? 'bg-neutral-700 text-white' 
-                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                        }`}
-                    >
-                        <FaTh className="text-xl" />
-                    </button>
-                    <button
-                        onClick={() => setView('list')}
-                        className={`p-2 mt-0 rounded transition-colors ${
-                            view === 'list' 
-                                ? 'bg-neutral-700 text-white' 
-                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                        }`}
-                    >
-                        <FaList className="text-xl" />
-                    </button>
+            <h2 className="text-xl font-semibold text-white mb-4 mt-8">Correction Reports</h2>
+
+            <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-2'>
+                <div className="mt-8">
+                        {/* <h2 className="text-xl font-semibold text-white mb-4">Correction Reports</h2> */}
+                        <div className="w-full h-full overflow-auto px-5">
+                    <div className="flex items-center gap-2 relative">
+                    
+                    <div className="hidden md:flex gap-2">
+                        <button
+                            onClick={() => setView('grid')}
+                            className={`p-2 mt-0 rounded transition-colors ${
+                                view === 'grid' 
+                                    ? 'bg-neutral-700 text-white' 
+                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                            }`}
+                        >
+                            <FaTh className="text-xl" />
+                        </button>
+                        <button
+                            onClick={() => setView('list')}
+                            className={`p-2 mt-0 rounded transition-colors ${
+                                view === 'list' 
+                                    ? 'bg-neutral-700 text-white' 
+                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                            }`}
+                        >
+                            <FaList className="text-xl" />
+                        </button>
+                    </div>
                 </div>
             </div>
 

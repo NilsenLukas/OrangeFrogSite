@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { FaList, FaEdit, FaTrashAlt, FaUsers, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch } from 'react-icons/fa';
+import { FaList, FaEdit, FaTrashAlt, FaUsers, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaAddressBook } from 'react-icons/fa';
 import { toast } from 'sonner';
 import Modal from "../../../Modal";
 import { HoverEffect } from "../../../ui/card-hover-effect";
@@ -71,75 +71,6 @@ export default function ViewEvent() {
     const handleEdit = (event) => {
         navigate(`/admin/events/edit/${event._id}`, { state: { from: '/admin/manage-events' } });
     };
-
-    // Sorting dropdown
-    // const handleSortChange = (e) => {
-    //     const value = e.target.value;
-    //     if (!value) {
-    //         setSortConfig({ key: null, direction: 'ascending' });
-    //         return;
-    //     }
-    //     const [field, direction] = value.split('-');
-
-    //     // Map dropdown values to sortConfig keys
-    //     let sortKey;
-    //     switch (field) {
-    //         case 'name':
-    //             sortKey = 'eventName';
-    //             break;
-    //         case 'createdAt':
-    //             sortKey = 'createdAt';
-    //             break;
-    //         case 'assignedContractors':
-    //             sortKey = 'assignedContractors';
-    //             break;
-    //         default:
-    //             sortKey = field;
-    //     }
-
-    //     setSortConfig({
-    //         key: sortKey,
-    //         direction: direction === 'asc' ? 'ascending' : 'descending'
-    //     });
-        
-    //     adjustSelectWidth();
-    // };
-
-    // const sortedEvents = [...events].sort((a, b) => {
-    //     if (sortConfig.key) {
-    //         const aVal = a[sortConfig.key];
-    //         const bVal = b[sortConfig.key];
-
-    //         if (typeof aVal === 'string') {
-    //             return sortConfig.direction === 'ascending'
-    //                 ? aVal.localeCompare(bVal)
-    //                 : bVal.localeCompare(aVal);
-    //         }
-
-    //         if (typeof aVal === 'number' || aVal instanceof Date) {
-    //             return sortConfig.direction === 'ascending' ? aVal - bVal : bVal - aVal;
-    //         }
-    //     }
-    //     return 0;
-    // });
-    // const getSortedEvents = () => {
-    //     return [...events].sort((a, b) => {
-    //         if (sortConfig.key) {
-    //             const aVal = a[sortConfig.key];
-    //             const bVal = b[sortConfig.key];
-
-    //             if (typeof aVal === 'string') {
-    //                 return sortConfig.direction === 'ascending'
-    //                     ? aVal.localeCompare(bVal)
-    //                     : bVal.localeCompare(aVal);
-    //             }
-    //             if (typeof aVal === 'number' || aVal instanceof Date) {
-    //                 return sortConfig.direction === 'ascending' ? aVal - bVal : bVal - aVal;
-    //             }
-    //         }
-    //         return 0;
-    //     });
-    // };
 
     const getSortIcon = (key) => {
         if (sortConfig.key === key) {
@@ -258,6 +189,18 @@ export default function ViewEvent() {
                         <FaUsers className="mr-2 text-neutral-400" />
                         <span className="text-neutral-300">
                             {event.assignedContractors?.length || 0} Contractors
+                        </span>
+                    </div>
+                    <div className="flex items-center pt-2 border-t border-neutral-700">
+                        <FaAddressBook className="mr-2 text-neutral-400" />
+                        <span className="text-neutral-300">
+                            {event.jobCommentCount || 0} Job Comments
+                        </span>
+                    </div>
+                    <div className="flex items-center pt-2 border-t border-neutral-700">
+                        <FaAddressBook className="mr-2 text-neutral-400" />
+                        <span className="text-neutral-300">
+                            {event.correctionCount || 0} Correction Reports
                         </span>
                     </div>
                 </div>
@@ -494,6 +437,24 @@ export default function ViewEvent() {
                                     </th>
                                     <th 
                                         className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('jobCommentCount')}
+                                    >
+                                        <div className="flex items-center">
+                                            Job Comments
+                                            <span className="ml-2">{getSortIcon('jobCommentCount')}</span>
+                                        </div>
+                                    </th>
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('correctionCount')}
+                                    >
+                                        <div className="flex items-center">
+                                            Correction Reports
+                                            <span className="ml-2">{getSortIcon('correctionCount')}</span>
+                                        </div>
+                                    </th>
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
                                         onClick={() => handleSort('createdAt')}
                                     >
                                         <div className="flex items-center">
@@ -539,6 +500,12 @@ export default function ViewEvent() {
                                         </td>
                                         <td className="p-4 text-white">
                                             {event.assignedContractors?.length || 0}
+                                        </td>
+                                        <td className="p-4 text-white">
+                                            {event.jobCommentCount || 0}
+                                        </td>
+                                        <td className="p-4 text-white">
+                                            {event.correctionCount || 0}
                                         </td>
                                         <td className="p-4 text-white">
                                             {event.createdAt

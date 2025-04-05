@@ -29,6 +29,8 @@ router.post('/', async (req, res) => {
     if (!event) {
       return res.status(404).json({ message: 'Event not found.' });
     }
+    event.correctionCount += 1;
+    await event.save();
 
     const newReport = new correctionReportCollection({
       correctionName,
@@ -42,6 +44,7 @@ router.post('/', async (req, res) => {
     });
 
     await newReport.save();
+
     res.status(201).json({ message: 'Correction report updating successfully' });
   } catch (error) {
     console.error('Error updating correction report:', error);

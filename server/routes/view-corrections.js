@@ -72,6 +72,16 @@ router.get('/:id([0-9a-fA-F]{24})', async (req, res) => {
 // Route to delete an correction by ID
 router.delete('/:id([0-9a-fA-F]{24})', async (req, res) => {
     try {
+        correction = await correctionReportCollection.findById(req.params.id);
+
+        const event = await eventCollection.findOne({ _id: correction.eventID });
+        if (!event) {
+            console.error('Event not found');
+            return res.status(404).json({ message: 'Event not found' });
+        }
+        event.correctionCount -= 1;
+        await event.save();
+
         await correctionReportCollection.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'Correction deleted successfully' });
     } catch (error) {

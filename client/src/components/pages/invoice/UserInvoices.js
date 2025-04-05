@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../../AuthContext";
 import { HoverBorderGradient } from '../../ui/hover-border-gradient';
+import { HoverEffect } from "../../ui/card-hover-effect";
 
 
 const UserInvoices = () => {
@@ -283,30 +284,34 @@ const UserInvoices = () => {
             <>
               {isGridView ? (
                 // GRID VIEW
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {getFilteredInvoices().map((invoice) => (
-                    <div
-                      key={invoice._id}
-                      className="bg-neutral-800 p-4 rounded shadow hover:bg-neutral-700/50 transition-colors cursor-pointer"
-                      onClick={() => {
+                <div className="w-full">
+                  <HoverEffect
+                    items={getFilteredInvoices().map((invoice) => ({
+                      title: (
+                        <div className="text-lg font-semibold text-white flex justify-between items-center pt-0">
+                          <span>{invoice.show}</span>
+                        </div>
+                      ),
+                      description: (
+                        <div className="flex flex-col space-y-2 text-sm">
+                          <p className="text-gray-300">Venue: {invoice.venue}</p>
+                          <p className="text-gray-400">Invoice #: {invoice._id}</p>
+                        </div>
+                      ),
+                      link: invoice._id
+                        ? `/user/invoices/${invoice._id}`
+                        : `/user/invoices/new?eventId=${invoice.eventId}`,
+                      _id: invoice._id || invoice.eventId,
+                      onClick: () => {
                         if (invoice._id) {
-                            navigate(`/user/invoices/${invoice._id}`);
+                          navigate(`/user/invoices/${invoice._id}`);
                         } else {
-                            navigate(`/user/invoices/new?eventId=${invoice.eventId}`);
+                          navigate(`/user/invoices/new?eventId=${invoice.eventId}`);
                         }
-                    }}
-                    >
-                      <h3 className="text-lg font-semibold text-white mb-2">
-                        {invoice.show}
-                      </h3>
-                      <p className="text-sm text-gray-300">
-                        Venue: {invoice.venue}
-                      </p>
-                      <p className="text-sm text-gray-400">
-                        Invoice #: {invoice._id}
-                      </p>
-                    </div>
-                  ))}
+                      }
+                    }))}
+                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+                  />
                 </div>
               ) : (
                 // TABLE VIEW

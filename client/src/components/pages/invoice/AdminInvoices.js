@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaTh, FaList, FaSortDown, FaSortUp, FaSort, FaSearch } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { HoverEffect } from "../../ui/card-hover-effect";
 
 const AdminInvoices = () => {
   const [invoices, setInvoices] = useState([]);
@@ -233,18 +234,26 @@ const AdminInvoices = () => {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {sortedInvoices.map((invoice) => (
-            <div
-              key={invoice._id}
-              className="p-4 bg-neutral-800 text-white rounded shadow cursor-pointer"
-              onClick={() => navigate(`/admin/invoices/${invoice._id}`)}
-            >
-              <h3 className="text-lg font-bold">{invoice.show}</h3>
-              <p className="text-sm text-gray-400">Venue: {invoice.venue}</p>
-              <p className="text-sm text-gray-400">Invoice #: {invoice._id}</p>
-            </div>
-          ))}
+        <div className="w-full">
+          <HoverEffect
+            items={sortedInvoices.map((invoice) => ({
+              title: (
+                <div className="text-lg font-bold flex justify-between items-center mt-0">
+                  <span className="mt-0">{invoice.show}</span>
+                </div>
+              ),
+              description: (
+                <div className="flex flex-col text-sm mt-0 space-y-1">
+                  <p className="text-gray-300">Venue: {invoice.venue}</p>
+                  <p className="text-gray-400">Invoice #: {invoice._id}</p>
+                </div>
+              ),
+              link: `/admin/invoices/${invoice._id}`,
+              _id: invoice._id,
+              onClick: () => navigate(`/admin/invoices/${invoice._id}`)
+            }))}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-0"
+          />
         </div>
       )}
     </div>

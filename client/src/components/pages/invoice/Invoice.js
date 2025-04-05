@@ -31,7 +31,7 @@ const Invoice = ({invoiceData}) => {
   const queryParams = new URLSearchParams(location.search);
   const eventId = queryParams.get("eventId");
   const isNewInvoice = !id && !!eventId;
-  
+  const [adminData, setAdminData] = useState(null);
 
   // If neither ID nor eventId is present, log an error for debugging
   useEffect(() => {
@@ -203,11 +203,8 @@ const Invoice = ({invoiceData}) => {
             ],
             [
               { text: 'Bill to:', bold: true },
-              { text: 'Orange Frog Productions', bold: true },
-              { text: '#280 2880 45 Ave SE' },
-              { text: 'Calgary, AB T2B 3M1' },
-              { text: 'Phone: 403-703-9218' },
-              { text: 'Email: CrewInvoice@OrangeFrogProductions.com' }
+              { text: adminData?.address || 'N/A' },
+              { text: adminData?.email || 'N/A', bold: true }
             ]
           ]
         },
@@ -367,6 +364,13 @@ const confirmDelete = async () => {
   if (!id) return; // Prevents fetching if invoice ID is missing
 
   const fetchInvoice = async () => {
+    try {
+      const adminRes = await fetch(`${process.env.REACT_APP_BACKEND}/admin/admin-profile`);
+      const adminData = await adminRes.json();
+      setAdminData(adminData);
+    } catch (err) {
+      console.error("Error fetching admin data:", err);
+    }
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND}/invoices/${id}`);
       if (!response.ok) {
@@ -750,13 +754,11 @@ const confirmDelete = async () => {
                 <p>Phone: {invoice.user.phone || "N/A"}</p>
                 <p>Email: {invoice.user.email || "N/A"}</p>
               </div>
-              <div>
+              <div className="w-2/5 ">
                 <p className="font-bold">Bill to:</p>
-                <p>Orange Frog Productions</p>
-                <p>#280 2880 45 Ave SE</p>
-                <p>Calgary, AB T2B 3M1</p>
-                <p>Phone: 403-703-9218</p>
-                <p>Email: CrewInvoice@OrangeFrogProductions.com</p>
+                <p className="whitespace-pre-line">{adminData?.address || 'N/A'}</p>
+                <p className="whitespace-pre-line">Email: {adminData?.email || 'N/A'}</p>
+
               </div>
             </div>
 

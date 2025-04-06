@@ -15,11 +15,15 @@ import CreateEvent from "./components/pages/admin/event/CreateEvent";
 import EditEvent from "./components/pages/admin/event/EditEvent";
 import AdminInvoices from "./components/pages/invoice/AdminInvoices";
 import EventDetails from "./components/pages/admin/event/EventDetails";
-
+// Correction Report Pages
 import ManageCorrections from "./components/pages/admin/corrections/ManageCorrections";
 import CorrectionDetails from "./components/pages/admin/corrections/CorrectionDetails";
 import AdminEditCorrectionReport from "./components/pages/admin/corrections/EditCorrectionReport";
 import UpdateCorrectionReportStatus from "./components/pages/admin/corrections/UpdateCorrectionReportStatus";
+// Job Comment Pages
+import AdminManageJobComments from "./components/pages/admin/job-comments/ManageJobComments";
+import AdminJobCommentDetails from "./components/pages/admin/job-comments/JobCommentDetails";
+
 
 // User Pages
 import UserDashboard from "./components/pages/freelancer/UserDashboard";
@@ -28,11 +32,15 @@ import FindJobs from "./components/pages/freelancer/jobs/FindJobs";
 import CurrentJobs from "./components/pages/freelancer/jobs/CurrentJobs";
 import UserEventDetails from "./components/pages/freelancer/jobs/EventDetails";
 import TimeCard from "./components/pages/freelancer/timecard/TimeCard";
-import CorrectionReport from "./components/pages/freelancer/report/CorrectionReport";
 import UserInvoices from "./components/pages/invoice/UserInvoices";
+// Correction Report Pages
+import CorrectionReport from "./components/pages/freelancer/report/CorrectionReport";
 import ViewCorrections from "./components/pages/freelancer/report/ManageCorrections";
 import FreelancerCorrectionDetails from "./components/pages/freelancer/report/CorrectionDetails";
 import EditCorrectionReport from "./components/pages/freelancer/report/EditCorrectionReport";
+// Job Comment Pages
+import FreelancerManageJobComments from "./components/pages/freelancer/job-comments/ManageJobComments";
+import FreelancerJobCommentDetails from "./components/pages/freelancer/job-comments/JobCommentDetails";
 
 // Invoice Page
 import Invoice from "./components/pages/invoice/Invoice";
@@ -85,6 +93,8 @@ function App() {
             <Route path="corrections/:correctionId" element={<CorrectionDetails />} />
             <Route path="corrections/edit/:id" element={<AdminEditCorrectionReport />} />
             <Route path="corrections/update-status/:id" element={<UpdateCorrectionReportStatus />} />
+            <Route path="manage-job-comments" element={<AdminManageJobComments />} />
+            <Route path="job-comments/:jobCommentId" element={<AdminJobCommentDetails />} />
             <Route path="invoices" element={<AdminInvoices />} />
             <Route path="invoices/:id" element={<Invoice />} />
           </Route>
@@ -111,6 +121,8 @@ function App() {
             <Route path="invoices/:id" element={<Invoice />} />
             <Route path="corrections/:correctionId" element={<FreelancerCorrectionDetails />} />
             <Route path="corrections/edit/:id" element={<EditCorrectionReport />} />
+            <Route path="manage-job-comments" element={<FreelancerManageJobComments />} />
+            <Route path="job-comments/:jobCommentId" element={<FreelancerJobCommentDetails />} />
           </Route>
 
           {/* Profile Setup Routes */}

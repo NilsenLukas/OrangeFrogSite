@@ -128,10 +128,21 @@ router.delete('/:id', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const jobComments = await userJobCommentCollection
-        res.status(200).json(jobComments);
+            .find({})
+            .select('-__v')  // Exclude version field
+            .lean();  // Convert to plain JavaScript objects
+        
+        const users = await userCollection.find({}).select('-__v').lean();
+        const events = await eventCollection.find({}).select('-__v').lean();
+        
+        res.status(200).json({
+            jobComments,
+            users,
+            events
+        });   
     } catch (error) {
-        console.error('Error fetching events:', error);
-        res.status(500).json({ message: 'Error fetching events' });
+        console.error('Error fetching job comments:', error);
+        res.status(500).json({ message: 'Error fetching job comments' });
     }
 });
 

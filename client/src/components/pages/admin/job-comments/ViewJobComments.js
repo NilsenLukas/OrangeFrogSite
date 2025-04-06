@@ -146,8 +146,6 @@ export default function ViewJobComments() {
             // Ensure events and jobComment.eventID exist before accessing properties
             const event = events?.find(e => e._id === jobComment.eventID);
             const user = users?.find(e => e._id === jobComment.userID);
-
-            console.log(event)
     
             return {
                 title: (

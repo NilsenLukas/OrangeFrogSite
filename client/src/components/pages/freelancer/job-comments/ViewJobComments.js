@@ -12,16 +12,15 @@ import { AuthContext } from "../../../../AuthContext";
 
 export default function ViewJobComments() {
     const navigate = useNavigate();
-    const [corrections, setCorrections] = useState([]);
+    const [jobComments, setJobComments] = useState([]);
     const [events, setEvents] = useState(null);
-    const [users, setUsers] = useState(null);
     // const [contractors, setContractors] = useState([]);
     // const [selectedContractors, setSelectedContractors] = useState([]);
     const [loading, setLoading] = useState(true);
     // const [setSaving] = useState(false);
     const [view, setView] = useState('grid');
     const [showDeletePopup, setShowDeletePopup] = useState(false);
-    const [correctionToDelete] = useState(null);
+    const [jobCommentToDelete] = useState(null);
     const [nameFilter, setNameFilter] = useState('');
     const selectRef = useRef(null);
     // const [sortField, setSortField] = useState(null);
@@ -38,12 +37,12 @@ export default function ViewJobComments() {
     const { auth } = useContext(AuthContext);
 
     useEffect(() => {
-        fetchCorrections();
+        fetchJobComments();
     }, []);
 
     useEffect(() => {
-        const handleClickOutside = (correction) => {
-            if (filterDropdownRef.current && !filterDropdownRef.current.contains(correction.target)) {
+        const handleClickOutside = (jobComment) => {
+            if (filterDropdownRef.current && !filterDropdownRef.current.contains(jobComment.target)) {
                 setShowFilterDropdown(false);
             }
         };
@@ -51,45 +50,34 @@ export default function ViewJobComments() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const fetchCorrections = async () => {
+    const fetchJobComments = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections/${auth.email}`);
-            console.log(response.data); // Debug: Check what is actually returned
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/job-comments/${auth.email}`);
     
-            // Ensure we're sorting the corrections array inside the response object
-            const sortedCorrections = response.data.corrections.sort((a, b) => {
+            // Ensure we're sorting the Job Comment array inside the response object
+            const sortedJobComments = response.data.jobComments.sort((a, b) => {
                 return new Date(b.createdAt) - new Date(a.createdAt);
             });
     
-            setCorrections(sortedCorrections);
-            setUsers(response.data.users);
+            setJobComments(sortedJobComments);
             setEvents(response.data.events);
     
             setLoading(false);
         } catch (error) {
-            console.error('Error fetching corrections:', error);
+            console.error('Error fetching job comments:', error);
             setLoading(false);
         }
     };
 
-    // const resetFilters = () => {
-    //     setFilterValues({ name: '', location: '', startDate: '', endDate: '', contractor: [] });
-    // };
-
-    // const handleDelete = (correction) => {
-    //     setCorrectionToDelete(correction);
-    //     setShowDeletePopup(true);
-    // };
-
     const confirmDelete = async () => {
         try {
-            await axios.delete(`${process.env.REACT_APP_BACKEND}/corrections/${correctionToDelete._id}`);
-            setCorrections(corrections.filter(e => e._id !== correctionToDelete._id));
+            await axios.delete(`${process.env.REACT_APP_BACKEND}/job-comments/${jobCommentToDelete._id}`);
+            setJobComments(jobComments.filter(e => e._id !== jobCommentToDelete._id));
             setShowDeletePopup(false);
-            toast.success('Correction deleted successfully!');
+            toast.success('Job comment deleted successfully!');
         } catch (error) {
-            console.error('Error deleting correction:', error);
-            toast.error('Failed to delete correction');
+            console.error('Error deleting job comment:', error);
+            toast.error('Failed to delete job comment');
         }
     };
 
@@ -115,9 +103,9 @@ export default function ViewJobComments() {
     //     setFilterValues((prev) => ({ ...prev, [name]: value }));
     // };
 
-    const getFilteredAndSortedCorrections = () => {
-        let filtered = corrections.filter(correction => {
-            return !nameFilter || correction.correctionName.toLowerCase().includes(nameFilter.toLowerCase());
+    const getFilteredAndSortedJobComments = () => {
+        let filtered = jobComments.filter(jobComment => {
+            return !nameFilter || jobComment.userID.toLowerCase().includes(nameFilter.toLowerCase());
         });
     
         if (sortConfig.key) {
@@ -142,62 +130,46 @@ export default function ViewJobComments() {
     if (loading) {
         return (
             <div className="h-screen flex justify-center items-center">
-                <p className="text-white">Loading corrections...</p>
+                <p className="text-white">Loading job comments...</p>
             </div>
         );
     }
 
-    const handleEventClick = (correctionId) => {
-        navigate(`/user/corrections/${correctionId}`);
+    const handleEventClick = (eventID) => {
+        navigate(`/user/events/${eventID}`);
     };
 
-    const formatEventsForHoverEffect = (corrections) => {
-        return corrections.map((correction) => {
-            // Ensure events and correction.eventID exist before accessing properties
-            const event = events?.find(e => e._id === correction.eventID);
-            const user = users?.find(e => e._id === correction.userID);
+    const formatEventsForHoverEffect = (jobComments) => {
+        return jobComments.map((jobComment) => {
+            // Ensure events and jobComment.eventID exist before accessing properties
+            const event = events?.find(e => e._id === jobComment.eventID);
     
             return {
                 title: (
-                    <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold">
-                            {correction.correctionName}
+                    <div className="flex gap-2 items-center text-lg ">
+                        <span className="text-neutral-400">Event:</span>
+                        <span className="font-semibold flex start">
+                            {event.eventName}
                         </span>
                     </div>
                 ),
                 description: (
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <span className="text-neutral-400 font-medium">Status:</span>
-                            <span className="ml-2 text-white">{correction.status}</span>
-                        </div>
-                        <div className="space-y-2">
-                            <span className="text-neutral-400 font-medium">Created By:</span>
-                            <span className="ml-2 text-white">{user ? user.name : 'Unknown User'}</span>
-                        </div>
-                        <div className="space-y-2">
-                            <span className="text-neutral-400 font-medium">Event:</span>
-                            <span className="ml-2 text-white">{event ? event.eventName : 'Unknown Event'}</span>
-                        </div>
-                        <div className="space-y-2">
-                            <span className="text-neutral-400 font-medium">Correction Type:</span>
-                            <span className="ml-2 text-white">{correction.requestType}</span>
-                        </div>
-                        <div className="space-y-2">
                             <span className="text-neutral-400 font-medium">Created:</span>
-                            <span className="ml-2 text-white">{new Date(correction.submittedAt).toLocaleString()}</span>
+                            <span className="ml-2 text-white">{new Date(jobComment.createdAt).toLocaleString()}</span>
                         </div>
                         <div className="space-y-2">
                             <span className="text-neutral-400 font-medium">Last Modified:</span>
-                            <span className="ml-2 text-white">{new Date(correction.updatedAt).toLocaleString()}</span>
+                            <span className="ml-2 text-white">{new Date(jobComment.updatedAt).toLocaleString()}</span>
                         </div>
                     </div>
                 ),
-                link: `/user/corrections/${correction._id}`,
-                _id: correction._id,
+                link: `/user/events/${jobComment.eventID}`,
+                _id: jobComment._id,
                 onClick: (e) => {
                     if (!e.defaultPrevented) {
-                        handleEventClick(correction._id);
+                        handleEventClick(jobComment.eventID);
                     }
                 }
             };
@@ -284,21 +256,7 @@ export default function ViewJobComments() {
 
                                         <button
                                             className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
-                                            onClick={() => handleSort('requestType')}
-                                        >
-                                            Correction Type
-                                        </button>
-
-                                        <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0"
-                                            onClick={() => handleSort('status')}
-                                        >
-                                            Status
-                                        </button>
-
-                                        <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
-                                            onClick={() => handleSort('submittedAt')}
+                                            onClick={() => handleSort('createdAt')}
                                         >
                                             Creation Date
                                         </button>
@@ -357,17 +315,17 @@ export default function ViewJobComments() {
             
 
             <div className="relative z-0 pb-8">
-                {getFilteredAndSortedCorrections().length === 0 ? (
+                {getFilteredAndSortedJobComments().length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-[50vh] text-neutral-400">
                         <span className="text-6xl mb-4">😢</span>
-                        <p className="text-xl">No corrections found</p>
-                        <p className="text-sm mt-2">Try adjusting your filters or create a new correction</p>
+                        <p className="text-xl">No job comments found</p>
+                        <p className="text-sm mt-2">Try adjusting your filters</p>
                     </div>
                 ) : (
                     view === 'grid' ? (
                         <div className="max-w-full mx-auto">
                             <HoverEffect 
-                                items={formatEventsForHoverEffect(getFilteredAndSortedCorrections())} 
+                                items={formatEventsForHoverEffect(getFilteredAndSortedJobComments())} 
                                 className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-auto"
                             />
                         </div>
@@ -376,36 +334,6 @@ export default function ViewJobComments() {
                             <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
                             <thead className="bg-neutral-700">
                                 <tr>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('correctionName')}
-                                    >
-                                        <div className="flex items-center">
-                                            Correction Name
-                                            <span className="ml-2">{getSortIcon('correctionName')}</span>
-                                        </div>
-                                    </th>
-
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('status')}
-                                    >
-                                        <div className="flex items-center">
-                                            Status
-                                            <span className="ml-2">{getSortIcon('status')}</span>
-                                        </div>
-                                    </th>
-
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('userID')}
-                                    >
-                                        <div className="flex items-center">
-                                            Created By
-                                            <span className="ml-2">{getSortIcon('userID')}</span>
-                                        </div>
-                                    </th>
-
                                     <th 
                                         className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
                                         onClick={() => handleSort('eventID')}
@@ -418,21 +346,11 @@ export default function ViewJobComments() {
 
                                     <th 
                                         className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('requestType')}
-                                    >
-                                        <div className="flex items-center">
-                                            Correction Type
-                                            <span className="ml-2">{getSortIcon('requestType')}</span>
-                                        </div>
-                                    </th>
-
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('submittedAt')}
+                                        onClick={() => handleSort('createdAt')}
                                     >
                                         <div className="flex items-center">
                                             Created
-                                            <span className="ml-2">{getSortIcon('submittedAt')}</span>
+                                            <span className="ml-2">{getSortIcon('createdAt')}</span>
                                         </div>
                                     </th>
                                     <th 
@@ -448,32 +366,20 @@ export default function ViewJobComments() {
                                 </tr>
                             </thead>
                             <tbody>
-                                    {getFilteredAndSortedCorrections().map((correction) => (
+                                    {getFilteredAndSortedJobComments().map((jobComment) => (
                                         <tr 
-                                            key={correction._id} 
+                                            key={jobComment._id} 
                                             className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
-                                            onClick={() => handleEventClick(correction._id)}
+                                            onClick={() => handleEventClick(jobComment._id)}
                                         >
                                             <td className="p-4 text-white">
-                                                {correction.correctionName}
+                                                {events?.find(event => event._id === jobComment.eventID)?.eventName}
                                             </td>
                                             <td className="p-4 text-white">
-                                                {correction.status}
+                                                {new Date(jobComment.createdAt).toLocaleString()}
                                             </td>
                                             <td className="p-4 text-white">
-                                                {users?.find(user => user._id === correction.userID)?.name}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {events?.find(event => event._id === correction.eventID)?.eventName}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {correction.requestType}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {new Date(correction.submittedAt).toLocaleString()}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {new Date(correction.updatedAt).toLocaleString()}
+                                                {new Date(jobComment.updatedAt).toLocaleString()}
                                             </td>
                                         </tr>
                                     ))}
@@ -490,7 +396,7 @@ export default function ViewJobComments() {
                     <div className="bg-neutral-900 p-8 rounded-md shadow-lg w-full max-w-md border border-neutral-700">
                         <h2 className="text-red-500 text-2xl mb-4">Are you sure you want to delete this Correction?</h2>
                         <p className="text-neutral-300 mb-6">
-                            This action cannot be undone. Once deleted, this correction's data will be permanently removed from the system.
+                            This action cannot be undone. Once deleted, this job comment's data will be permanently removed from the system.
                         </p>
                         <div className="flex justify-end gap-4">
                             <button 

@@ -40,7 +40,6 @@ import FreelancerCorrectionDetails from "./components/pages/freelancer/report/Co
 import EditCorrectionReport from "./components/pages/freelancer/report/EditCorrectionReport";
 // Job Comment Pages
 import FreelancerManageJobComments from "./components/pages/freelancer/job-comments/ManageJobComments";
-import FreelancerJobCommentDetails from "./components/pages/freelancer/job-comments/JobCommentDetails";
 
 // Invoice Page
 import Invoice from "./components/pages/invoice/Invoice";
@@ -122,7 +121,6 @@ function App() {
             <Route path="corrections/:correctionId" element={<FreelancerCorrectionDetails />} />
             <Route path="corrections/edit/:id" element={<EditCorrectionReport />} />
             <Route path="manage-job-comments" element={<FreelancerManageJobComments />} />
-            <Route path="job-comments/:jobCommentId" element={<FreelancerJobCommentDetails />} />
           </Route>
 
           {/* Profile Setup Routes */}

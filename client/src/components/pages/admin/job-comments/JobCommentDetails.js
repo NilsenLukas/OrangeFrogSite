@@ -6,10 +6,10 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import Modal from '../../../Modal';
 
-export default function CorrectionDetails() {
-    const { correctionId } = useParams();
+export default function JobCommentDetails() {
+    const { jobCommentId } = useParams();
     const navigate = useNavigate();
-    const [correction, setCorrection] = useState(null);
+    const [jobComment, setJobComment] = useState(null);
     const [event, setEvent] = useState(null);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -22,47 +22,23 @@ export default function CorrectionDetails() {
         transition: { duration: 0.6 }
     };
 
-    const fetchCorrectionDetails = async () => {
+    const fetchJobCommentDetails = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections/${correctionId}`);
-            setCorrection(response.data.correction);
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/job-comments/${jobCommentId}`);
+            setJobComment(response.data.jobComment);
             setUser(response.data.userName);
             setEvent(response.data.event);
             setLoading(false);
         } catch (error) {
-            console.error('Error fetching correction details:', error);
-            setError(error.response?.data?.message || 'Error fetching correction details');
+            console.error('Error fetching job comment details:', error);
+            setError(error.response?.data?.message || 'Error fetching job comment details');
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchCorrectionDetails();
-    }, [correctionId]);
-
-    // const handleEdit = (correction) => {
-    //     navigate(`/admin/corrections/edit/${correction._id}`, { state: { from: `/admin/corrections/${correction._id}` } });
-    // };
-
-    const handleUpdateStatus = (correction) => {
-        navigate(`/admin/corrections/update-status/${correction._id}`, { state: { from: `/admin/corrections/${correction._id}` } });
-    };
-
-    // const handleDelete = () => {
-    //     setShowDeletePopup(true);
-    // };
-
-    const confirmDelete = async () => {
-        try {
-            await axios.delete(`${process.env.REACT_APP_BACKEND}/corrections/${correctionId}`);
-            setShowDeletePopup(false);
-            toast.success('Correction deleted successfully!');
-            navigate('/admin/manage-corrections');
-        } catch (error) {
-            console.error('Error deleting correction:', error);
-            toast.error('Failed to delete correction');
-        }
-    };
+        fetchJobCommentDetails();
+    }, [jobCommentId]);
 
     if (loading) {
         return <div className="text-white text-center mt-8">Loading...</div>;
@@ -72,8 +48,8 @@ export default function CorrectionDetails() {
         return <div className="text-red-500 text-center mt-8">{error}</div>;
     }
 
-    if (!correction) {
-        return <div className="text-white text-center mt-8">Correction not found</div>;
+    if (!jobComment) {
+        return <div className="text-white text-center mt-8">Job comment not found</div>;
     }
 
     return (
@@ -89,11 +65,11 @@ export default function CorrectionDetails() {
                 className="flex justify-between items-center"
             >
                 <Link 
-                    to="/admin/manage-corrections"
+                    to="/admin/manage-job-comments"
                     className="mb-8 flex items-center text-neutral-400 hover:text-white transition-colors group"
                 >
                     <FaArrowLeft className="mr-2 transform group-hover:-translate-x-1 transition-transform" />
-                    Back to Corrections
+                    Back to Job Comments
                 </Link>
             </motion.div>
 
@@ -102,11 +78,11 @@ export default function CorrectionDetails() {
                 {...fadeIn}
             >   
                 <div className='mb-8 border-b border-neutral-700 pb-4 flex justify-between items-center'>
-                    <motion.h1 
+                <motion.h1 
                         className="text-4xl font-bold text-white "
                         {...fadeIn}
                     >
-                        {correction.correctionName}
+                        {event.eventName}
                     </motion.h1>
                 </div>
                 
@@ -123,18 +99,6 @@ export default function CorrectionDetails() {
                                 Event Details
                             </h2>
                             <div className="space-y-3 text-neutral-300">
-                                <p className="flex items-center">
-                                    <FaInfoCircle className="mr-2 text-grey-400" />
-                                    <span className="font-medium">Event:</span>
-                                    <span className="ml-2 text-white">
-                                        <Link 
-                                            to={`/admin/events/${event._id}`}
-                                            className="hover:text-blue-500 transition-colors group"
-                                        >
-                                            <u>{event.eventName}</u>
-                                        </Link>
-                                    </span>
-                                </p>
                                 <p className="flex items-center">
                                     <FaMapMarkerAlt className="mr-2 text-red-400" />
                                     <span className="font-medium">Location:</span>
@@ -160,6 +124,14 @@ export default function CorrectionDetails() {
                                         </div>
                                     </div>
                                 </div>
+                                <p className="flex items-center">
+                                    <span className="font-medium">Created:</span>
+                                    <span className="ml-2">{new Date(event.createdAt).toLocaleString()}</span>
+                                </p>
+                                <p className="flex items-center">
+                                    <span className="font-medium">Last Modified:</span>
+                                    <span className="ml-2">{new Date(event.updatedAt).toLocaleString()}</span>
+                                </p>
                             </div>
                         </div>
                     </motion.div>
@@ -173,7 +145,7 @@ export default function CorrectionDetails() {
                         <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-6">
                             <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
                                 <FaInfoCircle className="mr-2 text-blue-400" />
-                                Correction Details
+                                Job Comment Details
                             </h2>
                             <div className="space-y-3 text-neutral-300">
                                 <p className="flex items-center">
@@ -181,16 +153,12 @@ export default function CorrectionDetails() {
                                     <span className="ml-2">{user}</span>
                                 </p>
                                 <p className="flex items-center">
-                                    <span className="font-medium">Correction Type:</span>
-                                    <span className="ml-2">{correction.requestType}</span>
-                                </p>
-                                <p className="flex items-center">
                                     <span className="font-medium">Created:</span>
-                                    <span className="ml-2">{new Date(correction.submittedAt).toLocaleString()}</span>
+                                    <span className="ml-2">{new Date(jobComment.createdAt).toLocaleString()}</span>
                                 </p>
                                 <p className="flex items-center">
                                     <span className="font-medium">Last Modified:</span>
-                                    <span className="ml-2">{new Date(correction.updatedAt).toLocaleString()}</span>
+                                    <span className="ml-2">{new Date(jobComment.updatedAt).toLocaleString()}</span>
                                 </p>
                             </div>
                         </div>
@@ -204,63 +172,16 @@ export default function CorrectionDetails() {
                     <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-6">
                         <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
                             <FaInfoCircle className="mr-2 text-blue-400" />
-                            Description
+                            Job Comment
                         </h2>
                         <div className="space-y-3 text-neutral-300">
                             <p className="flex items-center">
-                                <span className="ml-2">{correction.description}</span>
+                                <span className="ml-2">{jobComment.jobComments}</span>
                             </p>
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-neutral-800 rounded-lg p-6">
-                    <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-6">
-                        <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-                            <FaInfoCircle className="mr-2 text-blue-400" />
-                            Status: {correction.status}
-                        </h2>
-                        <div className="space-y-3 text-neutral-300">
-                            <p className="flex items-center">
-                                <span className="ml-2">{correction.additionalComments}</span>
-                            </p>
-                        </div>
-                        <div className="flex justify-center">
-                            <button
-                                onClick={() => handleUpdateStatus(correction)}
-                                className="flex justify-center items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                            >
-                                <FaEdit />
-                                <span>Update Status</span>
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-
-            {showDeletePopup && (
-                <Modal>
-                    <div className="bg-neutral-900 p-8 rounded-md shadow-lg w-full max-w-md border border-neutral-700">
-                        <h2 className="text-red-500 text-2xl mb-4">Are you sure you want to delete this Correction?</h2>
-                        <p className="text-neutral-300 mb-6">
-                            This action cannot be undone. Once deleted, this correction's data will be permanently removed from the system.
-                        </p>
-                        <div className="flex justify-end gap-4">
-                            <button 
-                                onClick={() => setShowDeletePopup(false)} 
-                                className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button 
-                                onClick={confirmDelete} 
-                                className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-full transition-colors"
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                </Modal>
-            )}
         </motion.div>
     );
 }

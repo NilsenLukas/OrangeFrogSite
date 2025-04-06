@@ -466,7 +466,7 @@ export default function EventDetails() {
                         </div>
                     </motion.div>
                 </div>
-
+                {event?.acceptedContractors?.some(contractor => contractor.toString() === auth.userId) && (
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="col-span-2">
                         <div className='flex justify-between items-center mt-8'>
@@ -514,7 +514,9 @@ export default function EventDetails() {
                         </button>
                     </div> */}
                 </form>
+                )}
 
+                {event?.approvedContractors?.some(contractor => contractor.toString() === auth.userId) && (
                 <div className="flex items-center justify-between mb-0 mt-8">
                     <h2 className="text-xl font-semibold text-white">Correction Reports:</h2>
                     <Link to={`/user/corrections/create?eventID=${eventID}`}>
@@ -526,7 +528,8 @@ export default function EventDetails() {
                         </button>
                     </Link>
                 </div>
-
+                )}
+                {event?.approvedContractors?.some(contractor => contractor.toString() === auth.userId) && (
                 <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-0'>
                 <div className="mt-2">
                     <div className="w-full h-full overflow-auto px-5">
@@ -634,6 +637,7 @@ export default function EventDetails() {
             </div>
             </div>
             </div>
+            )}
             </motion.div>
 
             {showDeletePopup && (

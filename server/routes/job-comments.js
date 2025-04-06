@@ -65,6 +65,24 @@ router.post('/:eventID/:email', async (req, res) => {
     }
 });
 
+// Route to get all job comments of that event
+router.get('/event/:eventId', async (req, res) => {
+    try {
+        const eventID = req.params.eventId;
+
+        const jobComments = await userJobCommentCollection.find({
+            eventID: eventID,
+        });
+        
+        res.status(200).json({
+            jobComments
+        });        
+    } catch (error) {
+        console.error('Error fetching job comments:', error);
+        res.status(500).json({ message: 'Error fetching job comments' });
+    }
+});
+
 // Updates Job comment
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
@@ -146,6 +164,31 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Route to get a single event
+router.get('/:id([0-9a-fA-F]{24})', async (req, res) => {
+    try {
+        const jobComment = await userJobCommentCollection.findById(req.params.id)
+
+        const user = await userCollection.findById(jobComment.userID);
+
+        const event = await eventCollection.findById(jobComment.eventID);
+            
+        if (!jobComment) {
+            return res.status(404).json({ message: 'Job comment not found' });
+        }
+        
+        res.status(200).json({
+            jobComment,
+            userName: user.name,
+            event
+        });
+    } catch (error) {
+        console.error('Error fetching job comment:', error);
+        res.status(500).json({ message: 'Error fetching job comment details' });
+    }
+});
+
+
 // Route to get all corrections of that user
 router.get('/:email', async (req, res) => {
     try {
@@ -197,7 +240,5 @@ router.get('/:eventID/:email', async (req, res) => {
         res.status(500).json({ message: 'Error fetching job comment information' });
     }
 });
-
-
 
 module.exports = router;

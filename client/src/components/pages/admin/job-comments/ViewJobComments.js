@@ -53,7 +53,6 @@ export default function ViewJobComments() {
     const fetchJobComments = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/job-comments`);
-            console.log(response.data); // Debug: Check what is actually returned
     
             // Ensure we're sorting the Job Comment array inside the response object
             const sortedJobComments = response.data.jobComments.sort((a, b) => {

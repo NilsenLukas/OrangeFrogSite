@@ -29,7 +29,8 @@ const invoicesRoute = require('./routes/invoices');
 const viewCorrectionsRoute = require("./routes/view-corrections");
 const adminRoutes = require("./routes/admin");
 const timeTrackingRoutes = require("./routes/timeTracking");
-const jobCommentRoutes = require("./routes/job-comments")
+const jobCommentRoutes = require("./routes/job-comments");
+const notificationRoutes = require("./routes/notifications");
 
 app.use("/users", usersRoute);
 app.use("/update-user", userProfileRoute);
@@ -52,6 +53,7 @@ app.use("/corrections", viewCorrectionsRoute);
 app.use("/time-tracking", timeTrackingRoutes);
 app.use("/admin", adminRoutes);
 app.use("/job-comments", jobCommentRoutes)
+app.use("/notifications", notificationRoutes)
 
 app.use("/health", (req, res) => {
   res.status(200).send("App is running!");

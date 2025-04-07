@@ -45,6 +45,17 @@ router.post('/', async (req, res) => {
 
     await newReport.save();
 
+    const user = await userCollection.findById(userID);
+
+    const newNotification = new notificationCollection({
+      eventID: eventID,
+      userID: userID,
+      description: `<a href="/admin/corrections/${newReport?._id}" class="hover:text-blue-500 transition-colors group"><u>New Correction Report</u></a> by ${user?.name} for <a href="/admin/events/${event?._id}" class="hover:text-blue-500 transition-colors group"><u>${event?.eventName}</u></a>`,
+      forAdmin: true
+    });
+
+    await newNotification.save();
+
     res.status(201).json({ message: 'Correction report updating successfully' });
   } catch (error) {
     console.error('Error updating correction report:', error);

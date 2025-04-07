@@ -87,9 +87,6 @@ const CorrectionReport = () => {
     }
 
     try {
-      formDataToSend.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
-      });
       await axios.post(
         `${process.env.REACT_APP_BACKEND}/correction-report`,
         formattedData,

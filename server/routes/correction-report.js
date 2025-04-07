@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
-const { correctionReportCollection, eventCollection, userCollection } = require('../mongo');
+const { correctionReportCollection, eventCollection, userCollection, notificationCollection } = require('../mongo');
 // Nodemailer transporter setup
 const transporter = nodemailer.createTransport({
   service: 'gmail',

@@ -21,6 +21,7 @@ export default function EventDetails() {
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [view, setView] = useState('grid');
     const [corrections, setCorrections] = useState([]);
+    const [jobComments, setJobComments] = useState([]);
     const [nameFilter, setNameFilter] = useState('');
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [events, setEvents] = useState(null);
@@ -49,7 +50,6 @@ export default function EventDetails() {
     const fetchCorrections = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections/event/${eventId}`);
-            console.log(response.data); // Debug: Check what is actually returned
     
             // Ensure we're sorting the corrections array inside the response object
             const sortedCorrections = response.data.corrections.sort((a, b) => {
@@ -67,9 +67,28 @@ export default function EventDetails() {
         }
     };
 
+    const fetchJobComments = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/job-comments/event/${eventId}`);
+    
+            // Ensure we're sorting the Job Comment array inside the response object
+            const sortedJobComments = response.data.jobComments.sort((a, b) => {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+    
+            setJobComments(sortedJobComments);
+    
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching job comments:', error);
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchCorrections();
         fetchEventDetails();
+        fetchJobComments();
     }, [eventId]);
 
     const handleContractorClick = (contractor) => {
@@ -165,6 +184,69 @@ export default function EventDetails() {
         return filtered;
     };
 
+    // Filtering only by name
+    const getFilteredAndSortedJobComments = () => {
+        let filtered = jobComments.filter(jobComment => {
+            return !nameFilter || jobComment.userID.toLowerCase().includes(nameFilter.toLowerCase());
+        });
+    
+        if (sortConfig.key) {
+            filtered.sort((a, b) => {
+                const aVal = a[sortConfig.key];
+                const bVal = b[sortConfig.key];
+    
+                if (typeof aVal === 'string') {
+                    return sortConfig.direction === 'ascending'
+                        ? aVal.localeCompare(bVal)
+                        : bVal.localeCompare(aVal);
+                }
+                if (typeof aVal === 'number' || aVal instanceof Date) {
+                    return sortConfig.direction === 'ascending' ? aVal - bVal : bVal - aVal;
+                }
+                return 0;
+            });
+        }
+        return filtered;
+    };
+
+    const formatJobCommentsForHoverEffect = (jobComments) => {
+        return jobComments.map((jobComment) => {
+            // Ensure events and jobComment.eventID exist before accessing properties
+            const event = events?.find(e => e._id === jobComment.eventID);
+            const user = users?.find(e => e._id === jobComment.userID);
+    
+            return {
+                title: (
+                    <div className="flex gap-2 items-center text-lg ">
+                        <span className="text-neutral-400">User:</span>
+                        <span className="font-semibold flex start">
+                            {user?.name}
+                        </span>
+                    </div>
+                ),
+                description: (
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <span className="text-neutral-400 font-medium">Created:</span>
+                            <span className="ml-2 text-white">{new Date(jobComment.createdAt).toLocaleString()}</span>
+                        </div>
+                        <div className="space-y-2">
+                            <span className="text-neutral-400 font-medium">Last Modified:</span>
+                            <span className="ml-2 text-white">{new Date(jobComment.updatedAt).toLocaleString()}</span>
+                        </div>
+                    </div>
+                ),
+                link: `/admin/job-comments/${jobComment._id}`,
+                _id: jobComment._id,
+                onClick: (e) => {
+                    if (!e.defaultPrevented) {
+                        handleEventClick(jobComment._id);
+                    }
+                }
+            };
+        });
+    };
+
     const formatEventsForHoverEffect = (corrections) => {
         return corrections.map((correction) => {
             // Ensure events and correction.eventId exist before accessing properties
@@ -208,6 +290,10 @@ export default function EventDetails() {
 
     const handleEventClick = (correctionId) => {
         navigate(`/admin/corrections/${correctionId}`);
+    };
+
+    const handleJobCommentClick = (jobCommentId) => {
+        navigate(`/admin/job-comments/${jobCommentId}`);
     };
 
     if (loading) {
@@ -418,6 +504,115 @@ export default function EventDetails() {
                 </div>
             </div>
 
+            <h2 className="text-xl font-semibold text-white mb-4 mt-8">Job Comments</h2>
+
+            <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-2'>
+                <div className="mt-8">
+                        <div className="w-full h-full overflow-auto px-5">
+                    <div className="flex items-center gap-2 relative">
+                    
+                    <div className="hidden md:flex gap-2">
+                        <button
+                            onClick={() => setView('grid')}
+                            className={`p-2 mt-0 rounded transition-colors ${
+                                view === 'grid' 
+                                    ? 'bg-neutral-700 text-white' 
+                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                            }`}
+                        >
+                            <FaTh className="text-xl" />
+                        </button>
+                        <button
+                            onClick={() => setView('list')}
+                            className={`p-2 mt-0 rounded transition-colors ${
+                                view === 'list' 
+                                    ? 'bg-neutral-700 text-white' 
+                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                            }`}
+                        >
+                            <FaList className="text-xl" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="relative z-0 pb-8">
+                {getFilteredAndSortedJobComments().length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-[50vh] text-neutral-400">
+                        <span className="text-6xl mb-4">😢</span>
+                        <p className="text-xl">No job comments found</p>
+                    </div>
+                ) : (
+                    view === 'grid' ? (
+                        <div className="max-w-full mx-auto">
+                            <HoverEffect 
+                                items={formatJobCommentsForHoverEffect(getFilteredAndSortedJobComments())} 
+                                className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-auto"
+                            />
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
+                            <thead className="bg-neutral-700">
+                                <tr>
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('userID')}
+                                    >
+                                        <div className="flex items-center">
+                                            User
+                                            <span className="ml-2">{getSortIcon('userID')}</span>
+                                        </div>
+                                    </th>
+
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('createdAt')}
+                                    >
+                                        <div className="flex items-center">
+                                            Created
+                                            <span className="ml-2">{getSortIcon('createdAt')}</span>
+                                        </div>
+                                    </th>
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('updatedAt')}
+                                    >
+                                        <div className="flex items-center">
+                                            Last Modified
+                                            <span className="ml-2">{getSortIcon('updatedAt')}</span>
+                                        </div>
+                                    </th>
+                                
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    {getFilteredAndSortedJobComments().map((jobComment) => (
+                                        <tr 
+                                            key={jobComment._id} 
+                                            className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
+                                            onClick={() => handleEventClick(jobComment._id)}
+                                        >
+                                            <td className="p-4 text-white">
+                                                {users?.find(user => user._id === jobComment.userID)?.name}
+                                            </td>
+                                            <td className="p-4 text-white">
+                                                {new Date(jobComment.createdAt).toLocaleString()}
+                                            </td>
+                                            <td className="p-4 text-white">
+                                                {new Date(jobComment.updatedAt).toLocaleString()}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )
+                )}
+            </div>
+            </div>
+            </div>
+
             <h2 className="text-xl font-semibold text-white mb-4 mt-8">Correction Reports</h2>
 
             <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-2'>
@@ -537,18 +732,6 @@ export default function EventDetails() {
                         </div>
                     )
                 )}
-                
-                <div className="flex justify-center">
-                    <Link to={`/user/corrections/create?eventId=${eventId}`}>
-                        <HoverBorderGradient
-                            containerClassName="rounded-full"
-                            className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2"
-                        >
-                            <span className="text-lg mr-1">+</span> 
-                            <span>Create Correction Report</span>
-                        </HoverBorderGradient>
-                    </Link>
-                </div>
             </div>
             </div>
             </div>

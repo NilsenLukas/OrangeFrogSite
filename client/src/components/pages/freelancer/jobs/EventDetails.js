@@ -74,7 +74,7 @@ export default function EventDetails() {
 
     const fetchJobCommentDetails = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/events/job-comments/${eventID}/${auth.email}`);
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/job-comments/${eventID}/${auth.email}`);
             
             if (response.data) {
                 setComment(response.data);
@@ -160,7 +160,7 @@ export default function EventDetails() {
         try {
             if (!comment) {
                 const response = await axios.post(
-                    `${process.env.REACT_APP_BACKEND}/events/job-comments/${eventID}/${auth.email}`,
+                    `${process.env.REACT_APP_BACKEND}/job-comments/${eventID}/${auth.email}`,
                     formattedData,
                     { headers: { 'Content-Type': 'application/json' } }
                 );
@@ -168,7 +168,7 @@ export default function EventDetails() {
                 setComment(response.data); // Make sure to set the updated comment
             } else {
                 const response = await axios.put(
-                    `${process.env.REACT_APP_BACKEND}/events/job-comments/${comment._id}`,
+                    `${process.env.REACT_APP_BACKEND}/job-comments/${comment._id}`,
                     formattedData,
                     { headers: { 'Content-Type': 'application/json' } }
                 );
@@ -201,7 +201,7 @@ export default function EventDetails() {
     const confirmDelete = async () => {
         try {
             if (comment) {
-                await axios.delete(`${process.env.REACT_APP_BACKEND}/events/job-comments/${comment._id}`);
+                await axios.delete(`${process.env.REACT_APP_BACKEND}/job-comments/${comment._id}`);
                 setShowDeletePopup(false);
                 setFormData({ jobComments: '' });
                 setComment(null); // Reset the local state
@@ -466,7 +466,7 @@ export default function EventDetails() {
                         </div>
                     </motion.div>
                 </div>
-
+                {event?.acceptedContractors?.some(contractor => contractor.toString() === auth.userId) && (
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="col-span-2">
                         <div className='flex justify-between items-center mt-8'>
@@ -514,7 +514,9 @@ export default function EventDetails() {
                         </button>
                     </div> */}
                 </form>
+                )}
 
+                {event?.approvedContractors?.some(contractor => contractor.toString() === auth.userId) && (
                 <div className="flex items-center justify-between mb-0 mt-8">
                     <h2 className="text-xl font-semibold text-white">Correction Reports:</h2>
                     <Link to={`/user/corrections/create?eventID=${eventID}`}>
@@ -526,7 +528,8 @@ export default function EventDetails() {
                         </button>
                     </Link>
                 </div>
-
+                )}
+                {event?.approvedContractors?.some(contractor => contractor.toString() === auth.userId) && (
                 <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-0'>
                 <div className="mt-2">
                     <div className="w-full h-full overflow-auto px-5">
@@ -634,6 +637,7 @@ export default function EventDetails() {
             </div>
             </div>
             </div>
+            )}
             </motion.div>
 
             {showDeletePopup && (
@@ -677,7 +681,7 @@ export default function EventDetails() {
                         <p className="text-neutral-300 mb-6">
                             {confirmationType === "apply"
                                 ? "By applying to this event, you acknowledge that if approved, you will be required to work this event and cannot reject it later. Are you sure you want to apply?"
-                                : "Once your end your application to this event, it will be permanently removed from your available jobs. Are you sure you want to end your application to this event?"}
+                                : "Are you sure you want to end your application to this event?"}
                         </p>
 
                         <div className="flex justify-end space-x-4">

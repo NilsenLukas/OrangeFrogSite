@@ -52,7 +52,9 @@ const eventSchema = new mongoose.Schema({
     approvedContractors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'userCollection' }],
     invoiceGenerated: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
+    updatedAt: { type: Date, default: Date.now },
+    jobCommentCount: { type: Number, default: 0 },
+    correctionCount: { type: Number, default: 0 },
 });
 
 const eventCollection = mongoose.model('eventCollection', eventSchema);
@@ -103,9 +105,10 @@ const correctionReportCollection = mongoose.model('correctionReportCollection', 
 
 const notificationSchema = new mongoose.Schema({
     userID: { type: String, required: true },
-    subject: { type: String, required: true },
+    eventID: { type: String, required: true },
     description: { type: String, required: true },
     hasBeenOpened: { type: Boolean, default: false },
+    forAdmin: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
 });
 

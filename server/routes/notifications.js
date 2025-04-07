@@ -35,8 +35,6 @@ router.get('/:email', async (req, res) => {
         });
         
         const events = await eventCollection.find({}).select('-__v').lean();
-            
-        console.log("Corrections fetched from DB:", corrections);
         
         res.status(200).json({
             notifications,

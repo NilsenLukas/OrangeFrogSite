@@ -301,15 +301,19 @@ export default function FindJobs() {
         <div className="flex flex-col items-center mb-8">
             <div className="flex justify-between items-center w-full mt-4">
                 <div className="flex gap-4">
-                    <div className="relative">
+                    <div className="relative flex items-center mt-5">
                         <input
                             type="text"
-                            placeholder="Search by Job Name"
+                            placeholder="Search by name"
                             value={nameFilter}
                             onChange={(e) => setNameFilter(e.target.value)}
-                            className="px-4 py-2 bg-neutral-800 text-white rounded transition-colors outline-none w-7/9 mt-5"
+                            className="w-40 md:w-54 lg:w-64 px-4 pr-10 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40"
+                            style={{
+                                transition: 'width 0.3s ease',
+                                height: '2.5rem', 
+                            }}
                         />
-                        
+                        <FaSearch className="absolute right-3 text-white/50" />
                     </div>
                
                     <AnimatePresence>
@@ -341,7 +345,7 @@ export default function FindJobs() {
                                 transition={{ duration: 0.3 }}
                                 className="flex items-center gap-3 mt-5"
                             >
-                                <span className="text-white whitespace-nowrap">Sort by:</span>
+                                <span className="text-white text-small whitespace-nowrap">Sort by:</span>
 
                                 <button
                                     className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 

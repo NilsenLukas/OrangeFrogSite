@@ -268,15 +268,19 @@ const CurrentJobs = () => {
             </h1>
             <div className="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <div className="relative mt-5">
+                    <div className="relative flex items-center mt-5">
                         <input
                             type="text"
-                            placeholder="Search events..."
+                            placeholder="Search by name"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="px-4 py-2 bg-neutral-800 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-40 md:w-54 lg:w-64 px-4 pr-10 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40"
+                            style={{
+                                transition: 'width 0.3s ease',
+                                height: '2.5rem', 
+                            }}
                         />
-                        <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
+                        <FaSearch className="absolute right-3 text-white/50" />
                     </div>
                     <AnimatePresence>
                         {!showSortOptions && (
@@ -356,7 +360,7 @@ const CurrentJobs = () => {
                         )}
                     </AnimatePresence>
                 </div>
-                <div className="hidden md:flex gap-2">
+                <div className="hidden md:flex gap-2 mt-5">
                     <button
                         onClick={() => setIsGridView(true)}
                         className={`p-2 mt-0 rounded transition-colors ${
@@ -432,7 +436,7 @@ const CurrentJobs = () => {
                                     ? "No past events found."
                                     : "No events match your current filters."}
                     </p>
-                    {timeFilter !== 'future' && (
+                    {/* {timeFilter !== 'future' && (
                         <button 
                             onClick={() => setTimeFilter('future')}
                             className="mt-4 px-4 py-2 bg-neutral-800 rounded-lg text-white hover:bg-neutral-700 transition-colors"
@@ -440,6 +444,14 @@ const CurrentJobs = () => {
                             Show Future Events
                         </button>
                     )}
+                    {timeFilter !== 'all' && (
+                        <button 
+                            onClick={() => setTimeFilter('all')}
+                            className="mt-4 px-4 py-2 bg-neutral-800 rounded-lg text-white hover:bg-neutral-700 transition-colors ml-3"
+                        >
+                            Clear Time Filter
+                        </button>
+                    )} */}
                 </div>
             ) : (
                 <>

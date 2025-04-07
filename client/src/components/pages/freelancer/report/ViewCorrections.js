@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import axios from 'axios';
-import { FaList, FaEdit, FaTrashAlt, FaSort, FaTh, FaSortUp, FaSortDown } from 'react-icons/fa';
+import { FaList, FaEdit, FaTrashAlt, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch } from 'react-icons/fa';
 // import MultiSelect from './MultiSelect';
 import { toast } from 'sonner';
 import Modal from "../../../Modal";
@@ -280,22 +280,28 @@ export default function ViewCorrections() {
 
     return (
         <div className="w-full h-full overflow-auto px-5">
-            <div className="flex justify-between items-center sticky top-0 bg-neutral-900 py-4 z-50">
+            <div className="flex justify-between items-center sticky top-0 bg-neutral-900  z-50">
                 <div className="flex items-center gap-4">
 
-                    <div className='flex items-center gap-3 mt-3'>
+                    <div className='flex items-center gap-3 mt-5'>
                         {/* Name filter input */}
-                        <input
-                            type="text"
-                            placeholder="Search by Name"
-                            value={nameFilter}
-                            onChange={(e) => setNameFilter(e.target.value)}
-                            className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded transition-colors outline-none mt-2"
-                            style={{ minWidth: "150px" }}
-                        />
+                        <div className="relative flex items-center">
+                            <input
+                                type="text"
+                                placeholder="Search by name"
+                                value={nameFilter}
+                                onChange={(e) => setNameFilter(e.target.value)}
+                                className="w-40 md:w-54 lg:w-64 px-4 pr-10 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40"
+                                style={{
+                                    transition: 'width 0.3s ease',
+                                    height: '2.5rem', 
+                                }}
+                            />
+                            <FaSearch className="absolute right-3 text-white/50" />
+                        </div>
 
                         {/* Sort dropdown */}
-                        <div className="flex items-center gap-3 mt-2">
+                        <div className="flex items-center gap-3 ">
                             <AnimatePresence>
                                 {!showSortOptions && (
                                     <motion.button
@@ -325,41 +331,41 @@ export default function ViewCorrections() {
                                         transition={{ duration: 0.3 }}
                                         className="flex items-center gap-3"
                                     >
-                                        <span className="text-white whitespace-nowrap">Sort by:</span>
+                                        <span className="text-white text-sm whitespace-nowrap">Sort by:</span>
 
                                         <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0"
+                                            className="px-4 py-2 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0"
                                             onClick={() => handleSort('correctionName')}
                                         >
                                             Name
                                         </button>
 
                                         <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
+                                            className="px-4 py-2 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
                                             onClick={() => handleSort('requestType')}
                                         >
                                             Correction Type
                                         </button>
 
                                         <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0"
+                                            className="px-4 py-2 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0"
                                             onClick={() => handleSort('status')}
                                         >
                                             Status
                                         </button>
 
                                         <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
+                                            className="px-4 py-2 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
                                             onClick={() => handleSort('submittedAt')}
                                         >
                                             Creation Date
                                         </button>
 
                                         <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
+                                            className="px-4 py-2 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
                                             onClick={() => handleSort('updatedAt')}
                                         >
-                                            Last Modified Date
+                                            Last Modified
                                         </button>
 
                                         <motion.button
@@ -384,7 +390,7 @@ export default function ViewCorrections() {
                 
                 <div className="flex items-center gap-2 relative">
 
-                    <div className="hidden md:flex gap-2">
+                    <div className="hidden md:flex gap-2 mt-5">
                         <button
                             onClick={() => setView('grid')}
                             className={`p-2 mt-0 rounded transition-colors ${
@@ -409,13 +415,13 @@ export default function ViewCorrections() {
                 </div>
             </div>
 
-            <div className="flex items-center gap-4 ">
+            <div className="flex items-center gap-4">
                     <Link to="/user/corrections/create" className='mt-0 bg-none'>
                         <HoverBorderGradient
                             containerClassName="rounded-full"
                             className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0"
                         >
-                            <span className="text-lg mr-1 mt-0">+</span> 
+                            <span className="text-lg mr-1">+</span> 
                             <span>Create Correction Report</span>
                         </HoverBorderGradient>
                     </Link>
@@ -437,7 +443,7 @@ export default function ViewCorrections() {
                             />
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto mt-5">
                             <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
                             <thead className="bg-neutral-700">
                                 <tr>

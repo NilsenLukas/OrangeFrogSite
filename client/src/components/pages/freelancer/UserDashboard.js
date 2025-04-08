@@ -29,10 +29,10 @@ const UserDashboard = () => {
   const welcomeText = "Welcome,".split("");
   
   return (
-    <div className="flex flex-col items-center w-full min-h-screen h-full p-8 bg-gray-100 dark:bg-neutral-900">
+    <div className="flex flex-col items-center w-full min-h-screen h-full p-8 bg-gray-100 dark:bg-neutral-900 overflow-y-auto">
       {/* Animated Welcome Section */}
-      <div className="w-full mb-20">
-        <div className="flex justify-center mb-4">
+      <div className="w-full mb-4 sm:mb-20">
+        <div className="flex justify-center mb-2 sm:mb-4">
           {welcomeText.map((letter, index) => (
             <motion.span
               key={index}
@@ -44,7 +44,7 @@ const UserDashboard = () => {
                 type: "spring",
                 stiffness: 200,
               }}
-              className="text-2xl text-neutral-600 dark:text-neutral-400"
+              className="text-lg sm:text-2xl text-neutral-600 dark:text-neutral-400"
             >
               {letter}
             </motion.span>
@@ -71,7 +71,7 @@ const UserDashboard = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5, duration: 0.5 }}
-            className="text-5xl font-bold text-neutral-900 dark:text-white py-4"
+            className="text-2xl sm:text-5xl font-bold text-neutral-900 dark:text-white py-2 sm:py-4"
           >
             {userName || "User"}
           </motion.h1>
@@ -79,17 +79,17 @@ const UserDashboard = () => {
       </div>
 
       {/* Rest of dashboard content */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 w-full ">
         {/* Find Jobs Card */}
         <div
           className="relative group cursor-pointer"
           onClick={() => navigate("/user/find-jobs")}
         >
           <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
-          <div className="relative bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl p-6 shadow-lg flex flex-col items-center gap-4">
-            <IconCalendarEvent className="w-12 h-12 text-teal-400" />
-            <h2 className="text-xl font-semibold">Find Jobs</h2>
-            <p className="text-sm text-neutral-400 text-center">
+          <div className="relative bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl p-4 sm:p-6 shadow-lg flex flex-col items-center gap-2 sm:gap-4">
+            <IconCalendarEvent className="w-8 h-8 sm:w-12 sm:h-12 text-teal-400" />
+            <h2 className="text-lg sm:text-xl font-semibold">Find Jobs</h2>
+            <p className="text-xs sm:text-sm text-neutral-400 text-center">
               Browse and apply for available job opportunities.
             </p>
           </div>
@@ -101,10 +101,10 @@ const UserDashboard = () => {
           onClick={() => navigate("/user/current-jobs")}
         >
           <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
-          <div className="relative bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl p-6 shadow-lg flex flex-col items-center gap-4">
-            <IconUsers className="w-12 h-12 text-teal-400" />
-            <h2 className="text-xl font-semibold">Current Jobs</h2>
-            <p className="text-sm text-neutral-400 text-center">
+          <div className="relative bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl p-4 sm:p-6 shadow-lg flex flex-col items-center gap-2 sm:gap-4">
+            <IconUsers className="w-8 h-8 sm:w-12 sm:h-12 text-teal-400" />
+            <h2 className="text-lg sm:text-xl font-semibold">Current Jobs</h2>
+            <p className="text-xs sm:text-sm text-neutral-400 text-center">
               View and manage your current job assignments.
             </p>
           </div>
@@ -116,10 +116,10 @@ const UserDashboard = () => {
           onClick={() => navigate("/user/time-card")}
         >
           <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
-          <div className="relative bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl p-6 shadow-lg flex flex-col items-center gap-4">
-            <IconUsers className="w-12 h-12 text-teal-400" />
-            <h2 className="text-xl font-semibold">Time Card</h2>
-            <p className="text-sm text-neutral-400 text-center">
+          <div className="relative bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl p-4 sm:p-6 shadow-lg flex flex-col items-center gap-2 sm:gap-4">
+            <IconUsers className="w-8 h-8 sm:w-12 sm:h-12 text-teal-400" />
+            <h2 className="text-lg sm:text-xl font-semibold">Time Card</h2>
+            <p className="text-xs sm:text-sm text-neutral-400 text-center">
               Record and track your work hours efficiently.
             </p>
           </div>
@@ -131,10 +131,10 @@ const UserDashboard = () => {
           onClick={() => navigate("/user/manage-corrections")}
         >
           <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
-          <div className="relative bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl p-6 shadow-lg flex flex-col items-center gap-4">
-            <IconUsers className="w-12 h-12 text-teal-400" />
-            <h2 className="text-xl font-semibold">Manage Correction Reports</h2>
-            <p className="text-sm text-neutral-400 text-center">
+          <div className="relative bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl p-4 sm:p-6 shadow-lg flex flex-col items-center gap-2 sm:gap-4">
+            <IconUsers className="w-8 h-8 sm:w-12 sm:h-12 text-teal-400" />
+            <h2 className="text-lg sm:text-xl font-semibold">Manage Correction Reports</h2>
+            <p className="text-xs sm:text-sm text-neutral-400 text-center">
               Create, view, and manage your correction reports.
             </p>
           </div>
@@ -146,10 +146,10 @@ const UserDashboard = () => {
           onClick={() => navigate("/user/invoices")}
         >
           <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
-          <div className="relative bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl p-6 shadow-lg flex flex-col items-center gap-4">
-            <IconCalendarEvent className="w-12 h-12 text-teal-400" />
-            <h2 className="text-xl font-semibold">My Invoices</h2>
-            <p className="text-sm text-neutral-400 text-center">
+          <div className="relative bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl p-4 sm:p-6 shadow-lg flex flex-col items-center gap-2 sm:gap-4">
+            <IconCalendarEvent className="w-8 h-8 sm:w-12 sm:h-12 text-teal-400" />
+            <h2 className="text-lg sm:text-xl font-semibold">My Invoices</h2>
+            <p className="text-xs sm:text-sm text-neutral-400 text-center">
               View and track your personal invoices.
             </p>
           </div>
@@ -161,15 +161,14 @@ const UserDashboard = () => {
           onClick={() => navigate("/user/manage-job-comments")}
         >
           <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
-          <div className="relative bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl p-6 shadow-lg flex flex-col items-center gap-4">
-            <IconCalendarEvent className="w-12 h-12 text-teal-400" />
-            <h2 className="text-xl font-semibold">Manage Job Comments</h2>
-            <p className="text-sm text-neutral-400 text-center">
-            View and manage job comments.
+          <div className="relative bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl p-4 sm:p-6 shadow-lg flex flex-col items-center gap-2 sm:gap-4">
+            <IconCalendarEvent className="w-8 h-8 sm:w-12 sm:h-12 text-teal-400" />
+            <h2 className="text-lg sm:text-xl font-semibold">Manage Job Comments</h2>
+            <p className="text-xs sm:text-sm text-neutral-400 text-center">
+              View and manage job comments.
             </p>
           </div>
         </div>
-
       </div>
     </div>
   );

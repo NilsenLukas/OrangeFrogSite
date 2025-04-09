@@ -23,6 +23,8 @@ import UpdateCorrectionReportStatus from "./components/pages/admin/corrections/U
 // Job Comment Pages
 import AdminManageJobComments from "./components/pages/admin/job-comments/ManageJobComments";
 import AdminJobCommentDetails from "./components/pages/admin/job-comments/JobCommentDetails";
+// Notifications
+import AdminNotifications from "./components/pages/admin/notifications/ManageNotifications";
 
 
 // User Pages
@@ -40,6 +42,8 @@ import FreelancerCorrectionDetails from "./components/pages/freelancer/report/Co
 import EditCorrectionReport from "./components/pages/freelancer/report/EditCorrectionReport";
 // Job Comment Pages
 import FreelancerManageJobComments from "./components/pages/freelancer/job-comments/ManageJobComments";
+// Notifications
+import FreelancerNotifications from "./components/pages/freelancer/notifications/ManageNotifications";
 
 // Invoice Page
 import Invoice from "./components/pages/invoice/Invoice";
@@ -94,6 +98,7 @@ function App() {
             <Route path="corrections/update-status/:id" element={<UpdateCorrectionReportStatus />} />
             <Route path="manage-job-comments" element={<AdminManageJobComments />} />
             <Route path="job-comments/:jobCommentId" element={<AdminJobCommentDetails />} />
+            <Route path="notifications" element={<AdminNotifications />} />
             <Route path="invoices" element={<AdminInvoices />} />
             <Route path="invoices/:id" element={<Invoice />} />
           </Route>
@@ -118,6 +123,7 @@ function App() {
             <Route path="invoices" element={<UserInvoices />} />
             <Route path="invoices/new" element={<Invoice />} />
             <Route path="invoices/:id" element={<Invoice />} />
+            <Route path="notifications" element={<FreelancerNotifications />} />
             <Route path="corrections/:correctionId" element={<FreelancerCorrectionDetails />} />
             <Route path="corrections/edit/:id" element={<EditCorrectionReport />} />
             <Route path="manage-job-comments" element={<FreelancerManageJobComments />} />

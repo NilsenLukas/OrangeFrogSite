@@ -104,9 +104,14 @@ const correctionReportSchema = new mongoose.Schema({
 const correctionReportCollection = mongoose.model('correctionReportCollection', correctionReportSchema);
 
 const notificationSchema = new mongoose.Schema({
-    userID: { type: String, required: true },
-    eventID: { type: String, required: true },
-    description: { type: String, required: true },
+    userID: { type: String, default: '' },
+    text0: { type: String, default: '' },
+    linkPath1: { type: String, default: '' },
+    linkText1: { type: String, default: '' },
+    text1: { type: String, default: '' },
+    linkPath2: { type: String, default: ''},
+    linkText2: { type: String, default: '' },
+    text2: { type: String, default: '' },
     hasBeenOpened: { type: Boolean, default: false },
     forAdmin: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },

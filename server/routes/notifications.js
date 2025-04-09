@@ -21,6 +21,22 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// Route to get admin notifications
+router.get('/admin', async (req, res) => {
+    try {
+        const notifications = await notificationCollection.find({
+            forAdmin: true,
+        });
+
+        res.status(200).json({
+            notifications
+        });        
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).json({ message: 'Error fetching events' });
+    }
+});
+
 // Route to get all notifications of a user
 router.get('/:email', async (req, res) => {
     try {
@@ -37,9 +53,7 @@ router.get('/:email', async (req, res) => {
         const events = await eventCollection.find({}).select('-__v').lean();
         
         res.status(200).json({
-            notifications,
-            corrections,
-            events
+            notifications
         });        
     } catch (error) {
         console.error('Error fetching events:', error);

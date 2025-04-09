@@ -61,6 +61,13 @@ router.put('/admin-profile/:email', async (req, res) => {
             return res.status(404).json({ message: 'Admin not found' });
         }
 
+        const newNotification = new notificationCollection({
+            text1: `Update to admin profile ${admin?.email}`,
+            forAdmin: true
+        });
+    
+        await newNotification.save();
+
         res.json({ message: 'Profile updated successfully', admin });
     } catch (error) {
         console.error("Error updating admin profile:", error);
@@ -83,6 +90,14 @@ router.put('/update-admin-profile/:email/password', async (req, res) => {
         // Hash new password and update
         admin.password = await bcrypt.hash(newPassword, 10);
         await admin.save();
+
+        const newNotification = new notificationCollection({
+            text1: `Update to password of admin ${admin?.email}`,
+            forAdmin: true
+        });
+    
+        await newNotification.save();
+
         res.json({ message: 'Password updated successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error updating password' });

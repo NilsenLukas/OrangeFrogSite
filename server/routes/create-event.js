@@ -2,7 +2,7 @@ require('dotenv').config();
 const nodemailer = require('nodemailer');
 const express = require("express");
 const router = express.Router();
-const { eventCollection, userCollection } = require('../mongo');
+const { eventCollection, userCollection, notificationCollection } = require('../mongo');
 
 // Nodemailer transporter setup
 const transporter = nodemailer.createTransport({
@@ -175,6 +175,15 @@ router.post('/', async (req, res) => {
             } catch (error) {
                 console.error(`Error sending email to ${contractor.email}:`, error);
             }
+
+            const newNotification = new notificationCollection({
+                userID: contractor?._id,
+                text0: `New job `,
+                linkPath1: `/user/events/${newEvent?._id}`,
+                linkText1: `${newEvent?.eventName}`,
+            });
+
+            await newNotification.save();
         }
 
         res.status(200).json({ message: 'Event created and notifications sent successfully' });

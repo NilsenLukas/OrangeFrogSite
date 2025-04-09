@@ -48,9 +48,13 @@ router.post('/', async (req, res) => {
     const user = await userCollection.findById(userID);
 
     const newNotification = new notificationCollection({
-      eventID: eventID,
       userID: userID,
-      description: `<a href="/admin/corrections/${newReport?._id}" class="hover:text-blue-500 transition-colors group"><u>New Correction Report</u></a> by ${user?.name} for <a href="/admin/events/${event?._id}" class="hover:text-blue-500 transition-colors group"><u>${event?.eventName}</u></a>`,
+      text0: `New correction report `,
+      linkPath1: `/admin/corrections/${newReport?._id}`,
+      linkText1: `${newReport?.correctionName}`,
+      text1: ` by ${user?.name} for event `,
+      linkPath2: `/admin/events/${event?._id}`,
+      linkText2: `${event?.eventName}`,
       forAdmin: true
     });
 
@@ -140,6 +144,20 @@ router.put('/:id([0-9a-fA-F]{24})', async (req, res) => {
       if (!updatedCorrection) {
           return res.status(404).json({ message: 'Correction not found' });
       }
+
+      const newNotification = new notificationCollection({
+        userID: user?._id,
+        text0: `Update to correction report `,
+        linkPath1: `/admin/corrections/${updatedCorrection?._id}`,
+        linkText1: `${updatedCorrection?.correctionName}`,
+        text1: ` by ${user?.name} for `,
+        linkPath2: `/admin/events/${event?._id}`,
+        linkText2: `${event?.eventName}`,
+        text2: ` event`,
+        forAdmin: true
+      });
+  
+      await newNotification.save();
 
       res.status(200).json(updatedCorrection);
   } catch (error) {

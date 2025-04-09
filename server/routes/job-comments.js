@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const router = express.Router();
-const { eventCollection, userCollection, userJobCommentCollection } = require('../mongo');
+const { eventCollection, userCollection, userJobCommentCollection, notificationCollection } = require('../mongo');
 
 // Nodemailer transporter setup
 const transporter = nodemailer.createTransport({
@@ -57,6 +57,19 @@ router.post('/:eventID/:email', async (req, res) => {
         }
         event.jobCommentCount += 1;
         await event.save();
+
+        const newNotification = new notificationCollection({
+            userID: userID,
+            text0: `New `,
+            linkPath1: `/admin/job-comments/${newJobComment?._id}`,
+            linkText1: `Job Comment`,
+            text1: ` by ${user?.name} for event `,
+            linkPath2: `/admin/events/${event?._id}`,
+            linkText2: `${event?.eventName}`,
+            forAdmin: true
+        });
+
+        await newNotification.save();
 
         res.status(201).json({ message: 'Comment added successfully' });
     } catch (error) {

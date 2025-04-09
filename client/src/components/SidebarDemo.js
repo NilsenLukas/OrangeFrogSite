@@ -108,7 +108,7 @@ export default function SidebarDemo({ role }) {
   return (
     <div className={cn(
         "flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 max-w-full mx-auto border border-neutral-200 dark:border-neutral-700",
-        "min-w-[100px] h-full overflow-hidden"
+        "min-w-[100px] h-screen overflow-hidden"
     )}>
         {/* Hamburger Button - Only visible on mobile */}
         <button

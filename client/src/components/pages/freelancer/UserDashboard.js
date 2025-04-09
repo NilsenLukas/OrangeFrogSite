@@ -79,6 +79,9 @@ const UserDashboard = () => {
       </div>
 
       {/* Rest of dashboard content */}
+      <div className="w-full overflow-y-auto max-h-[calc(100vh-200px)] sm:overflow-y-visible sm:max-h-full">
+  {/* Grid content goes here */}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 w-full ">
         {/* Find Jobs Card */}
         <div
@@ -112,7 +115,7 @@ const UserDashboard = () => {
 
         {/* Time Card */}
         <div
-          className="relative group cursor-pointer sm:col-span-2 lg:col-span-1"
+          className="relative group cursor-pointer"
           onClick={() => navigate("/user/time-card")}
         >
           <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
@@ -168,6 +171,7 @@ const UserDashboard = () => {
               View and manage job comments.
             </p>
           </div>
+        </div>
         </div>
       </div>
     </div>

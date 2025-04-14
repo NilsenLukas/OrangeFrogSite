@@ -31,6 +31,7 @@ router.post("/clock-in", async (req, res) => {
 
 // ✅ 2. Clock Out
 // ✅ 2. Clock Out (Handles 24-Hour Limit)
+// ✅ 2. Clock Out (Handles 24-Hour Limit)
 router.put("/clock-out/:userId", async (req, res) => {
     try {
         const { userId } = req.params;

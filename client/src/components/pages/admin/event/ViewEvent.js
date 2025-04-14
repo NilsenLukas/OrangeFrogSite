@@ -100,9 +100,27 @@ export default function ViewEvent() {
     
         if (sortConfig.key) {
             filtered.sort((a, b) => {
-                const aVal = a[sortConfig.key];
-                const bVal = b[sortConfig.key];
-    
+                let aVal, bVal;
+
+                // Handle special sorting cases
+                switch (sortConfig.key) {
+                    case 'contractors':
+                        aVal = a.assignedContractors?.length || 0;
+                        bVal = b.assignedContractors?.length || 0;
+                        break;
+                    case 'jobComments':
+                        aVal = a.jobCommentCount || 0;
+                        bVal = b.jobCommentCount || 0;
+                        break;
+                    case 'correctionReports':
+                        aVal = a.correctionCount || 0;
+                        bVal = b.correctionCount || 0;
+                        break;
+                    default:
+                        aVal = a[sortConfig.key];
+                        bVal = b[sortConfig.key];
+                }
+
                 if (typeof aVal === 'string') {
                     return sortConfig.direction === 'ascending'
                         ? aVal.localeCompare(bVal)
@@ -278,43 +296,64 @@ export default function ViewEvent() {
                             <AnimatePresence>
                                 {showSortOptions && (
                                     <motion.div
-                                        initial={{ opacity: 0, x: 20 }}        // Start hidden & to the right
-                                        animate={{ opacity: 1, x: 0 }}          // Fade in from the right
-                                        exit={{ opacity: 0, x: 20 }}            // Fade out to the right when hidden
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: 20 }}
                                         transition={{ duration: 0.3 }}
-                                        className="flex items-center gap-3"
+                                        className="flex items-center gap-2"
                                     >
-                                        <span className="text-white whitespace-nowrap">Sort by:</span>
+                                        <span className="text-white text-sm whitespace-nowrap">Sort by:</span>
 
                                         <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0"
+                                            className="px-3 py-1.5 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0"
                                             onClick={() => handleSort('eventName')}
                                         >
                                             Name
                                         </button>
 
                                         <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0"
-                                            onClick={() => handleSort('createdAt')}
-                                        >
-                                            Date
-                                        </button>
-
-                                        <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0"
-                                            onClick={() => handleSort('assignedContractors')}
+                                            className="px-3 py-1.5 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0"
+                                            onClick={() => handleSort('contractors')}
                                         >
                                             Contractors
                                         </button>
 
+                                        <button
+                                            className="px-3 py-1.5 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0"
+                                            onClick={() => handleSort('jobComments')}
+                                        >
+                                            Comments
+                                        </button>
+
+                                        <button
+                                            className="px-3 py-1.5 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0"
+                                            onClick={() => handleSort('correctionReports')}
+                                        >
+                                            Reports
+                                        </button>
+
+                                        <button
+                                            className="px-3 py-1.5 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
+                                            onClick={() => handleSort('createdAt')}
+                                        >
+                                            Creation Date
+                                        </button>
+
+                                        <button
+                                            className="px-3 py-1.5 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
+                                            onClick={() => handleSort('updatedAt')}
+                                        >
+                                            Last Modified
+                                        </button>
+
                                         <motion.button
-                                            initial={{ opacity: 0, x: -20 }}    // Fade in from the left
+                                            initial={{ opacity: 0, x: -20 }}
                                             animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: -20 }}       // Fade out to the left when hiding
+                                            exit={{ opacity: 0, x: -20 }}
                                             transition={{ delay: 0.2 }}
                                             type="button"
                                             onClick={() => setShowSortOptions(false)}
-                                            className="h-9 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors mt-0"
+                                            className="h-7 px-3 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-white text-sm rounded-full transition-colors mt-0"
                                         >
                                             Cancel
                                         </motion.button>
@@ -392,65 +431,29 @@ export default function ViewEvent() {
                                     </th>
                                     <th 
                                         className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('eventLoadIn')}
-                                    >
-                                        <div className="flex items-center">
-                                            Load In
-                                            <span className="ml-2">{getSortIcon('eventLoadIn')}</span>
-                                        </div>
-                                    </th>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('eventLoadInHours')}
-                                    >
-                                        <div className="flex items-center">
-                                            Load In Hours
-                                            <span className="ml-2">{getSortIcon('eventLoadInHours')}</span>
-                                        </div>
-                                    </th>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('eventLoadOut')}
-                                    >
-                                        <div className="flex items-center">
-                                            Load Out
-                                            <span className="ml-2">{getSortIcon('eventLoadOut')}</span>
-                                        </div>
-                                    </th>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('eventLoadOutHours')}
-                                    >
-                                        <div className="flex items-center">
-                                            Load Out Hours
-                                            <span className="ml-2">{getSortIcon('eventLoadOutHours')}</span>
-                                        </div>
-                                    </th>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('assignedContractors')}
+                                        onClick={() => handleSort('contractors')}
                                     >
                                         <div className="flex items-center">
                                             Contractors
-                                            <span className="ml-2">{getSortIcon('assignedContractors')}</span>
+                                            <span className="ml-2">{getSortIcon('contractors')}</span>
                                         </div>
                                     </th>
                                     <th 
                                         className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('jobCommentCount')}
+                                        onClick={() => handleSort('jobComments')}
                                     >
                                         <div className="flex items-center">
                                             Job Comments
-                                            <span className="ml-2">{getSortIcon('jobCommentCount')}</span>
+                                            <span className="ml-2">{getSortIcon('jobComments')}</span>
                                         </div>
                                     </th>
                                     <th 
                                         className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('correctionCount')}
+                                        onClick={() => handleSort('correctionReports')}
                                     >
                                         <div className="flex items-center">
                                             Correction Reports
-                                            <span className="ml-2">{getSortIcon('correctionCount')}</span>
+                                            <span className="ml-2">{getSortIcon('correctionReports')}</span>
                                         </div>
                                     </th>
                                     <th 
@@ -458,7 +461,7 @@ export default function ViewEvent() {
                                         onClick={() => handleSort('createdAt')}
                                     >
                                         <div className="flex items-center">
-                                            Created
+                                            Creation Date
                                             <span className="ml-2">{getSortIcon('createdAt')}</span>
                                         </div>
                                     </th>
@@ -485,18 +488,6 @@ export default function ViewEvent() {
                                     >
                                         <td className="p-4 text-white">
                                             {event.eventName}
-                                        </td>
-                                        <td className="p-4 text-white">
-                                            {new Date(event.eventLoadIn).toLocaleString()}
-                                        </td>
-                                        <td className="p-4 text-white">
-                                            {event.eventLoadInHours}h
-                                        </td>
-                                        <td className="p-4 text-white">
-                                            {new Date(event.eventLoadOut).toLocaleString()}
-                                        </td>
-                                        <td className="p-4 text-white">
-                                            {event.eventLoadOutHours}h
                                         </td>
                                         <td className="p-4 text-white">
                                             {event.assignedContractors?.length || 0}

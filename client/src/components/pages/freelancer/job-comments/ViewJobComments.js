@@ -104,15 +104,39 @@ export default function ViewJobComments() {
     // };
 
     const getFilteredAndSortedJobComments = () => {
-        let filtered = jobComments.filter(jobComment => {
-            return !nameFilter || jobComment.userID.toLowerCase().includes(nameFilter.toLowerCase());
+        // Return empty array if data is not loaded yet
+        if (!jobComments || !events) return [];
+
+        // Filter job comments by search text across multiple fields
+        const filteredJobComments = jobComments.filter(jobComment => {
+            // Return true if no filter is applied
+            if (!nameFilter || nameFilter.trim() === '') return true;
+            
+            const searchTerm = nameFilter.toLowerCase().trim();
+            const event = events.find(e => e._id === jobComment.eventID);
+            
+            // Create search fields with proper null checks
+            const searchFields = [
+                event?.eventName || '',
+                jobComment.comment || '',
+                jobComment.correctionName || '',
+                jobComment.status || '',
+                jobComment.type || '',
+                jobComment.createdAt ? new Date(jobComment.createdAt).toLocaleString() : '',
+                jobComment.updatedAt ? new Date(jobComment.updatedAt).toLocaleString() : ''
+            ].filter(Boolean); // Remove any empty strings
+
+            // Only search if we have valid fields to search through
+            return searchFields.length > 0 && searchFields.some(field => 
+                field.toLowerCase().includes(searchTerm)
+            );
         });
-    
+
         if (sortConfig.key) {
-            filtered.sort((a, b) => {
+            filteredJobComments.sort((a, b) => {
                 const aVal = a[sortConfig.key];
                 const bVal = b[sortConfig.key];
-    
+
                 if (typeof aVal === 'string') {
                     return sortConfig.direction === 'ascending'
                         ? aVal.localeCompare(bVal)
@@ -124,7 +148,7 @@ export default function ViewJobComments() {
                 return 0;
             });
         }
-        return filtered;
+        return filteredJobComments;
     };
 
     if (loading) {
@@ -199,10 +223,10 @@ export default function ViewJobComments() {
                 <div className="flex items-center gap-4">
                     <div className='flex items-center gap-3 mt-3'>
                         {/* Name filter input */}
-                        <div className="relative flex items-center mt-2">
+                        <div className="relative flex items-center">
                             <input
                                 type="text"
-                                placeholder="Search by name"
+                                placeholder="Search by keyword"
                                 value={nameFilter}
                                 onChange={(e) => setNameFilter(e.target.value)}
                                 className="w-40 md:w-54 lg:w-64 px-4 pr-10 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40"

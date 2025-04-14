@@ -177,6 +177,34 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Gets user's job comments for an event
+router.get('/:eventID/:email', async (req, res) => {
+    const eventID = req.params.eventID;
+
+    try {
+        // First, find the contractor by email
+        const user = await userCollection.findOne({ email: req.params.email });
+        if (!user) {
+            console.error('Contractor not found');
+            return res.status(404).json({ message: 'Contractor not found' });
+        }
+
+        const jobComment = await userJobCommentCollection.findOne({
+            eventID: eventID,
+            userID: user._id
+        });
+        
+        if (!jobComment) {
+            return res.status(404).json({ message: 'Job comment not found' });
+        }
+        res.status(200).json(jobComment);
+    } catch (error) {
+        console.error('Error fetching job comment information:', error);
+        res.status(500).json({ message: 'Error fetching job comment information' });
+    }
+});
+
+
 // Route to get a single event
 router.get('/:id([0-9a-fA-F]{24})', async (req, res) => {
     try {
@@ -227,31 +255,5 @@ router.get('/:email', async (req, res) => {
     }
 });
 
-// Gets user's job comments for an event
-router.get('/:eventID/:email', async (req, res) => {
-    const eventID = req.params.eventID;
-
-    try {
-        // First, find the contractor by email
-        const user = await userCollection.findOne({ email: req.params.email });
-        if (!user) {
-            console.error('Contractor not found');
-            return res.status(404).json({ message: 'Contractor not found' });
-        }
-
-        const jobComment = await userJobCommentCollection.findOne({
-            eventID: eventID,
-            userID: user._id
-        });
-        
-        if (!jobComment) {
-            return res.status(404).json({ message: 'Job comment not found' });
-        }
-        res.status(200).json(jobComment);
-    } catch (error) {
-        console.error('Error fetching job comment information:', error);
-        res.status(500).json({ message: 'Error fetching job comment information' });
-    }
-});
 
 module.exports = router;

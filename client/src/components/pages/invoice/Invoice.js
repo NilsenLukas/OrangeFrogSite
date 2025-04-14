@@ -253,7 +253,7 @@ const Invoice = ({invoiceData}) => {
         },
         {
           text: [
-            { text: `Tax %: `, bold: true },
+            { text: `Tax: `, bold: true },
             { text: `${invoice.taxPercentage ?? '0'}%` }
           ]
         },

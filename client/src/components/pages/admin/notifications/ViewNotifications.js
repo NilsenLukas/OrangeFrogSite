@@ -79,15 +79,37 @@ export default function ViewNotifications() {
     }, []);
 
     const getFilteredAndSortedNotifications = () => {
-        let filtered = notifications.filter(notification => {
-            return !nameFilter || notification._id.toLowerCase().includes(nameFilter.toLowerCase());
+        // Return empty array if data is not loaded yet
+        if (!notifications) return [];
+
+        // Filter notifications by search text across multiple fields
+        const filteredNotifications = notifications.filter(notification => {
+            // Return true if no filter is applied
+            if (!nameFilter || nameFilter.trim() === '') return true;
+            
+            const searchTerm = nameFilter.toLowerCase().trim();
+            
+            // Create search fields with proper null checks
+            const searchFields = [
+                notification.text0 || '',
+                notification.text1 || '',
+                notification.text2 || '',
+                notification.linkText1 || '',
+                notification.linkText2 || '',
+                notification.createdAt ? new Date(notification.createdAt).toLocaleString() : ''
+            ].filter(Boolean); // Remove any empty strings
+
+            // Only search if we have valid fields to search through
+            return searchFields.length > 0 && searchFields.some(field => 
+                field.toLowerCase().includes(searchTerm)
+            );
         });
-    
+
         if (sortConfig.key) {
-            filtered.sort((a, b) => {
+            filteredNotifications.sort((a, b) => {
                 const aVal = a[sortConfig.key];
                 const bVal = b[sortConfig.key];
-    
+
                 if (typeof aVal === 'string') {
                     return sortConfig.direction === 'ascending'
                         ? aVal.localeCompare(bVal)
@@ -99,7 +121,7 @@ export default function ViewNotifications() {
                 return 0;
             });
         }
-        return filtered;
+        return filteredNotifications;
     };
 
     if (loading) {
@@ -170,7 +192,7 @@ export default function ViewNotifications() {
                 <div className="flex items-center gap-4">
                     <div className='flex items-center gap-3 mt-3'>
                         {/* Name filter input */}
-                        <div className="relative flex items-center mt-2">
+                        <div className="relative flex items-center mt-3">
                             <input
                                 type="text"
                                 placeholder="Search by name"
@@ -220,7 +242,7 @@ export default function ViewNotifications() {
 
                                         <button
                                             className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0"
-                                            onClick={() => handleSort('description')}
+                                            onClick={() => handleSort('text0')}
                                         >
                                             Description
                                         </button>
@@ -299,20 +321,20 @@ export default function ViewNotifications() {
                                 <tr>
                                     <th 
                                         className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('correctionName')}
+                                        onClick={() => handleSort('text0')}
                                     >
                                         <div className="flex items-center">
                                             Description
-                                            <span className="ml-2">{getSortIcon('correctionName')}</span>
+                                            <span className="ml-2">{getSortIcon('text0')}</span>
                                         </div>
                                     </th>
                                     <th 
                                         className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('submittedAt')}
+                                        onClick={() => handleSort('createdAt')}
                                     >
                                         <div className="flex items-center">
                                             Created
-                                            <span className="ml-2">{getSortIcon('submittedAt')}</span>
+                                            <span className="ml-2">{getSortIcon('createdAt')}</span>
                                         </div>
                                     </th>
                                 

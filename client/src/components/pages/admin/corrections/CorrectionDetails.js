@@ -80,7 +80,7 @@ export default function CorrectionDetails() {
         <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex flex-col w-full min-h-screen p-8 bg-gradient-to-b from-neutral-900 to-neutral-800"
+            className="flex flex-col w-full min-h-screen p-4 sm:p-8 bg-gradient-to-b from-neutral-900 to-neutral-800"
         >
             <motion.div
                 initial={{ x: -20, opacity: 0 }}
@@ -90,7 +90,7 @@ export default function CorrectionDetails() {
             >
                 <Link 
                     to="/admin/manage-corrections"
-                    className="mb-8 flex items-center text-neutral-400 hover:text-white transition-colors group"
+                    className="mb-4 sm:mb-8 flex items-center text-neutral-400 hover:text-white transition-colors group text-sm sm:text-base"
                 >
                     <FaArrowLeft className="mr-2 transform group-hover:-translate-x-1 transition-transform" />
                     Back to Corrections
@@ -98,31 +98,31 @@ export default function CorrectionDetails() {
             </motion.div>
 
             <motion.div 
-                className="bg-neutral-800 rounded-lg p-8 shadow-2xl backdrop-blur-sm bg-opacity-90"
+                className="bg-neutral-800 rounded-lg p-4 sm:p-8 shadow-2xl backdrop-blur-sm bg-opacity-90"
                 {...fadeIn}
             >   
-                <div className='mb-8 border-b border-neutral-700 pb-4 flex justify-between items-center'>
+                <div className='mb-4 sm:mb-8 border-b border-neutral-700 pb-4 flex justify-between items-center'>
                     <motion.h1 
-                        className="text-4xl font-bold text-white "
+                        className="text-2xl sm:text-4xl font-bold text-white"
                         {...fadeIn}
                     >
                         {correction.correctionName}
                     </motion.h1>
                 </div>
                 
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
                     <motion.div 
-                        className="space-y-6"
+                        className="space-y-4 sm:space-y-6"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2 }}
                     >
-                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-4 sm:p-6">
+                            <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center">
                                 <FaInfoCircle className="mr-2 text-blue-400" />
                                 Event Details
                             </h2>
-                            <div className="space-y-3 text-neutral-300">
+                            <div className="space-y-2 sm:space-y-3 text-neutral-300 text-sm sm:text-base">
                                 <p className="flex items-center">
                                     <FaInfoCircle className="mr-2 text-grey-400" />
                                     <span className="font-medium">Event:</span>
@@ -145,7 +145,7 @@ export default function CorrectionDetails() {
                                     <div className="flex-1">
                                         <div className="mb-2">
                                             <span className="font-medium">Load In:</span>
-                                            <span className="ml-2">{new Date(event.eventLoadIn).toLocaleString()}</span>
+                                            <span className="ml-2">{new Date(event.eventLoadIn).toLocaleDateString()}</span>
                                             <span className="ml-2 text-green-400">({event.eventLoadInHours}h)</span>
                                         </div>
                                     </div>
@@ -155,7 +155,7 @@ export default function CorrectionDetails() {
                                     <div className="flex-1">
                                         <div>
                                             <span className="font-medium">Load Out:</span>
-                                            <span className="ml-2">{new Date(event.eventLoadOut).toLocaleString()}</span>
+                                            <span className="ml-2">{new Date(event.eventLoadOut).toLocaleDateString()}</span>
                                             <span className="ml-2 text-yellow-400">({event.eventLoadOutHours}h)</span>
                                         </div>
                                     </div>
@@ -165,17 +165,17 @@ export default function CorrectionDetails() {
                     </motion.div>
 
                     <motion.div 
-                        className="space-y-6"
+                        className="space-y-4 sm:space-y-6"
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4 }}
                     >
-                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-4 sm:p-6">
+                            <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center">
                                 <FaInfoCircle className="mr-2 text-blue-400" />
                                 Correction Details
                             </h2>
-                            <div className="space-y-3 text-neutral-300">
+                            <div className="space-y-2 sm:space-y-3 text-neutral-300 text-sm sm:text-base">
                                 <p className="flex items-center">
                                     <span className="font-medium">Created by:</span>
                                     <span className="ml-2">{user}</span>
@@ -186,11 +186,11 @@ export default function CorrectionDetails() {
                                 </p>
                                 <p className="flex items-center">
                                     <span className="font-medium">Created:</span>
-                                    <span className="ml-2">{new Date(correction.submittedAt).toLocaleString()}</span>
+                                    <span className="ml-2">{new Date(correction.submittedAt).toLocaleDateString()}</span>
                                 </p>
                                 <p className="flex items-center">
                                     <span className="font-medium">Last Modified:</span>
-                                    <span className="ml-2">{new Date(correction.updatedAt).toLocaleString()}</span>
+                                    <span className="ml-2">{new Date(correction.updatedAt).toLocaleDateString()}</span>
                                 </p>
                             </div>
                         </div>
@@ -198,36 +198,35 @@ export default function CorrectionDetails() {
                 </div>
             </motion.div>
 
-            <div className="mt-8">
-                <h2 className="text-xl font-semibold text-white mb-4"></h2>
-                <div className="bg-neutral-800 rounded-lg p-6">
-                    <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-6">
-                        <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+            <div className="mt-4 sm:mt-8">
+                <div className="bg-neutral-800 rounded-lg p-4 sm:p-6">
+                    <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-4 sm:p-6">
+                        <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center">
                             <FaInfoCircle className="mr-2 text-blue-400" />
                             Description
                         </h2>
-                        <div className="space-y-3 text-neutral-300">
+                        <div className="space-y-2 sm:space-y-3 text-neutral-300 text-sm sm:text-base">
                             <p className="flex items-center">
                                 <span className="ml-2">{correction.description}</span>
                             </p>
                         </div>
                     </div>
                 </div>
-                <div className="bg-neutral-800 rounded-lg p-6">
-                    <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-6">
-                        <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <div className="bg-neutral-800 rounded-lg p-4 sm:p-6 mt-4">
+                    <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-4 sm:p-6">
+                        <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center">
                             <FaInfoCircle className="mr-2 text-blue-400" />
                             Status: {correction.status}
                         </h2>
-                        <div className="space-y-3 text-neutral-300">
+                        <div className="space-y-2 sm:space-y-3 text-neutral-300 text-sm sm:text-base">
                             <p className="flex items-center">
                                 <span className="ml-2">{correction.additionalComments}</span>
                             </p>
                         </div>
-                        <div className="flex justify-center">
+                        <div className="flex justify-center mt-4">
                             <button
                                 onClick={() => handleUpdateStatus(correction)}
-                                className="flex justify-center items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                                className="flex justify-center items-center space-x-2 px-3 sm:px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm sm:text-base w-full sm:w-auto"
                             >
                                 <FaEdit />
                                 <span>Update Status</span>
@@ -239,21 +238,21 @@ export default function CorrectionDetails() {
 
             {showDeletePopup && (
                 <Modal>
-                    <div className="bg-neutral-900 p-8 rounded-md shadow-lg w-full max-w-md border border-neutral-700">
-                        <h2 className="text-red-500 text-2xl mb-4">Are you sure you want to delete this Correction?</h2>
-                        <p className="text-neutral-300 mb-6">
+                    <div className="bg-neutral-900 p-4 sm:p-8 rounded-md shadow-lg w-full max-w-md border border-neutral-700">
+                        <h2 className="text-red-500 text-xl sm:text-2xl mb-4">Are you sure you want to delete this Correction?</h2>
+                        <p className="text-neutral-300 mb-6 text-sm sm:text-base">
                             This action cannot be undone. Once deleted, this correction's data will be permanently removed from the system.
                         </p>
                         <div className="flex justify-end gap-4">
                             <button 
                                 onClick={() => setShowDeletePopup(false)} 
-                                className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors"
+                                className="px-3 sm:px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors text-sm sm:text-base"
                             >
                                 Cancel
                             </button>
                             <button 
                                 onClick={confirmDelete} 
-                                className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-full transition-colors"
+                                className="px-3 sm:px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-full transition-colors text-sm sm:text-base"
                             >
                                 Delete
                             </button>

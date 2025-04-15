@@ -64,15 +64,15 @@ export default function EditUser() {
   }
 
   return (
-    <div className="flex flex-col w-full h-screen bg-neutral-900">
+    <div className="flex flex-col w-full h-full bg-neutral-900">
       <div className="p-4 md:p-8">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-6 md:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
             <h1 className="text-2xl md:text-3xl font-bold text-white">Edit User</h1>
             <button
               type="button"
               onClick={() => navigate("/admin/manage-users")}
-              className="px-3 py-1.5 md:px-4 md:py-2 bg-neutral-700 text-white text-sm md:text-base rounded-lg hover:bg-neutral-600 transition-colors"
+              className="w-full sm:w-auto px-4 py-2 bg-neutral-700 text-white text-sm md:text-base rounded-lg hover:bg-neutral-600 transition-colors"
             >
               Back
             </button>
@@ -87,10 +87,10 @@ export default function EditUser() {
               onSubmit={handleSubmit}
               className="bg-neutral-800 rounded-lg shadow-xl p-4 md:p-8 space-y-6"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-neutral-200 text-sm md:text-lg font-medium mb-2">
-                    Name <span className="text-red-500">*</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm md:text-base font-medium text-neutral-200">
+                    Name
                   </label>
                   <input
                     type="text"
@@ -98,13 +98,13 @@ export default function EditUser() {
                     value={formData.name}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white text-sm md:text-base placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
-                    required
+                    placeholder="Enter name"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-neutral-200 text-sm md:text-lg font-medium mb-2">
-                    Email <span className="text-red-500">*</span>
+                <div className="space-y-2">
+                  <label className="block text-sm md:text-base font-medium text-neutral-200">
+                    Email
                   </label>
                   <input
                     type="email"
@@ -112,12 +112,12 @@ export default function EditUser() {
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white text-sm md:text-base placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
-                    required
+                    placeholder="Enter email"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-neutral-200 text-sm md:text-lg font-medium mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm md:text-base font-medium text-neutral-200">
                     Phone
                   </label>
                   <input
@@ -126,11 +126,12 @@ export default function EditUser() {
                     value={formData.phone}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white text-sm md:text-base placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
+                    placeholder="Enter phone number"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-neutral-200 text-sm md:text-lg font-medium mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm md:text-base font-medium text-neutral-200">
                     Hourly Rate
                   </label>
                   <input
@@ -139,13 +140,12 @@ export default function EditUser() {
                     value={formData.hourlyRate}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white text-sm md:text-base placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
-                    step="0.01"
-                    min="0"
+                    placeholder="Enter hourly rate"
                   />
                 </div>
 
-                <div className="md:col-span-2">
-                  <label className="block text-neutral-200 text-sm md:text-lg font-medium mb-2">
+                <div className="md:col-span-2 space-y-2">
+                  <label className="block text-sm md:text-base font-medium text-neutral-200">
                     Address
                   </label>
                   <input
@@ -154,11 +154,12 @@ export default function EditUser() {
                     value={formData.address}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white text-sm md:text-base placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
+                    placeholder="Enter address"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-neutral-200 text-sm md:text-lg font-medium mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm md:text-base font-medium text-neutral-200">
                     Date of Birth
                   </label>
                   <input
@@ -170,8 +171,8 @@ export default function EditUser() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-neutral-200 text-sm md:text-lg font-medium mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm md:text-base font-medium text-neutral-200">
                     T-Shirt Size
                   </label>
                   <select
@@ -180,7 +181,7 @@ export default function EditUser() {
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white text-sm md:text-base placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
                   >
-                    <option value="">Select Size</option>
+                    <option value="">Select size</option>
                     <option value="XS">XS</option>
                     <option value="S">S</option>
                     <option value="M">M</option>
@@ -190,8 +191,8 @@ export default function EditUser() {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-neutral-200 text-sm md:text-lg font-medium mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm md:text-base font-medium text-neutral-200">
                     First Aid Certification
                   </label>
                   <input
@@ -200,22 +201,23 @@ export default function EditUser() {
                     value={formData.firstAidCert}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white text-sm md:text-base placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
+                    placeholder="Enter certification"
                   />
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row justify-end gap-3 md:gap-4 pt-6 border-t border-neutral-700">
+              <div className="flex flex-col sm:flex-row justify-end gap-3 md:gap-4 pt-6 border-t border-neutral-700">
                 <button
                   type="button"
                   onClick={() => navigate("/admin/manage-users")}
-                  className="w-full md:w-auto px-4 py-2 bg-neutral-700 text-white text-sm md:text-base rounded-lg hover:bg-neutral-600 transition-colors order-2 md:order-1"
+                  className="w-full sm:w-auto px-4 py-2 bg-neutral-700 text-white text-sm md:text-base rounded-lg hover:bg-neutral-600 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full md:w-auto px-4 py-2 bg-black text-white text-sm md:text-base rounded-lg hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed order-1 md:order-2"
+                  className="w-full sm:w-auto px-4 py-2 bg-black text-white text-sm md:text-base rounded-lg hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {saving ? "Saving..." : "Save Changes"}
                 </button>

@@ -195,9 +195,9 @@ export default function SidebarDemo({ role }) {
 
       {/* Desktop Sidebar - Hidden on mobile */}
       <div className="hidden md:block">
-        <div className="fixed md:relative z-40 transition-transform duration-300 ease-in-out">
+        <div className="fixed md:relative z-40 transition-transform duration-300 ease-in-out h-full">
           <Sidebar open={open} setOpen={setOpen}>
-            <SidebarBody className="flex flex-col justify-between h-full gap-4 sm:gap-10">
+            <SidebarBody className="flex flex-col justify-between h-screen">
               <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
                 {open ? <Logo /> : <LogoIcon />}
                 <div className="mt-4 sm:mt-8 flex flex-col gap-1 sm:gap-2">
@@ -224,7 +224,7 @@ export default function SidebarDemo({ role }) {
                 </div>
               </div>
 
-              <div className="p-2 sm:p-4">
+              <div className="p-2 sm:p-4 mt-auto">
                 <button
                   onClick={() => {
                     handleNavigation("/", "logout");

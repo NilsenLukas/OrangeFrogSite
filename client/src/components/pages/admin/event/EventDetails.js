@@ -312,431 +312,387 @@ export default function EventDetails() {
         <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex flex-col w-full min-h-screen p-4 md:p-8 bg-gradient-to-b from-neutral-900 to-neutral-800"
+            className="min-h-screen bg-neutral-900 py-6 md:py-12 px-4 sm:px-6 lg:px-8"
         >
-            <motion.div
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.4 }}
-                className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0"
-            >
-                <Link 
-                    to="/admin/manage-events"
-                    className="mb-2 md:mb-8 flex items-center text-neutral-400 hover:text-white transition-colors group"
-                >
-                    <FaArrowLeft className="mr-2 transform group-hover:-translate-x-1 transition-transform" />
-                    Back to Events
-                </Link>
-            </motion.div>
-
-            <motion.div 
-                className="bg-neutral-800 rounded-lg p-4 md:p-8 shadow-2xl backdrop-blur-sm bg-opacity-90"
-                {...fadeIn}
-            >   
-                <div className='mb-4 md:mb-8 border-b border-neutral-700 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
-                    <motion.h1 
-                        className="text-2xl md:text-4xl font-bold text-white"
-                        {...fadeIn}
+            <div className="max-w-7xl mx-auto">
+                {/* Header Section */}
+                <div className="mb-6 md:mb-8">
+                    <Link 
+                        to="/admin/manage-events"
+                        className="inline-flex items-center text-neutral-400 hover:text-white transition-colors mb-4"
                     >
-                        {event.eventName}
-                    </motion.h1>
-                    <div className="flex space-x-2 md:space-x-4 w-full md:w-auto">
-                        <button
-                            onClick={() => handleEdit(event)}
-                            className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                        >
-                            <FaEdit className="md:mr-2" />
-                            <span className="hidden md:inline">Edit</span>
-                        </button>
-                        <button
-                            onClick={handleDelete}
-                            className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-                        >
-                            <FaTrashAlt className="md:mr-2" />
-                            <span className="hidden md:inline">Delete</span>
-                        </button>
-                    </div>
+                        <FaArrowLeft className="w-4 h-4 mr-2" />
+                        <span className="text-sm">Back to Events</span>
+                    </Link>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-                    <motion.div 
-                        className="space-y-4 md:space-y-6"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 }}
-                    >
-                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-4 md:p-6">
-                            <h2 className="text-lg md:text-xl font-semibold text-white mb-4 flex items-center">
-                                <FaInfoCircle className="mr-2 text-blue-400" />
-                                Event Details
-                            </h2>
-                            <div className="space-y-3 text-neutral-300 text-sm md:text-base">
-                                <p className="flex items-center">
-                                    <FaMapMarkerAlt className="mr-2 text-red-400 flex-shrink-0" />
-                                    <span className="font-medium mr-2">Location:</span>
-                                    <span className="break-all">{event.eventLocation}</span>
-                                </p>
-                                <div className="flex items-start">
-                                    <FaClock className="mr-2 text-green-400 mt-1 flex-shrink-0" />
-                                    <div className="flex-1">
-                                        <div className="mb-2">
-                                            <span className="font-medium">Load In:</span>
-                                            <div className="ml-2">
-                                                <div>{new Date(event.eventLoadIn).toLocaleString()}</div>
-                                                <div className="text-green-400">({event.eventLoadInHours}h)</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start">
-                                    <FaClock className="mr-2 text-yellow-400 mt-1 flex-shrink-0" />
-                                    <div className="flex-1">
+
+                {/* Main Content */}
+                <motion.div 
+                    className="bg-neutral-800 rounded-lg p-6 md:p-8 shadow-xl space-y-8"
+                    {...fadeIn}
+                >
+                    {/* Event Header */}
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-neutral-700 pb-6">
+                        <motion.h1 
+                            className="text-2xl md:text-3xl font-bold text-white"
+                            {...fadeIn}
+                        >
+                            {event.eventName}
+                        </motion.h1>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => handleEdit(event)}
+                                className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors flex items-center gap-2"
+                            >
+                                <FaEdit className="text-sm" />
+                                <span>Edit</span>
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors flex items-center gap-2"
+                            >
+                                <FaTrashAlt className="text-sm" />
+                                <span>Delete</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Event Details Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        {/* Event Information */}
+                        <motion.div 
+                            className="space-y-6"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 }}
+                        >
+                            <div className="bg-neutral-700/40 rounded-lg p-6">
+                                <h2 className="text-lg font-semibold text-white mb-4 flex items-center">
+                                    <FaInfoCircle className="mr-2 text-blue-400" />
+                                    Event Details
+                                </h2>
+                                <div className="space-y-4">
+                                    <div className="flex items-start">
+                                        <FaMapMarkerAlt className="mt-1 mr-3 text-red-400 flex-shrink-0" />
                                         <div>
-                                            <span className="font-medium">Load Out:</span>
-                                            <div className="ml-2">
-                                                <div>{new Date(event.eventLoadOut).toLocaleString()}</div>
-                                                <div className="text-yellow-400">({event.eventLoadOutHours}h)</div>
-                                            </div>
+                                            <span className="text-neutral-400">Location:</span>
+                                            <p className="text-white">{event.eventLocation}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start">
+                                        <FaClock className="mt-1 mr-3 text-green-400 flex-shrink-0" />
+                                        <div>
+                                            <span className="text-neutral-400">Load In:</span>
+                                            <p className="text-white">{new Date(event.eventLoadIn).toLocaleString()}</p>
+                                            <p className="text-green-400">({event.eventLoadInHours}h)</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start">
+                                        <FaClock className="mt-1 mr-3 text-yellow-400 flex-shrink-0" />
+                                        <div>
+                                            <span className="text-neutral-400">Load Out:</span>
+                                            <p className="text-white">{new Date(event.eventLoadOut).toLocaleString()}</p>
+                                            <p className="text-yellow-400">({event.eventLoadOutHours}h)</p>
                                         </div>
                                     </div>
                                 </div>
-                                <p className="flex items-center">
-                                    <span className="font-medium mr-2">Created:</span>
-                                    <span>{new Date(event.createdAt).toLocaleString()}</span>
-                                </p>
-                                <p className="flex items-center">
-                                    <span className="font-medium mr-2">Last Modified:</span>
-                                    <span>{new Date(event.updatedAt).toLocaleString()}</span>
+                            </div>
+                        </motion.div>
+
+                        {/* Description */}
+                        <motion.div 
+                            className="space-y-6"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.4 }}
+                        >
+                            <div className="bg-neutral-700/40 rounded-lg p-6">
+                                <h2 className="text-lg font-semibold text-white mb-4 flex items-center">
+                                    <FaInfoCircle className="mr-2 text-blue-400" />
+                                    Description
+                                </h2>
+                                <p className="text-neutral-300 leading-relaxed">
+                                    {event.eventDescription || 'No description provided'}
                                 </p>
                             </div>
-                        </div>
-                    </motion.div>
+                        </motion.div>
+                    </div>
 
-                    <motion.div 
-                        className="space-y-4 md:space-y-6"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 }}
-                    >
-                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-4 md:p-6">
-                            <h2 className="text-lg md:text-xl font-semibold text-white mb-4 flex items-center">
-                                <FaInfoCircle className="mr-2 text-blue-400" />
-                                Description
-                            </h2>
-                            <p className="text-neutral-300 leading-relaxed text-sm md:text-base">
-                                {event.eventDescription || 'No description provided'}
-                            </p>
-                        </div>
-                    </motion.div>
-                </div>
-            </motion.div>
-
-            <div className="mt-6 md:mt-8">
-                <h2 className="text-lg md:text-xl font-semibold text-white mb-4">Invited Freelancers</h2>
-                <div className="bg-neutral-800 rounded-lg p-4 md:p-6">
-                    {event?.assignedContractors?.filter(contractor => 
-                        !event.approvedContractors?.some(ac => ac._id === contractor._id)
-                    ).length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                            {event.assignedContractors
-                                .filter(contractor => 
-                                    !event.approvedContractors?.some(ac => ac._id === contractor._id)
-                                )
-                                .map((contractor) => (
-                                    <div 
-                                        key={contractor._id}
-                                        className="bg-neutral-700 rounded-lg p-3 md:p-4 flex flex-col cursor-pointer hover:bg-neutral-600 transition-colors"
-                                        onClick={() => handleContractorClick(contractor)}
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <div className="min-w-0 flex-1">
-                                                <h3 className="text-white font-medium text-sm md:text-base truncate">{contractor.name}</h3>
-                                                <p className="text-neutral-400 text-xs md:text-sm truncate">{contractor.email}</p>
+                    {/* Contractors Section */}
+                    <div className="space-y-6">
+                        <h2 className="text-lg font-semibold text-white">Invited Freelancers</h2>
+                        <div className="bg-neutral-700/40 rounded-lg p-6">
+                            {event?.assignedContractors?.filter(contractor => 
+                                !event.approvedContractors?.some(ac => ac._id === contractor._id)
+                            ).length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {event.assignedContractors
+                                        .filter(contractor => 
+                                            !event.approvedContractors?.some(ac => ac._id === contractor._id)
+                                        )
+                                        .map((contractor) => (
+                                            <div 
+                                                key={contractor._id}
+                                                className="bg-neutral-700 rounded-lg p-4 hover:bg-neutral-600 transition-colors cursor-pointer"
+                                                onClick={() => handleContractorClick(contractor)}
+                                            >
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <h3 className="text-white font-medium">{contractor.name}</h3>
+                                                        <p className="text-neutral-400 text-sm">{contractor.email}</p>
+                                                    </div>
+                                                    <div>
+                                                        {event.acceptedContractors?.some(c => c._id === contractor._id) ? (
+                                                            <span className="px-2 py-1 bg-green-500/10 text-green-500 rounded-full text-xs">
+                                                                Applied
+                                                            </span>
+                                                        ) : event.rejectedContractors?.some(c => c._id === contractor._id) ? (
+                                                            <span className="px-2 py-1 bg-red-500/10 text-red-500 rounded-full text-xs">
+                                                                Declined
+                                                            </span>
+                                                        ) : (
+                                                            <span className="px-2 py-1 bg-yellow-500/10 text-yellow-500 rounded-full text-xs">
+                                                                Pending
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="ml-2 flex-shrink-0">
-                                                {event.acceptedContractors?.some(c => c._id === contractor._id) ? (
-                                                    <span className="px-2 py-1 bg-green-500/10 text-green-500 rounded-full text-xs whitespace-nowrap">
-                                                        Applied
-                                                    </span>
-                                                ) : event.rejectedContractors?.some(c => c._id === contractor._id) ? (
-                                                    <span className="px-2 py-1 bg-red-500/10 text-red-500 rounded-full text-xs whitespace-nowrap">
-                                                        Declined
-                                                    </span>
-                                                ) : (
-                                                    <span className="px-2 py-1 bg-yellow-500/10 text-yellow-500 rounded-full text-xs whitespace-nowrap">
-                                                        Pending
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                        </div>
-                    ) : (
-                        <p className="text-neutral-400 text-center text-sm md:text-base">No freelancers have been invited to this event.</p>
-                    )}
-                </div>
-            </div>
-
-            <div className="mt-6 md:mt-8">
-                <h2 className="text-lg md:text-xl font-semibold text-white mb-4">Approved Freelancers</h2>
-                <div className="bg-neutral-800 rounded-lg p-4 md:p-6">
-                    {event?.approvedContractors?.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                            {event.approvedContractors.map((contractor) => (
-                                <div 
-                                    key={contractor._id}
-                                    className="bg-neutral-700 rounded-lg p-3 md:p-4 flex flex-col"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="min-w-0 flex-1">
-                                            <h3 className="text-white font-medium text-sm md:text-base truncate">{contractor.name}</h3>
-                                            <p className="text-neutral-400 text-xs md:text-sm truncate">{contractor.email}</p>
-                                        </div>
-                                        <span className="ml-2 px-2 py-1 bg-blue-500/10 text-blue-500 rounded-full text-xs whitespace-nowrap">
-                                            Approved
-                                        </span>
-                                    </div>
+                                        ))}
                                 </div>
-                            ))}
+                            ) : (
+                                <p className="text-neutral-400 text-center">No freelancers have been invited to this event.</p>
+                            )}
                         </div>
-                    ) : (
-                        <p className="text-neutral-400 text-center text-sm md:text-base">No approved freelancers yet.</p>
-                    )}
-                </div>
-            </div>
-
-            <h2 className="text-xl font-semibold text-white mb-4 mt-8">Job Comments</h2>
-
-            <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-2'>
-                <div className="mt-8">
-                        <div className="w-full h-full overflow-auto px-5">
-                    <div className="flex items-center gap-2 relative">
-                    
-                    <div className="hidden md:flex gap-2">
-                        <button
-                            onClick={() => setView('grid')}
-                            className={`p-2 mt-0 rounded transition-colors ${
-                                view === 'grid' 
-                                    ? 'bg-neutral-700 text-white' 
-                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                            }`}
-                        >
-                            <FaTh className="text-xl" />
-                        </button>
-                        <button
-                            onClick={() => setView('list')}
-                            className={`p-2 mt-0 rounded transition-colors ${
-                                view === 'list' 
-                                    ? 'bg-neutral-700 text-white' 
-                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                            }`}
-                        >
-                            <FaList className="text-xl" />
-                        </button>
                     </div>
-                </div>
-            </div>
 
-            <div className="relative z-0 pb-8">
-                {getFilteredAndSortedJobComments().length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-[50vh] text-neutral-400">
-                        <span className="text-6xl mb-4">😢</span>
-                        <p className="text-xl">No job comments found</p>
-                    </div>
-                ) : (
-                    view === 'grid' ? (
-                        <div className="max-w-full mx-auto">
-                            <HoverEffect 
-                                items={formatJobCommentsForHoverEffect(getFilteredAndSortedJobComments())} 
-                                className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-auto"
-                            />
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
-                            <thead className="bg-neutral-700">
-                                <tr>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('userID')}
-                                    >
-                                        <div className="flex items-center">
-                                            User
-                                            <span className="ml-2">{getSortIcon('userID')}</span>
-                                        </div>
-                                    </th>
-
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('createdAt')}
-                                    >
-                                        <div className="flex items-center">
-                                            Created
-                                            <span className="ml-2">{getSortIcon('createdAt')}</span>
-                                        </div>
-                                    </th>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('updatedAt')}
-                                    >
-                                        <div className="flex items-center">
-                                            Last Modified
-                                            <span className="ml-2">{getSortIcon('updatedAt')}</span>
-                                        </div>
-                                    </th>
-                                
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    {getFilteredAndSortedJobComments().map((jobComment) => (
-                                        <tr 
-                                            key={jobComment._id} 
-                                            className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
-                                            onClick={() => handleEventClick(jobComment._id)}
+                    {/* Approved Contractors Section */}
+                    <div className="space-y-6">
+                        <h2 className="text-lg font-semibold text-white">Approved Freelancers</h2>
+                        <div className="bg-neutral-700/40 rounded-lg p-6">
+                            {event?.approvedContractors?.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {event.approvedContractors.map((contractor) => (
+                                        <div 
+                                            key={contractor._id}
+                                            className="bg-neutral-700 rounded-lg p-4"
                                         >
-                                            <td className="p-4 text-white">
-                                                {users?.find(user => user._id === jobComment.userID)?.name}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {new Date(jobComment.createdAt).toLocaleString()}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {new Date(jobComment.updatedAt).toLocaleString()}
-                                            </td>
-                                        </tr>
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <h3 className="text-white font-medium">{contractor.name}</h3>
+                                                    <p className="text-neutral-400 text-sm">{contractor.email}</p>
+                                                </div>
+                                                <span className="px-2 py-1 bg-blue-500/10 text-blue-500 rounded-full text-xs">
+                                                    Approved
+                                                </span>
+                                            </div>
+                                        </div>
                                     ))}
-                                </tbody>
-                            </table>
+                                </div>
+                            ) : (
+                                <p className="text-neutral-400 text-center">No approved freelancers yet.</p>
+                            )}
                         </div>
-                    )
-                )}
-            </div>
-            </div>
-            </div>
-
-            <h2 className="text-xl font-semibold text-white mb-4 mt-8">Correction Reports</h2>
-
-            <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-2'>
-                <div className="mt-8">
-                        <div className="w-full h-full overflow-auto px-5">
-                    <div className="flex items-center gap-2 relative">
-                    
-                    <div className="hidden md:flex gap-2">
-                        <button
-                            onClick={() => setView('grid')}
-                            className={`p-2 mt-0 rounded transition-colors ${
-                                view === 'grid' 
-                                    ? 'bg-neutral-700 text-white' 
-                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                            }`}
-                        >
-                            <FaTh className="text-xl" />
-                        </button>
-                        <button
-                            onClick={() => setView('list')}
-                            className={`p-2 mt-0 rounded transition-colors ${
-                                view === 'list' 
-                                    ? 'bg-neutral-700 text-white' 
-                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                            }`}
-                        >
-                            <FaList className="text-xl" />
-                        </button>
                     </div>
-                </div>
-            </div>
 
-            <div className="relative z-0 pb-8">
-                {getFilteredAndSortedCorrections().length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-[50vh] text-neutral-400">
-                        <span className="text-6xl mb-4">😢</span>
-                        <p className="text-xl">No corrections found</p>
+                    {/* Job Comments Section */}
+                    <div className="space-y-6">
+                        <h2 className="text-lg font-semibold text-white">Job Comments</h2>
+                        <div className="bg-neutral-700/40 rounded-lg p-6">
+                            <div className="flex justify-end mb-4">
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => setView('grid')}
+                                        className={`p-2 rounded transition-colors ${
+                                            view === 'grid' 
+                                                ? 'bg-neutral-700 text-white' 
+                                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                                        }`}
+                                    >
+                                        <FaTh className="text-lg" />
+                                    </button>
+                                    <button
+                                        onClick={() => setView('list')}
+                                        className={`p-2 rounded transition-colors ${
+                                            view === 'list' 
+                                                ? 'bg-neutral-700 text-white' 
+                                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                                        }`}
+                                    >
+                                        <FaList className="text-lg" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {getFilteredAndSortedJobComments().length === 0 ? (
+                                <div className="flex flex-col items-center justify-center h-[200px] text-neutral-400">
+                                    <span className="text-6xl mb-4">😢</span>
+                                    <p className="text-xl">No job comments found</p>
+                                </div>
+                            ) : (
+                                view === 'grid' ? (
+                                    <div className="max-w-full mx-auto">
+                                        <HoverEffect 
+                                            items={formatJobCommentsForHoverEffect(getFilteredAndSortedJobComments())} 
+                                            className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full bg-neutral-800/50 rounded-lg">
+                                            <thead className="bg-neutral-700">
+                                                <tr>
+                                                    <th className="p-4 text-left text-white cursor-pointer">
+                                                        <div className="flex items-center">
+                                                            User
+                                                            <span className="ml-2">{getSortIcon('userID')}</span>
+                                                        </div>
+                                                    </th>
+                                                    <th className="p-4 text-left text-white cursor-pointer">
+                                                        <div className="flex items-center">
+                                                            Created
+                                                            <span className="ml-2">{getSortIcon('createdAt')}</span>
+                                                        </div>
+                                                    </th>
+                                                    <th className="p-4 text-left text-white cursor-pointer">
+                                                        <div className="flex items-center">
+                                                            Last Modified
+                                                            <span className="ml-2">{getSortIcon('updatedAt')}</span>
+                                                        </div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {getFilteredAndSortedJobComments().map((jobComment) => (
+                                                    <tr 
+                                                        key={jobComment._id} 
+                                                        className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
+                                                        onClick={() => handleEventClick(jobComment._id)}
+                                                    >
+                                                        <td className="p-4 text-white">
+                                                            {users?.find(user => user._id === jobComment.userID)?.name}
+                                                        </td>
+                                                        <td className="p-4 text-white">
+                                                            {new Date(jobComment.createdAt).toLocaleString()}
+                                                        </td>
+                                                        <td className="p-4 text-white">
+                                                            {new Date(jobComment.updatedAt).toLocaleString()}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )
+                            )}
+                        </div>
                     </div>
-                ) : (
-                    view === 'grid' ? (
-                        <div className="max-w-full mx-auto">
-                            <HoverEffect 
-                                items={formatEventsForHoverEffect(getFilteredAndSortedCorrections())} 
-                                className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-auto"
-                            />
+
+                    {/* Corrections Section */}
+                    <div className="space-y-6">
+                        <h2 className="text-lg font-semibold text-white">Correction Reports</h2>
+                        <div className="bg-neutral-700/40 rounded-lg p-6">
+                            <div className="flex justify-end mb-4">
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => setView('grid')}
+                                        className={`p-2 rounded transition-colors ${
+                                            view === 'grid' 
+                                                ? 'bg-neutral-700 text-white' 
+                                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                                        }`}
+                                    >
+                                        <FaTh className="text-lg" />
+                                    </button>
+                                    <button
+                                        onClick={() => setView('list')}
+                                        className={`p-2 rounded transition-colors ${
+                                            view === 'list' 
+                                                ? 'bg-neutral-700 text-white' 
+                                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                                        }`}
+                                    >
+                                        <FaList className="text-lg" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {getFilteredAndSortedCorrections().length === 0 ? (
+                                <div className="flex flex-col items-center justify-center h-[200px] text-neutral-400">
+                                    <span className="text-6xl mb-4">😢</span>
+                                    <p className="text-xl">No corrections found</p>
+                                </div>
+                            ) : (
+                                view === 'grid' ? (
+                                    <div className="max-w-full mx-auto">
+                                        <HoverEffect 
+                                            items={formatEventsForHoverEffect(getFilteredAndSortedCorrections())} 
+                                            className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full bg-neutral-800/50 rounded-lg">
+                                            <thead className="bg-neutral-700">
+                                                <tr>
+                                                    <th className="p-4 text-left text-white cursor-pointer">
+                                                        <div className="flex items-center">
+                                                            Correction Name
+                                                            <span className="ml-2">{getSortIcon('correctionName')}</span>
+                                                        </div>
+                                                    </th>
+                                                    <th className="p-4 text-left text-white cursor-pointer">
+                                                        <div className="flex items-center">
+                                                            Status
+                                                            <span className="ml-2">{getSortIcon('status')}</span>
+                                                        </div>
+                                                    </th>
+                                                    <th className="p-4 text-left text-white cursor-pointer">
+                                                        <div className="flex items-center">
+                                                            Created By
+                                                            <span className="ml-2">{getSortIcon('userID')}</span>
+                                                        </div>
+                                                    </th>
+                                                    <th className="p-4 text-left text-white cursor-pointer">
+                                                        <div className="flex items-center">
+                                                            Correction Type
+                                                            <span className="ml-2">{getSortIcon('requestType')}</span>
+                                                        </div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {getFilteredAndSortedCorrections().map((correction) => (
+                                                    <tr 
+                                                        key={correction._id} 
+                                                        className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
+                                                        onClick={() => handleEventClick(correction._id)}
+                                                    >
+                                                        <td className="p-4 text-white">
+                                                            {correction.correctionName}
+                                                        </td>
+                                                        <td className="p-4 text-white">
+                                                            {correction.status}
+                                                        </td>
+                                                        <td className="p-4 text-white">
+                                                            {users?.find(user => user._id === correction.userID)?.name}
+                                                        </td>
+                                                        <td className="p-4 text-white">
+                                                            {correction.requestType}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )
+                            )}
                         </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
-                            <thead className="bg-neutral-700">
-                                <tr>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('correctionName')}
-                                    >
-                                        <div className="flex items-center">
-                                            Correction Name
-                                            <span className="ml-2">{getSortIcon('correctionName')}</span>
-                                        </div>
-                                    </th>
-
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('status')}
-                                    >
-                                        <div className="flex items-center">
-                                            Status
-                                            <span className="ml-2">{getSortIcon('status')}</span>
-                                        </div>
-                                    </th>
-
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('userID')}
-                                    >
-                                        <div className="flex items-center">
-                                            Created By
-                                            <span className="ml-2">{getSortIcon('userID')}</span>
-                                        </div>
-                                    </th>
-
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('requestType')}
-                                    >
-                                        <div className="flex items-center">
-                                            Correction Type
-                                            <span className="ml-2">{getSortIcon('requestType')}</span>
-                                        </div>
-                                    </th>
-                                </tr>
-                            </thead>
-                                <tbody>
-                                    {getFilteredAndSortedCorrections().map((correction) => (
-                                        <tr 
-                                            key={correction._id} 
-                                            className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
-                                            onClick={() => handleEventClick(correction._id)}
-                                        >
-                                            <td className="p-4 text-white">
-                                                {correction.correctionName}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {correction.status}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {users?.find(user => user._id === correction.userID)?.name}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {correction.requestType}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )
-                )}
-            </div>
-            </div>
+                    </div>
+                </motion.div>
             </div>
 
+            {/* Modals */}
             {showApprovalModal && (
                 <Modal>
                     <motion.div 
@@ -801,13 +757,13 @@ export default function EventDetails() {
                         <div className="flex justify-end gap-3 md:gap-4">
                             <button 
                                 onClick={() => setShowDeletePopup(false)} 
-                                className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors text-sm md:text-base"
+                                className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors text-sm md:text-base"
                             >
                                 Cancel
                             </button>
                             <button 
                                 onClick={confirmDelete} 
-                                className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-full transition-colors text-sm md:text-base"
+                                className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors text-sm md:text-base"
                             >
                                 Delete
                             </button>

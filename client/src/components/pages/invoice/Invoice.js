@@ -702,10 +702,10 @@ const confirmDelete = async () => {
   }, [invoice]);
 
   return (
-    <div className="p-8 bg-gray-100 dark:bg-neutral-900 min-h-screen">
+    <div className="p-4 sm:p-8 bg-gray-100 dark:bg-neutral-900 min-h-screen">
       <Link
         to={auth.role === "admin" ? "/admin/invoices" : "/user/invoices"}
-        className="mb-8 flex items-center text-gray-300 hover:text-white transition-colors"
+        className="mb-4 sm:mb-8 flex items-center text-gray-300 hover:text-white transition-colors"
       >
         <svg
           className="w-5 h-5 mr-2"
@@ -726,44 +726,44 @@ const confirmDelete = async () => {
         {!isNewInvoice && (
           <button
             onClick={generatePDF}
-            className="absolute top-0 right-0 px-6 py-2 w-auto bg-neutral-800 hover:bg-neutral-700 text-white rounded transition-colors flex items-center"
+            className="absolute top-0 right-0 px-4 sm:px-6 py-2 w-auto bg-neutral-800 hover:bg-neutral-700 text-white rounded transition-colors flex items-center text-sm sm:text-base"
           >
             <FaDownload className="mr-2" />
-            Download PDF
+            <span className="hidden sm:inline">Download PDF</span>
+            <span className="sm:hidden">PDF</span>
           </button>
         )}
 
-        <h1 className="text-3xl font-bold text-white mb-8">Invoice Details</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-8">Invoice Details</h1>
 
         {invoice ? (
           <div 
             ref={invoiceRef}
-            className="max-w-4xl mx-auto p-6 rounded-lg shadow bg-neutral-800 text-white"
+            className="max-w-4xl mx-auto p-4 sm:p-6 rounded-lg shadow bg-neutral-800 text-white"
             style={{
               width: "100%",
               minHeight: "100vh",
-              padding: "20px"
+              padding: "16px"
           }}
           >
             {/* User and Bill To Section */}
-            <div className="flex justify-between mb-6 text-white">
-              <div>
+            <div className="flex flex-col sm:flex-row justify-between mb-6 text-white gap-4 sm:gap-0">
+              <div className="w-full sm:w-auto">
                 <p className="font-bold">Return address:</p>
                 <p className="font-bold">{invoice.user.name}</p>
                 <p>{invoice.user.address || "N/A"}</p>
                 <p>Phone: {invoice.user.phone || "N/A"}</p>
                 <p>Email: {invoice.user.email || "N/A"}</p>
               </div>
-              <div className="w-2/5 ">
+              <div className="w-full sm:w-2/5">
                 <p className="font-bold">Bill to:</p>
                 <p className="whitespace-pre-line">{adminData?.address || 'N/A'}</p>
                 <p className="whitespace-pre-line">Email: {adminData?.email || 'N/A'}</p>
-
               </div>
             </div>
 
             {/* Invoice Details */}
-            <h2 className="text-2xl font-bold text-white mb-4">Show: {invoice.show}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-4">Show: {invoice.show}</h2>
 
             {/* Editable Venue */}
             <p className="text-sm text-gray-400 mb-2">
@@ -811,129 +811,127 @@ const confirmDelete = async () => {
             </p>
 
             {/* Invoice Table */}
-            <table className="w-full border-collapse border border-gray-700">
-              <thead>
-                <tr className="bg-gray-700">
-                  <th className="p-2 border border-gray-700 text-white w-44">Date of Work</th>
-                  <th className="p-2 border border-gray-700 text-white w-64">Actual Hours Worked</th>
-                  <th className="p-2 border border-gray-700 text-white w-64">Notes</th>
-                  <th className="p-2 border border-gray-700 text-white w-24">Billable Hours</th>
-                  <th className="p-2 border border-gray-700 text-white w-20">Rate</th>
-                  <th className="p-2 border border-gray-700 text-white w-32">Total</th>
-                  <th className="p-2 border border-gray-700 text-white w-28 text-center">Actions</th>
-                </tr>
-              </thead>
-              
-              <tbody>
-                {invoice?.items?.length > 0 ? (
-                  invoice.items.map((item, index) => (
-                    <tr key={index}>
-                      {editingRow === index ? (
-                        <>
-                          {/* Editable Date Input (Shows MM/DD/YYYY Format) */}
-                          <td>
-                            <input
-                              className="bg-transparent border border-gray-500 p-1 text-white w-full"
-                              value={editedData.date ?? ""} // Ensures the date is not empty
-                              onChange={(e) => setEditedData({ ...editedData, date: e.target.value })}
-                              placeholder="MM/DD/YYYY"
-                            />
-                          </td>
-                          <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full" value={editedData.actualHours || ''} onChange={(e) => handleChange(e, 'actualHours')} placeholder="HH:MM - HH:MM" /></td>
-                          <td><input className="bg-transparent border border-gray-500 p-1 pl-2 text-white w-full" value={editedData.notes ?? '-'} onChange={(e) => handleChange(e, 'notes')} /></td>
-                          <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full" value={editedData.billableHours ?? '0'} onChange={(e) => handleChange(e, 'billableHours')} /></td>
-                          <td>$ <input className="bg-transparent border border-gray-500 p-1 text-white w-3/4" value={editedData.rate || ''} onChange={(e) => handleChange(e, 'rate')} /></td>
-                          <td className="text-center w-32">${(editedData.billableHours * editedData.rate).toFixed(2)}</td>
-                          <td className="w-28 border border-gray-700 text-center flex justify-center gap-2">
-                            <button onClick={() => handleSave(index)} className="bg-gray-600 hover:bg-gray-500 p-2 rounded text-white w-auto mt-0">
-                              <FaSave />
-                            </button>
-                            <button onClick={() => setEditingRow(null)} className="bg-gray-600 hover:bg-gray-500 p-2 rounded text-white w-auto mt-0">
-                              <FaTimes />
-                            </button>
-                          </td>
-                        </>
-                      ) : (
-                        <>
-                          {/* Read-Only Display */}
-                          <td className="w-44">{parseDate(invoice.dateOfWork[index] || "")}</td>
-                          <td className="w-40">{item.actualHours}</td>
-                          <td className="w-64 pl-4">{item.notes && item.notes.trim() ? item.notes : "-"}</td>
-                          <td className="w-24">{item.billableHours && item.billableHours > 0 ? item.billableHours : "0"}</td>
-                          <td className="w-32">${Number(item.rate).toFixed(2)}</td>
-                          <td className="text-center w-32 whitespace-nowrap">${Number(item.total).toFixed(2)}</td>
-                          <td className="w-28 border-none text-center flex justify-center gap-2">
-                            {/* Edit Button */}
-                            <button 
-                              onClick={() => handleEdit(index)} 
-                              className="bg-gray-600 hover:bg-gray-500 p-2 py-1 rounded text-white w-auto mt-0"
-                            >
-                              <FaEdit />
-                            </button>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse border border-gray-700">
+                <thead>
+                  <tr className="bg-gray-700">
+                    <th className="p-2 border border-gray-700 text-white text-sm sm:text-base w-24 sm:w-44">Date</th>
+                    <th className="p-2 border border-gray-700 text-white text-sm sm:text-base w-32 sm:w-64">Hours</th>
+                    <th className="p-2 border border-gray-700 text-white text-sm sm:text-base w-32 sm:w-64">Notes</th>
+                    <th className="p-2 border border-gray-700 text-white text-sm sm:text-base w-20 sm:w-24">Billable</th>
+                    <th className="p-2 border border-gray-700 text-white text-sm sm:text-base w-16 sm:w-20">Rate</th>
+                    <th className="p-2 border border-gray-700 text-white text-sm sm:text-base w-24 sm:w-32">Total</th>
+                    <th className="p-2 border border-gray-700 text-white text-sm sm:text-base w-20 sm:w-28 text-center">Actions</th>
+                  </tr>
+                </thead>
+                
+                <tbody>
+                  {invoice?.items?.length > 0 ? (
+                    invoice.items.map((item, index) => (
+                      <tr key={index}>
+                        {editingRow === index ? (
+                          <>
+                            <td>
+                              <input
+                                className="bg-transparent border border-gray-500 p-1 text-white w-full text-sm sm:text-base"
+                                value={editedData.date ?? ""}
+                                onChange={(e) => setEditedData({ ...editedData, date: e.target.value })}
+                                placeholder="MM/DD/YYYY"
+                              />
+                            </td>
+                            <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full text-sm sm:text-base" value={editedData.actualHours || ''} onChange={(e) => handleChange(e, 'actualHours')} placeholder="HH:MM - HH:MM" /></td>
+                            <td><input className="bg-transparent border border-gray-500 p-1 pl-2 text-white w-full text-sm sm:text-base" value={editedData.notes ?? '-'} onChange={(e) => handleChange(e, 'notes')} /></td>
+                            <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full text-sm sm:text-base" value={editedData.billableHours ?? '0'} onChange={(e) => handleChange(e, 'billableHours')} /></td>
+                            <td>$ <input className="bg-transparent border border-gray-500 p-1 text-white w-3/4 text-sm sm:text-base" value={editedData.rate || ''} onChange={(e) => handleChange(e, 'rate')} /></td>
+                            <td className="text-center w-24 sm:w-32 text-sm sm:text-base">${(editedData.billableHours * editedData.rate).toFixed(2)}</td>
+                            <td className="w-20 sm:w-28 border border-gray-700 text-center flex justify-center gap-1 sm:gap-2">
+                              <button onClick={() => handleSave(index)} className="bg-gray-600 hover:bg-gray-500 p-1 sm:p-2 rounded text-white w-auto mt-0">
+                                <FaSave className="text-sm sm:text-base" />
+                              </button>
+                              <button onClick={() => setEditingRow(null)} className="bg-gray-600 hover:bg-gray-500 p-1 sm:p-2 rounded text-white w-auto mt-0">
+                                <FaTimes className="text-sm sm:text-base" />
+                              </button>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="w-24 sm:w-44 text-sm sm:text-base">{parseDate(invoice.dateOfWork[index] || "")}</td>
+                            <td className="w-32 sm:w-40 text-sm sm:text-base">{item.actualHours}</td>
+                            <td className="w-32 sm:w-64 pl-2 sm:pl-4 text-sm sm:text-base">{item.notes && item.notes.trim() ? item.notes : "-"}</td>
+                            <td className="w-20 sm:w-24 text-sm sm:text-base">{item.billableHours && item.billableHours > 0 ? item.billableHours : "0"}</td>
+                            <td className="w-16 sm:w-32 text-sm sm:text-base">${Number(item.rate).toFixed(2)}</td>
+                            <td className="text-center w-24 sm:w-32 whitespace-nowrap text-sm sm:text-base">${Number(item.total).toFixed(2)}</td>
+                            <td className="w-20 sm:w-28 border-none text-center flex justify-center gap-1 sm:gap-2">
+                              <button 
+                                onClick={() => handleEdit(index)} 
+                                className="bg-gray-600 hover:bg-gray-500 p-1 sm:p-2 py-1 rounded text-white w-auto mt-0"
+                              >
+                                <FaEdit className="text-sm sm:text-base" />
+                              </button>
 
-                            {/* Delete Button */}
-                            <button 
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleDelete(index);
-                              }} 
-                              className="bg-gray-600 hover:bg-gray-500 p-2 py-1 rounded text-white w-auto mt-0"
-                            >
-                              <FaTrashAlt className="text-red-500" />
-                            </button>
-                          </td>
-                        </>
-                      )}
+                              <button 
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleDelete(index);
+                                }} 
+                                className="bg-gray-600 hover:bg-gray-500 p-1 sm:p-2 py-1 rounded text-white w-auto mt-0"
+                              >
+                                <FaTrashAlt className="text-red-500 text-sm sm:text-base" />
+                              </button>
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="7" className="text-center text-gray-400 text-sm sm:text-base">No invoice items available</td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" className="text-center text-gray-400">No invoice items available</td>
-                  </tr>
-                )}
+                  )}
 
-                {/* New Row Input Fields (Only Shown When 'Add Row' is Clicked) */}
-                {newRow && (
-                  <tr className="">
-                    <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full" value={newRow.date} onChange={(e) => handleNewRowChange(e, 'date')} placeholder="MM/DD/YYYY" /></td>
-                    <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full" value={newRow.actualHours} onChange={(e) => handleNewRowChange(e, 'actualHours')} placeholder="HH:MM - HH:MM" /></td>
-                    <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full" value={newRow.notes} onChange={(e) => handleNewRowChange(e, 'notes')} /></td>
-                    <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full" value={newRow.billableHours} onChange={(e) => handleNewRowChange(e, 'billableHours')} /></td>
-                    <td>$ <input className="bg-transparent border border-gray-500 p-1 text-white w-3/4" value={newRow.rate} onChange={(e) => handleNewRowChange(e, 'rate')} /></td>
-                    <td className="text-center w-32">${(newRow.billableHours * newRow.rate).toFixed(2)}</td>
-                    <td className="text-center flex justify-center gap-2">
-                      <button onClick={handleSaveNewRow} className="bg-gray-600 hover:bg-gray-500 p-2 rounded text-white w-auto mt-0">
-                        <FaSave />
-                      </button>
-                      <button onClick={() => setNewRow(null)} className="bg-gray-600 hover:bg-gray-500 p-2 rounded text-white w-auto mt-0">
-                        <FaTimes />
-                      </button>
-                    </td>
-                  </tr>
-                )}
-                {errorMessage && <tr><td colSpan="7" className="text-red-500 text-center">{errorMessage}</td></tr>}
-              </tbody>
-            </table>
+                  {/* New Row Input Fields */}
+                  {newRow && (
+                    <tr className="">
+                      <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full text-sm sm:text-base" value={newRow.date} onChange={(e) => handleNewRowChange(e, 'date')} placeholder="MM/DD/YYYY" /></td>
+                      <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full text-sm sm:text-base" value={newRow.actualHours} onChange={(e) => handleNewRowChange(e, 'actualHours')} placeholder="HH:MM - HH:MM" /></td>
+                      <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full text-sm sm:text-base" value={newRow.notes} onChange={(e) => handleNewRowChange(e, 'notes')} /></td>
+                      <td><input className="bg-transparent border border-gray-500 p-1 text-white w-full text-sm sm:text-base" value={newRow.billableHours} onChange={(e) => handleNewRowChange(e, 'billableHours')} /></td>
+                      <td>$ <input className="bg-transparent border border-gray-500 p-1 text-white w-3/4 text-sm sm:text-base" value={newRow.rate} onChange={(e) => handleNewRowChange(e, 'rate')} /></td>
+                      <td className="text-center w-24 sm:w-32 text-sm sm:text-base">${(newRow.billableHours * newRow.rate).toFixed(2)}</td>
+                      <td className="text-center flex justify-center gap-1 sm:gap-2">
+                        <button onClick={handleSaveNewRow} className="bg-gray-600 hover:bg-gray-500 p-1 sm:p-2 rounded text-white w-auto mt-0">
+                          <FaSave className="text-sm sm:text-base" />
+                        </button>
+                        <button onClick={() => setNewRow(null)} className="bg-gray-600 hover:bg-gray-500 p-1 sm:p-2 rounded text-white w-auto mt-0">
+                          <FaTimes className="text-sm sm:text-base" />
+                        </button>
+                      </td>
+                    </tr>
+                  )}
+                  {errorMessage && <tr><td colSpan="7" className="text-red-500 text-center text-sm sm:text-base">{errorMessage}</td></tr>}
+                </tbody>
+              </table>
+            </div>
 
             <div className="flex justify-end mb-4">
-                <button onClick={addNewRow} className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded flex items-center w-auto mt-2">
-                    <FaPlus className="mr-2 " /> Add Row
+                <button onClick={addNewRow} className="px-3 sm:px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded flex items-center w-auto mt-2 text-sm sm:text-base">
+                    <FaPlus className="mr-2" /> Add Row
                 </button>
             </div>
 
             {/* Invoice Totals */}
             <div className="mt-6 text-white">
-              <p className="mb-2">
+              <p className="mb-2 text-sm sm:text-base">
                 <strong>Subtotal:</strong> ${subtotal.toFixed(2)}
               </p>
-              <p className="mb-2">
+              <p className="mb-2 text-sm sm:text-base">
                 <strong>Tax Percentage:</strong> {invoice.taxPercentage}%
               </p>
-              <p className="mb-2">
+              <p className="mb-2 text-sm sm:text-base">
                 <strong>Tax Amount:</strong> ${taxAmount}
               </p>
-              <p className="text-xl font-bold">
+              <p className="text-lg sm:text-xl font-bold">
                 <strong>Total:</strong> ${total}
               </p>
             </div>
@@ -941,40 +939,39 @@ const confirmDelete = async () => {
             {/* Action Buttons Section */}
             {isNewInvoice && (
               <div className="flex justify-center items-center mt-6">
-                  {/* Save Invoice Button */}
                   <button
                       onClick={handleSaveInvoice}
-                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-full transition-colors"
+                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-full transition-colors text-sm sm:text-base"
                   >
                       Save Invoice
                   </button>
               </div>
-          )}
+            )}
           </div>
         ) : (
-          <p className="text-white text-center">Loading invoice details...</p>
+          <p className="text-white text-center text-sm sm:text-base">Loading invoice details...</p>
         )}
       </div>
       {/* Delete Confirmation Popup */}
       {showDeletePopup && (
         <Modal>
-            <div className="bg-neutral-900 p-8 rounded-md shadow-lg w-full max-w-md border border-neutral-700">
-                <h2 className="text-red-500 text-2xl mb-4">
+            <div className="bg-neutral-900 p-4 sm:p-8 rounded-md shadow-lg w-full max-w-md border border-neutral-700">
+                <h2 className="text-red-500 text-xl sm:text-2xl mb-4">
                     Are you sure you want to delete this row?
                 </h2>
-                <p className="text-neutral-300 mb-6">
+                <p className="text-neutral-300 mb-6 text-sm sm:text-base">
                     This action cannot be undone. Once deleted, this row's data will be permanently removed.
                 </p>
                 <div className="flex justify-end gap-4">
                     <button 
                         onClick={() => setShowDeletePopup(false)} 
-                        className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors"
+                        className="px-3 sm:px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors text-sm sm:text-base"
                     >
                         Cancel
                     </button>
                     <button 
                         onClick={confirmDelete} 
-                        className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-full transition-colors"
+                        className="px-3 sm:px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-full transition-colors text-sm sm:text-base"
                     >
                         Delete
                     </button>

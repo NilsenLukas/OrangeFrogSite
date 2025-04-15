@@ -228,128 +228,33 @@ export default function ViewEvent() {
     
 
     return (
-        <div className="w-full h-full overflow-auto px-2 md:px-5">
-            <div className="flex justify-between items-center mb-2 sticky top-0 bg-neutral-900 py-4 z-50">
-                
-                {/* Left section: Filter & Sort */}
-                <div className="flex items-center gap-3 mt-2">
-                    <div className='flex items-center gap-3 mt-3'>
-                        {/* Name filter input - Desktop */}
-                        <div className="relative hidden md:flex items-center mt-1">
-                            <input
-                                type="text"
-                                placeholder="Search by name"
-                                value={nameFilter}
-                                onChange={(e) => setNameFilter(e.target.value)}
-                                className="w-40 md:w-54 lg:w-64 px-4 pr-10 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40"
-                                style={{
-                                    transition: 'width 0.3s ease',
-                                    height: '2.5rem', 
-                                }}
-                            />
-                            <FaSearch className="absolute right-3 text-white/50" />
-                        </div>
+        <div className="w-full h-full overflow-auto px-4 sm:px-6 md:px-8">
+            {/* Control Bar */}
+            <div className="flex items-center justify-between mb-4 sticky top-0 bg-neutral-900 py-4 z-50">
+                {/* Left section: Controls */}
+                <div className="flex items-center gap-2">
+                    {/* Search Toggle */}
+                    <button
+                        onClick={() => setShowSearchModal(!showSearchModal)}
+                        className={`p-2 rounded-full transition-colors ${
+                            showSearchModal ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                        } text-white`}
+                    >
+                        <FaSearch className="text-lg sm:text-xl" />
+                    </button>
 
-                        {/* Name filter input - Mobile */}
-                        <div className="md:hidden">
-                            <button
-                                onClick={() => setShowSearchModal(true)}
-                                className="p-2 rounded-full bg-neutral-800 text-white hover:bg-neutral-700 transition-colors"
-                            >
-                                <FaSearch className="text-xl" />
-                            </button>
-                        </div>
-
-                        {/* Sort dropdown - Desktop */}
-                        <div className="hidden md:flex items-center gap-3 mt-2">
-                            <AnimatePresence>
-                                {!showSortOptions && (
-                                    <motion.button
-                                        initial={{ opacity: 0, x: -20 }}      
-                                        animate={{ opacity: 1, x: 0 }}         
-                                        exit={{ opacity: 0, x: -20 }}         
-                                        transition={{ duration: 0.3 }}
-                                        onClick={() => setShowSortOptions(true)}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded transition-colors mt-0 ${
-                                            showSortOptions
-                                                ? 'bg-neutral-700 text-white'
-                                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                                        }`}
-                                    >
-                                        <FaSort className="text-xl" />
-                                        <span className="whitespace-nowrap">Filter by</span>
-                                    </motion.button>
-                                )}
-                            </AnimatePresence>
-
-                            <AnimatePresence>
-                                {showSortOptions && (
-                                    <motion.div
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: 20 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="flex items-center gap-2"
-                                    >
-                                        <span className="text-white text-sm whitespace-nowrap">Sort by:</span>
-
-                                        <button
-                                            className="px-4 py-1.5 bg-neutral-800 text-white text-sm rounded-full hover:bg-neutral-700 transition-colors"
-                                            onClick={() => handleSort('eventName')}
-                                        >
-                                            Name
-                                        </button>
-
-                                        <button
-                                            className="px-4 py-1.5 bg-neutral-800 text-white text-sm rounded-full hover:bg-neutral-700 transition-colors"
-                                            onClick={() => handleSort('contractors')}
-                                        >
-                                            Contractors
-                                        </button>
-
-                                        <button
-                                            className="px-4 py-1.5 bg-neutral-800 text-white text-sm rounded-full hover:bg-neutral-700 transition-colors whitespace-nowrap"
-                                            onClick={() => handleSort('createdAt')}
-                                        >
-                                            Creation Date
-                                        </button>
-
-                                        <button
-                                            className="px-4 py-1.5 bg-neutral-800 text-white text-sm rounded-full hover:bg-neutral-700 transition-colors whitespace-nowrap"
-                                            onClick={() => handleSort('updatedAt')}
-                                        >
-                                            Last Modified
-                                        </button>
-
-                                        <motion.button
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: -20 }}
-                                            transition={{ delay: 0.2 }}
-                                            type="button"
-                                            onClick={() => setShowSortOptions(false)}
-                                            className="px-4 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-white text-sm rounded-full transition-colors"
-                                        >
-                                            Cancel
-                                        </motion.button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-
-                        {/* Sort dropdown - Mobile */}
-                        <div className="md:hidden">
-                            <button
-                                onClick={() => setShowSortOptions(true)}
-                                className="p-2 rounded-full bg-neutral-800 text-white hover:bg-neutral-700 transition-colors"
-                            >
-                                <FaSort className="text-xl" />
-                            </button>
-                        </div>
-                    </div>
+                    {/* Sort Toggle */}
+                    <button
+                        onClick={() => setShowSortOptions(!showSortOptions)}
+                        className={`p-2 rounded-full transition-colors ${
+                            showSortOptions ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                        } text-white`}
+                    >
+                        <FaSort className="text-lg sm:text-xl" />
+                    </button>
                 </div>
 
-                {/* View toggles */}
+                {/* Right section: View Toggle */}
                 <div className="flex gap-2">
                     <button
                         onClick={() => setView('grid')}
@@ -359,7 +264,7 @@ export default function ViewEvent() {
                                 : 'bg-neutral-800 text-white hover:bg-neutral-700'
                         }`}
                     >
-                        <FaTh className="text-xl" />
+                        <FaTh className="text-lg sm:text-xl" />
                     </button>
                     <button
                         onClick={() => setView('list')}
@@ -369,16 +274,94 @@ export default function ViewEvent() {
                                 : 'bg-neutral-800 text-white hover:bg-neutral-700'
                         }`}
                     >
-                        <FaList className="text-xl" />
+                        <FaList className="text-lg sm:text-xl" />
                     </button>
                 </div>
             </div>
 
+            {/* Control Panels */}
+            <div className="mb-4">
+                {/* Search Panel */}
+                <AnimatePresence>
+                    {showSearchModal && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mb-4 overflow-hidden"
+                        >
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    placeholder="Search by name"
+                                    value={nameFilter}
+                                    onChange={(e) => setNameFilter(e.target.value)}
+                                    className="w-full px-4 pr-10 py-2 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 border border-white/20 focus:border-white/40"
+                                />
+                                <FaSearch className="absolute right-3 text-white/50" />
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Sort Options Panel */}
+                <AnimatePresence>
+                    {showSortOptions && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mb-4 overflow-hidden"
+                        >
+                            <div className="flex flex-wrap gap-2 p-4 bg-neutral-800 rounded-lg">
+                                <button
+                                    onClick={() => handleSort('eventName')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Name
+                                </button>
+                                <button
+                                    onClick={() => handleSort('contractors')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Contractors
+                                </button>
+                                <button
+                                    onClick={() => handleSort('createdAt')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Creation Date
+                                </button>
+                                <button
+                                    onClick={() => handleSort('updatedAt')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Last Modified
+                                </button>
+                                <button
+                                    onClick={() => setShowSortOptions(false)}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-600 text-white rounded-full hover:bg-neutral-500 transition-colors text-sm sm:text-base"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            {/* Filter Summary */}
+            {nameFilter && (
+                <div className="mb-4 text-xs sm:text-sm text-neutral-400">
+                    Search: "{nameFilter}"
+                </div>
+            )}
+
             {/* Create Event Button - Desktop */}
-            <Link to="/admin/events/create" className="hidden md:block">
+            <Link to="/admin/events/create" className="hidden md:block mb-6">
                 <HoverBorderGradient
-                    containerClassName="rounded-full mt-0"
-                    className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0"
+                    containerClassName="rounded-full"
+                    className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2"
                 >
                     <span className="text-lg mr-1">+</span> 
                     <span>Create Event</span>
@@ -392,98 +375,7 @@ export default function ViewEvent() {
                 </button>
             </Link>
 
-            {/* Mobile Search Modal */}
-            {showSearchModal && (
-                <div className="md:hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        className="bg-neutral-900 p-6 rounded-lg w-[90%] max-w-sm"
-                    >
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-white text-lg font-medium">Search Events</h3>
-                            <button
-                                onClick={() => setShowSearchModal(false)}
-                                className="text-white/50 hover:text-white"
-                            >
-                                <FaTimes className="text-xl" />
-                            </button>
-                        </div>
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Search by name"
-                                value={nameFilter}
-                                onChange={(e) => setNameFilter(e.target.value)}
-                                className="w-full px-4 py-3 rounded-full bg-neutral-800 text-white placeholder:text-white/50 outline-none border border-neutral-700 focus:border-neutral-600"
-                            />
-                            <FaSearch className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50" />
-                        </div>
-                    </motion.div>
-                </div>
-            )}
-
-            {/* Mobile Sort Options Modal */}
-            {showSortOptions && (
-                <div className="md:hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        className="bg-neutral-900 p-6 rounded-lg w-[90%] max-w-sm"
-                    >
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-white text-lg font-medium">Sort by</h3>
-                            <button
-                                onClick={() => setShowSortOptions(false)}
-                                className="text-white/50 hover:text-white"
-                            >
-                                <FaTimes className="text-xl" />
-                            </button>
-                        </div>
-                        <div className="space-y-2">
-                            <button
-                                className="w-full px-4 py-3 bg-neutral-800 text-white text-sm rounded-full hover:bg-neutral-700 transition-colors text-left"
-                                onClick={() => {
-                                    handleSort('eventName');
-                                    setShowSortOptions(false);
-                                }}
-                            >
-                                Name
-                            </button>
-                            <button
-                                className="w-full px-4 py-3 bg-neutral-800 text-white text-sm rounded-full hover:bg-neutral-700 transition-colors text-left"
-                                onClick={() => {
-                                    handleSort('contractors');
-                                    setShowSortOptions(false);
-                                }}
-                            >
-                                Contractors
-                            </button>
-                            <button
-                                className="w-full px-4 py-3 bg-neutral-800 text-white text-sm rounded-full hover:bg-neutral-700 transition-colors text-left"
-                                onClick={() => {
-                                    handleSort('createdAt');
-                                    setShowSortOptions(false);
-                                }}
-                            >
-                                Creation Date
-                            </button>
-                            <button
-                                className="w-full px-4 py-3 bg-neutral-800 text-white text-sm rounded-full hover:bg-neutral-700 transition-colors text-left"
-                                onClick={() => {
-                                    handleSort('updatedAt');
-                                    setShowSortOptions(false);
-                                }}
-                            >
-                                Last Modified
-                            </button>
-                        </div>
-                    </motion.div>
-                </div>
-            )}
-
+            {/* Content Area */}
             <div className="relative z-0 pb-8">
                 {getFilteredAndSortedEvents().length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-[50vh] text-neutral-400">

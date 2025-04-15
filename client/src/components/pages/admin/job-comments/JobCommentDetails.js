@@ -56,7 +56,7 @@ export default function JobCommentDetails() {
         <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex flex-col w-full min-h-screen p-8 bg-gradient-to-b from-neutral-900 to-neutral-800"
+            className="flex flex-col w-full min-h-screen p-4 sm:p-8 bg-gradient-to-b from-neutral-900 to-neutral-800"
         >
             <motion.div
                 initial={{ x: -20, opacity: 0 }}
@@ -66,7 +66,7 @@ export default function JobCommentDetails() {
             >
                 <Link 
                     to="/admin/manage-job-comments"
-                    className="mb-8 flex items-center text-neutral-400 hover:text-white transition-colors group"
+                    className="mb-4 sm:mb-8 flex items-center text-sm sm:text-base text-neutral-400 hover:text-white transition-colors group"
                 >
                     <FaArrowLeft className="mr-2 transform group-hover:-translate-x-1 transition-transform" />
                     Back to Job Comments
@@ -74,31 +74,31 @@ export default function JobCommentDetails() {
             </motion.div>
 
             <motion.div 
-                className="bg-neutral-800 rounded-lg p-8 shadow-2xl backdrop-blur-sm bg-opacity-90"
+                className="bg-neutral-800 rounded-lg p-4 sm:p-8 shadow-2xl backdrop-blur-sm bg-opacity-90"
                 {...fadeIn}
             >   
-                <div className='mb-8 border-b border-neutral-700 pb-4 flex justify-between items-center'>
-                <motion.h1 
-                        className="text-4xl font-bold text-white "
+                <div className='mb-4 sm:mb-8 border-b border-neutral-700 pb-4 flex justify-between items-center'>
+                    <motion.h1 
+                        className="text-2xl sm:text-4xl font-bold text-white"
                         {...fadeIn}
                     >
                         {event.eventName}
                     </motion.h1>
                 </div>
                 
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
                     <motion.div 
-                        className="space-y-6"
+                        className="space-y-4 sm:space-y-6"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2 }}
                     >
-                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-4 sm:p-6">
+                            <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center">
                                 <FaInfoCircle className="mr-2 text-blue-400" />
                                 Event Details
                             </h2>
-                            <div className="space-y-3 text-neutral-300">
+                            <div className="space-y-2 sm:space-y-3 text-sm sm:text-base text-neutral-300">
                                 <p className="flex items-center">
                                     <FaMapMarkerAlt className="mr-2 text-red-400" />
                                     <span className="font-medium">Location:</span>
@@ -137,17 +137,17 @@ export default function JobCommentDetails() {
                     </motion.div>
 
                     <motion.div 
-                        className="space-y-6"
+                        className="space-y-4 sm:space-y-6"
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4 }}
                     >
-                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-4 sm:p-6">
+                            <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center">
                                 <FaInfoCircle className="mr-2 text-blue-400" />
                                 Job Comment Details
                             </h2>
-                            <div className="space-y-3 text-neutral-300">
+                            <div className="space-y-2 sm:space-y-3 text-sm sm:text-base text-neutral-300">
                                 <p className="flex items-center">
                                     <span className="font-medium">Created by:</span>
                                     <span className="ml-2">{user}</span>
@@ -166,15 +166,14 @@ export default function JobCommentDetails() {
                 </div>
             </motion.div>
 
-            <div className="mt-8">
-                <h2 className="text-xl font-semibold text-white mb-4"></h2>
-                <div className="bg-neutral-800 rounded-lg p-6">
-                    <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-6">
-                        <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+            <div className="mt-4 sm:mt-8">
+                <div className="bg-neutral-800 rounded-lg p-4 sm:p-6">
+                    <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-4 sm:p-6">
+                        <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center">
                             <FaInfoCircle className="mr-2 text-blue-400" />
                             Job Comment
                         </h2>
-                        <div className="space-y-3 text-neutral-300">
+                        <div className="space-y-2 sm:space-y-3 text-sm sm:text-base text-neutral-300">
                             <p className="flex items-center">
                                 <span className="ml-2">{jobComment.jobComments}</span>
                             </p>

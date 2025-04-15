@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import axios from 'axios';
-import { FaList, FaEdit, FaTrashAlt, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch } from 'react-icons/fa';
+import { FaList, FaEdit, FaTrashAlt, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaFilter, FaArrowLeft } from 'react-icons/fa';
 // import MultiSelect from './MultiSelect';
 import { toast } from 'sonner';
 import Modal from "../../../Modal";
@@ -9,6 +9,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from "../../../../AuthContext";
 import { HoverBorderGradient } from '../../../ui/hover-border-gradient';
 import { motion, AnimatePresence } from 'framer-motion';
+
+const LoadingSpinner = () => (
+    <div className="flex flex-col items-center justify-center min-h-[300px] sm:min-h-[400px]">
+        <motion.div
+            className="w-12 h-12 sm:w-16 sm:h-16 border-4 border-neutral-600 border-t-blue-500 rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        />
+        <p className="mt-4 text-sm sm:text-base text-neutral-400">Loading corrections...</p>
+    </div>
+);
 
 export default function ViewCorrections() {
     const { auth } = useContext(AuthContext);
@@ -37,6 +48,8 @@ export default function ViewCorrections() {
     // const [error, setError] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [showSortOptions, setShowSortOptions] = useState(false);
+    const [showSearch, setShowSearch] = useState(false);
+    const [showFilterPanel, setShowFilterPanel] = useState(false);
 
     
 
@@ -181,11 +194,7 @@ export default function ViewCorrections() {
     };
 
     if (loading) {
-        return (
-            <div className="h-screen flex justify-center items-center">
-                <p className="text-white">Loading corrections...</p>
-            </div>
-        );
+        return <LoadingSpinner />;
     }
 
     const handleEventClick = (correctionId) => {
@@ -278,291 +287,269 @@ export default function ViewCorrections() {
         });
     };
 
+    const toggleSearch = () => {
+        setShowSearch(prev => !prev);
+        setShowFilterPanel(false);
+        setShowSortOptions(false);
+    };
+
+    const toggleFilterPanel = () => {
+        setShowFilterPanel(prev => !prev);
+        setShowSearch(false);
+        setShowSortOptions(false);
+    };
+
+    const toggleSortOptions = () => {
+        setShowSortOptions(prev => !prev);
+        setShowSearch(false);
+        setShowFilterPanel(false);
+    };
+
     return (
-        <div className="w-full h-full overflow-auto px-5">
-            <div className="flex justify-between items-center sticky top-0 bg-neutral-900  z-50">
-                <div className="flex items-center gap-4">
+        <div className="flex flex-col w-full min-h-screen h-full p-4 sm:p-6 md:p-8 bg-neutral-900">
+            <Link 
+                to="/user/dashboard"
+                className="mb-4 sm:mb-6 md:mb-8 flex items-center text-neutral-400 hover:text-white transition-colors text-sm sm:text-base"
+            >
+                <FaArrowLeft className="w-4 h-4 mr-2" />
+                Return to Dashboard
+            </Link>
 
-                    <div className='flex items-center gap-3 mt-5'>
-                        {/* Name filter input */}
-                        <div className="relative flex items-center">
-                            <input
-                                type="text"
-                                placeholder="Search by name"
-                                value={nameFilter}
-                                onChange={(e) => setNameFilter(e.target.value)}
-                                className="w-40 md:w-54 lg:w-64 px-4 pr-10 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40"
-                                style={{
-                                    transition: 'width 0.3s ease',
-                                    height: '2.5rem', 
-                                }}
-                            />
-                            <FaSearch className="absolute right-3 text-white/50" />
-                        </div>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4 sm:mb-6 text-center">
+                Correction Reports
+            </h1>
 
-                        {/* Sort dropdown */}
-                        <div className="flex items-center gap-3 ">
-                            <AnimatePresence>
-                                {!showSortOptions && (
-                                    <motion.button
-                                        initial={{ opacity: 0, x: -20 }}      
-                                        animate={{ opacity: 1, x: 0 }}         
-                                        exit={{ opacity: 0, x: -20 }}         
-                                        transition={{ duration: 0.3 }}
-                                        onClick={() => setShowSortOptions(true)}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded transition-colors mt-0 ${
-                                            showSortOptions
-                                                ? 'bg-neutral-700 text-white'
-                                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                                        }`}
-                                    >
-                                        <FaSort className="text-xl" />
-                                        <span className="whitespace-nowrap">Filter by</span>
-                                    </motion.button>
-                                )}
-                            </AnimatePresence>
+            {/* Control Bar */}
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <div className="flex items-center gap-2">
+                    {/* Search Toggle */}
+                    <button
+                        onClick={toggleSearch}
+                        className={`p-2 rounded-full transition-colors ${
+                            showSearch ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                        } text-white`}
+                    >
+                        <FaSearch className="text-lg sm:text-xl" />
+                    </button>
 
-                            <AnimatePresence>
-                                {showSortOptions && (
-                                    <motion.div
-                                        initial={{ opacity: 0, x: 20 }}        // Start hidden & to the right
-                                        animate={{ opacity: 1, x: 0 }}          // Fade in from the right
-                                        exit={{ opacity: 0, x: 20 }}            // Fade out to the right when hidden
-                                        transition={{ duration: 0.3 }}
-                                        className="flex items-center gap-3"
-                                    >
-                                        <span className="text-white text-sm whitespace-nowrap">Sort by:</span>
+                    {/* Filter Toggle */}
+                    <button
+                        onClick={toggleFilterPanel}
+                        className={`p-2 rounded-full transition-colors ${
+                            showFilterPanel ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                        } text-white`}
+                    >
+                        <FaFilter className="text-lg sm:text-xl" />
+                    </button>
 
-                                        <button
-                                            className="px-4 py-2 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0"
-                                            onClick={() => handleSort('correctionName')}
-                                        >
-                                            Name
-                                        </button>
-
-                                        <button
-                                            className="px-4 py-2 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
-                                            onClick={() => handleSort('requestType')}
-                                        >
-                                            Correction Type
-                                        </button>
-
-                                        <button
-                                            className="px-4 py-2 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0"
-                                            onClick={() => handleSort('status')}
-                                        >
-                                            Status
-                                        </button>
-
-                                        <button
-                                            className="px-4 py-2 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
-                                            onClick={() => handleSort('submittedAt')}
-                                        >
-                                            Creation Date
-                                        </button>
-
-                                        <button
-                                            className="px-4 py-2 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
-                                            onClick={() => handleSort('updatedAt')}
-                                        >
-                                            Last Modified
-                                        </button>
-
-                                        <motion.button
-                                            initial={{ opacity: 0, x: -20 }}    // Fade in from the left
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: -20 }}       // Fade out to the left when hiding
-                                            transition={{ delay: 0.2 }}
-                                            type="button"
-                                            onClick={() => setShowSortOptions(false)}
-                                            className="h-9 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors mt-0"
-                                        >
-                                            Cancel
-                                        </motion.button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </div>
+                    {/* Sort Toggle */}
+                    <button
+                        onClick={toggleSortOptions}
+                        className={`p-2 rounded-full transition-colors ${
+                            showSortOptions ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                        } text-white`}
+                    >
+                        <FaSort className="text-lg sm:text-xl" />
+                    </button>
                 </div>
 
-                
-                
-                <div className="flex items-center gap-2 relative">
-
-                    <div className="hidden md:flex gap-2 mt-5">
-                        <button
-                            onClick={() => setView('grid')}
-                            className={`p-2 mt-0 rounded transition-colors ${
-                                view === 'grid' 
-                                    ? 'bg-neutral-700 text-white' 
-                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                            }`}
-                        >
-                            <FaTh className="text-xl" />
-                        </button>
-                        <button
-                            onClick={() => setView('list')}
-                            className={`p-2 mt-0 rounded transition-colors ${
-                                view === 'list' 
-                                    ? 'bg-neutral-700 text-white' 
-                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                            }`}
-                        >
-                            <FaList className="text-xl" />
-                        </button>
-                    </div>
+                {/* View Toggle Buttons */}
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setView('grid')}
+                        className={`p-2 rounded-full transition-colors ${
+                            view === 'grid' 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                        }`}
+                    >
+                        <FaTh className="text-lg sm:text-xl" />
+                    </button>
+                    <button
+                        onClick={() => setView('list')}
+                        className={`p-2 rounded-full transition-colors ${
+                            view === 'list' 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                        }`}
+                    >
+                        <FaList className="text-lg sm:text-xl" />
+                    </button>
                 </div>
             </div>
 
-            <div className="flex items-center gap-4">
-                    <Link to="/user/corrections/create" className='mt-0 bg-none'>
-                        <HoverBorderGradient
-                            containerClassName="rounded-full"
-                            className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0"
+            {/* Control Panels Container */}
+            <div className="mb-4">
+                {/* Search Panel */}
+                <AnimatePresence>
+                    {showSearch && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mb-4 overflow-hidden"
                         >
-                            <span className="text-lg mr-1">+</span> 
-                            <span>Create Correction Report</span>
-                        </HoverBorderGradient>
-                    </Link>
-                </div>
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    placeholder="Search by name"
+                                    value={nameFilter}
+                                    onChange={(e) => setNameFilter(e.target.value)}
+                                    className="w-full px-4 pr-10 py-2 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 border border-white/20 focus:border-white/40"
+                                />
+                                <FaSearch className="absolute right-3 text-white/50" />
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
-            <div className="relative z-0 pb-8">
+                {/* Sort Options */}
+                <AnimatePresence>
+                    {showSortOptions && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mb-4 overflow-hidden"
+                        >
+                            <div className="flex flex-wrap gap-2 p-4 bg-neutral-800 rounded-lg">
+                                <button
+                                    onClick={() => handleSort('correctionName')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Name
+                                </button>
+                                <button
+                                    onClick={() => handleSort('requestType')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Correction Type
+                                </button>
+                                <button
+                                    onClick={() => handleSort('status')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Status
+                                </button>
+                                <button
+                                    onClick={() => handleSort('submittedAt')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Creation Date
+                                </button>
+                                <button
+                                    onClick={() => setShowSortOptions(false)}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-600 text-white rounded-full hover:bg-neutral-500 transition-colors text-sm sm:text-base"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            {/* Content Area */}
+            <div className="flex-1">
                 {getFilteredAndSortedCorrections().length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-[50vh] text-neutral-400">
                         <span className="text-6xl mb-4">😢</span>
                         <p className="text-xl">No corrections found</p>
                         <p className="text-sm mt-2">Try adjusting your filters or create a new correction</p>
                     </div>
+                ) : view === 'grid' ? (
+                    <div className="max-w-full mx-auto">
+                        <HoverEffect 
+                            items={formatEventsForHoverEffect(getFilteredAndSortedCorrections())} 
+                            className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-auto"
+                        />
+                    </div>
                 ) : (
-                    view === 'grid' ? (
-                        <div className="max-w-full mx-auto">
-                            <HoverEffect 
-                                items={formatEventsForHoverEffect(getFilteredAndSortedCorrections())} 
-                                className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-auto"
-                            />
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto mt-5">
-                            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
+                    <div className="overflow-x-auto rounded-lg">
+                        <table className="min-w-full bg-neutral-800/50">
                             <thead className="bg-neutral-700">
                                 <tr>
                                     <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        className="p-3 sm:p-4 text-left text-white cursor-pointer"
                                         onClick={() => handleSort('correctionName')}
                                     >
-                                        <div className="flex items-center">
+                                        <div className="flex items-center text-sm sm:text-base">
                                             Correction Name
                                             <span className="ml-2">{getSortIcon('correctionName')}</span>
                                         </div>
                                     </th>
-
                                     <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        className="p-3 sm:p-4 text-left text-white cursor-pointer hidden sm:table-cell"
                                         onClick={() => handleSort('status')}
                                     >
-                                        <div className="flex items-center">
+                                        <div className="flex items-center text-sm sm:text-base">
                                             Status
                                             <span className="ml-2">{getSortIcon('status')}</span>
                                         </div>
                                     </th>
-
                                     <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('eventID')}
-                                    >
-                                        <div className="flex items-center">
-                                            Event
-                                            <span className="ml-2">{getSortIcon('eventID')}</span>
-                                        </div>
-                                    </th>
-
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        className="p-3 sm:p-4 text-left text-white cursor-pointer hidden md:table-cell"
                                         onClick={() => handleSort('requestType')}
                                     >
-                                        <div className="flex items-center">
+                                        <div className="flex items-center text-sm sm:text-base">
                                             Correction Type
                                             <span className="ml-2">{getSortIcon('requestType')}</span>
                                         </div>
                                     </th>
-
                                     <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        className="p-3 sm:p-4 text-left text-white cursor-pointer hidden lg:table-cell"
                                         onClick={() => handleSort('submittedAt')}
                                     >
-                                        <div className="flex items-center">
+                                        <div className="flex items-center text-sm sm:text-base">
                                             Created
                                             <span className="ml-2">{getSortIcon('submittedAt')}</span>
                                         </div>
                                     </th>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('updatedAt')}
-                                    >
-                                        <div className="flex items-center">
-                                            Last Modified
-                                            <span className="ml-2">{getSortIcon('updatedAt')}</span>
-                                        </div>
-                                    </th>
-                                    
-                                    <th className="p-4 text-left text-white whitespace-nowrap">
+                                    <th className="p-3 sm:p-4 text-left text-white text-sm sm:text-base">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
-                                <tbody>
-                                    {getFilteredAndSortedCorrections().map((correction) => (
-                                        <tr 
-                                            key={correction._id} 
-                                            className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
-                                            onClick={() => handleEventClick(correction._id)}
-                                        >
-                                            <td className="p-4 text-white">
-                                                {correction.correctionName}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {correction.status}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {events?.find(event => event._id === correction.eventID)?.eventName}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {correction.requestType}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {new Date(correction.submittedAt).toLocaleString()}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {new Date(correction.updatedAt).toLocaleString()}
-                                            </td>
-                                            
-                                            <td className="p-4">
-                                                <div className="flex space-x-4">
-                                                    <FaEdit 
-                                                        onClick={(e) => {
-                                                            e.stopPropagation(); // Prevent row click
-                                                            handleEdit(correction);
-                                                        }} 
-                                                        className="text-blue-500 cursor-pointer text-xl hover:text-blue-600 transition-colors" 
-                                                        title="Edit Event" 
-                                                    />
-                                                    <FaTrashAlt 
-                                                        onClick={(e) => {
-                                                            e.stopPropagation(); // Prevent row click
-                                                            handleDelete(correction);
-                                                        }} 
-                                                        className="text-red-500 cursor-pointer text-xl hover:text-red-600 transition-colors" 
-                                                        title="Delete Correction" 
-                                                    />
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )
+                            <tbody>
+                                {getFilteredAndSortedCorrections().map((correction) => (
+                                    <tr 
+                                        key={correction._id} 
+                                        className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors"
+                                    >
+                                        <td className="p-3 sm:p-4 text-white text-sm sm:text-base">
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">{correction.correctionName}</span>
+                                                <span className="text-neutral-400 text-xs sm:hidden">
+                                                    {new Date(correction.submittedAt).toLocaleDateString()}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="p-3 sm:p-4 text-white text-sm sm:text-base hidden sm:table-cell">
+                                            {correction.status}
+                                        </td>
+                                        <td className="p-3 sm:p-4 text-white text-sm sm:text-base hidden md:table-cell">
+                                            {correction.requestType}
+                                        </td>
+                                        <td className="p-3 sm:p-4 text-white text-sm sm:text-base hidden lg:table-cell">
+                                            {new Date(correction.submittedAt).toLocaleString()}
+                                        </td>
+                                        <td className="p-3 sm:p-4">
+                                            <div className="flex space-x-4">
+                                                <FaEdit 
+                                                    onClick={() => handleEdit(correction)}
+                                                    className="text-blue-500 cursor-pointer text-xl hover:text-blue-600 transition-colors" 
+                                                />
+                                                <FaTrashAlt 
+                                                    onClick={() => handleDelete(correction)}
+                                                    className="text-red-500 cursor-pointer text-xl hover:text-red-600 transition-colors" 
+                                                />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
 

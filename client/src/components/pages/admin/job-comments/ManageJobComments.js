@@ -4,13 +4,13 @@ import ViewJobComments from "./ViewJobComments";
 
 const ManageJobComments = () => {
   return (
-    <div className="flex flex-col w-full h-full min-h-screen p-8 bg-gray-100 dark:bg-neutral-900">
+    <div className="flex flex-col w-full h-full min-h-screen p-4 sm:p-8 bg-gray-100 dark:bg-neutral-900">
       <Link 
         to="/admin/dashboard"
-        className="mb-8 flex items-center text-neutral-400 hover:text-white transition-colors"
+        className="mb-4 sm:mb-8 flex items-center text-sm sm:text-base text-neutral-400 hover:text-white transition-colors"
       >
         <svg 
-          className="w-5 h-5 mr-2" 
+          className="w-4 h-4 sm:w-5 sm:h-5 mr-2" 
           fill="none" 
           strokeLinecap="round" 
           strokeLinejoin="round" 
@@ -23,7 +23,7 @@ const ManageJobComments = () => {
         Return to Dashboard
       </Link>
 
-      <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-6 text-center">
+      <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white mb-4 sm:mb-6 text-center">
         Manage Job Comments
       </h1>
       

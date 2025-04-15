@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const { Admin } = require('../mongo'); // Import the Admin schema
+const { Admin, notificationCollection } = require('../mongo'); // Import the Admin schema
 const router = express.Router();
 
 // ✅ Get Admin Profile
@@ -62,6 +62,7 @@ router.put('/admin-profile/:email', async (req, res) => {
         }
 
         const newNotification = new notificationCollection({
+            subject: "Admin Profile",
             text1: `Update to admin profile ${admin?.email}`,
             forAdmin: true
         });
@@ -92,6 +93,7 @@ router.put('/update-admin-profile/:email/password', async (req, res) => {
         await admin.save();
 
         const newNotification = new notificationCollection({
+            subject: "Admin Profile",
             text1: `Update to password of admin ${admin?.email}`,
             forAdmin: true
         });

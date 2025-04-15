@@ -178,12 +178,20 @@ router.post('/', async (req, res) => {
 
             const newNotification = new notificationCollection({
                 userID: contractor?._id,
+                subject: "Job",
                 text0: `New job `,
                 linkPath1: `/user/events/${newEvent?._id}`,
                 linkText1: `${newEvent?.eventName}`,
             });
 
             await newNotification.save();
+
+            const newNotification2 = new notificationCollection({
+                subject: "Event",
+                text0: `Event ${event?.eventName} has been created`,
+                forAdmin: true
+            });
+            await newNotification2.save();
         }
 
         res.status(200).json({ message: 'Event created and notifications sent successfully' });

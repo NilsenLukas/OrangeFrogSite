@@ -48,6 +48,7 @@ router.get('/:email', async (req, res) => {
 
         const notifications = await notificationCollection.find({
             userID: contractor._id,
+            forAdmin: false,
         });
         
         const events = await eventCollection.find({}).select('-__v').lean();

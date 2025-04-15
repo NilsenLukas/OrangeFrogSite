@@ -60,6 +60,7 @@ router.post('/:eventID/:email', async (req, res) => {
 
         const newNotification = new notificationCollection({
             userID: userID,
+            subject: "Job Comment",
             text0: `New `,
             linkPath1: `/admin/job-comments/${newJobComment?._id}`,
             linkText1: `Job Comment`,
@@ -127,6 +128,22 @@ router.put('/:id', async (req, res) => {
         if (!updatedComment) {
             return res.status(404).json({ message: 'Event not found' });
         }
+
+        const event = await eventCollection.findById({eventID: updatedComment.eventID})
+
+        const newNotification = new notificationCollection({
+            userID: userID,
+            subject: "Job Comment",
+            linkPath1: `/admin/job-comments/${updatedComment?._id}`,
+            linkText1: `Job Comment`,
+            text1: ` by ${user?.name} for event `,
+            linkPath2: `/admin/events/${event?._id}`,
+            linkText2: `${event?.eventName}`,
+            text2: "has been updated",
+            forAdmin: true
+        });
+
+        await newNotification.save();
       
         res.status(200).json(updatedComment);
     } catch (error) {
@@ -146,6 +163,18 @@ router.delete('/:id', async (req, res) => {
         }
         event.jobCommentCount -= 1;
         await event.save();
+
+        const newNotification = new notificationCollection({
+            userID: userID,
+            subject: "Job Comment",
+            text1: `Job comment by ${user?.name} for event `,
+            linkPath2: `/admin/events/${event?._id}`,
+            linkText2: `${event?.eventName}`,
+            text2: "has been deleted",
+            forAdmin: true
+        });
+
+        await newNotification.save();
 
         await userJobCommentCollection.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'Comment deleted successfully' });

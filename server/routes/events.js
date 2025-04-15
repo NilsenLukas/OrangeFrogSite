@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const router = express.Router();
-const { eventCollection, userCollection, userJobCommentCollection } = require('../mongo');
+const { eventCollection, userCollection, userJobCommentCollection, notificationCollection } = require('../mongo');
 
 // Nodemailer transporter setup
 const transporter = nodemailer.createTransport({
@@ -57,7 +57,16 @@ router.get('/:id', async (req, res) => {
 // Route to delete an event by ID
 router.delete('/:id', async (req, res) => {
     try {
+        event = await eventCollection.findById(req.params.id);
         await eventCollection.findByIdAndDelete(req.params.id);
+
+        const newNotification = new notificationCollection({
+            subject: "Event",
+            text0: `Event ${event?.eventName} has been deleted`,
+            forAdmin: true
+        });
+        await newNotification.save();
+
         res.status(200).json({ message: 'Event deleted successfully' });
     } catch (error) {
         console.error('Error deleting event:', error);
@@ -158,6 +167,16 @@ router.post('/send-notifications', async (req, res) => {
                     </div>`
             };
 
+            const newNotification = new notificationCollection({
+                userID: contractor?._id,
+                subject: "Job",
+                text0: `New job `,
+                linkPath1: `/user/events/${newEvent?._id}`,
+                linkText1: `${newEvent?.eventName}`,
+            });
+
+            await newNotification.save();
+
             try {
                 await transporter.sendMail(mailOptions);
                 console.log(`Email sent to ${contractor.email}`);
@@ -201,6 +220,7 @@ router.post('/accept', async (req, res) => {
     const { eventId, userId } = req.body;
 
     try {
+        const user = await userCollection.findById(userId);
         const event = await eventCollection.findById(eventId);
         if (!event) {
             return res.status(404).json({ message: 'Event not found' });
@@ -210,6 +230,15 @@ router.post('/accept', async (req, res) => {
         if (!event.acceptedContractors.includes(userId)) {
             event.acceptedContractors.push(userId);
         }
+
+        const newNotification = new notificationCollection({
+            subject: "Event",
+            text0: `User ${user.name} has accepted the event `,
+            linkPath1: `/admin/corrections/${event?._id}`,
+            linkText1: `${event?.eventName}`,
+            forAdmin: true
+        });
+        await newNotification.save();
 
         await event.save();
         res.status(200).json({ message: 'Job accepted successfully' });
@@ -236,12 +265,21 @@ router.post('/reject', async (req, res) => {
         }
 
         const userId = user._id;
-        console.log(userId)
+    
 
         // Add to rejectedContractors if not already there
         if (!event.rejectedContractors.includes(userId)) {
             event.rejectedContractors.push(userId);
         }
+
+        const newNotification = new notificationCollection({
+            subject: "Event",
+            text0: `User ${user.name} has reject the event `,
+            linkPath1: `/admin/corrections/${event?._id}`,
+            linkText1: `${event?.eventName}`,
+            forAdmin: true
+        });
+        await newNotification.save();
 
         await event.save();
         res.status(200).json({ message: 'Job rejected successfully' });
@@ -372,6 +410,15 @@ router.post('/:eventId/apply', async (req, res) => {
 
         await event.save();
 
+        const newNotification = new notificationCollection({
+            subject: "Event",
+            text0: `User ${user.name} has accepted the event `,
+            linkPath1: `/admin/corrections/${event?._id}`,
+            linkText1: `${event?.eventName}`,
+            forAdmin: true
+        });
+        await newNotification.save();
+
         res.status(200).json({ 
             message: 'Application successful',
             event: await event.populate('acceptedContractors', 'name email')
@@ -412,6 +459,21 @@ router.post('/:eventId/approve', async (req, res) => {
                 event.rejectedContractors.push(contractorId);
             }
         }
+
+        // Deletes the job comments the user had
+        await userJobCommentCollection.findByIdAndDelete({
+            userID: contractorId.toString(),
+        });
+
+        const newNotification = new notificationCollection({
+            userID: userID,
+            subject: "Event",
+            text0: `You have been approved for `,
+            linkPath1: `/user/corrections/${event?._id}`,
+            linkText1: `${event?.eventName}`,
+            forAdmin: false
+        });
+        await newNotification.save();
 
         await event.save();
         res.status(200).json({ message: 'Contractor status updated successfully' });

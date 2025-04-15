@@ -49,6 +49,7 @@ router.post('/', async (req, res) => {
 
     const newNotification = new notificationCollection({
       userID: userID,
+      subject: "Correction Report",
       text0: `New correction report `,
       linkPath1: `/admin/corrections/${newReport?._id}`,
       linkText1: `${newReport?.correctionName}`,
@@ -57,7 +58,6 @@ router.post('/', async (req, res) => {
       linkText2: `${event?.eventName}`,
       forAdmin: true
     });
-
     await newNotification.save();
 
     res.status(201).json({ message: 'Correction report updating successfully' });
@@ -147,6 +147,7 @@ router.put('/:id([0-9a-fA-F]{24})', async (req, res) => {
 
       const newNotification = new notificationCollection({
         userID: user?._id,
+        subject: "Corrrection Report",
         text0: `Update to correction report `,
         linkPath1: `/admin/corrections/${updatedCorrection?._id}`,
         linkText1: `${updatedCorrection?.correctionName}`,

@@ -410,7 +410,6 @@ export default function ViewUsers() {
                     
                 </div>
             ),
-            link: `/admin/users/${user._id}`,
             _id: user._id,
             onClick: (e) => {
                 if (!e.defaultPrevented) {

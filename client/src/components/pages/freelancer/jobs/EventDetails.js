@@ -98,7 +98,6 @@ export default function EventDetails() {
     const fetchCorrections = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections/event/${auth.email}/${eventID}`);
-            console.log(response.data); // Debug: Check what is actually returned
     
             // Ensure we're sorting the corrections array inside the response object
             const sortedCorrections = response.data.corrections.sort((a, b) => {
@@ -466,7 +465,8 @@ export default function EventDetails() {
                         </div>
                     </motion.div>
                 </div>
-                {event?.acceptedContractors?.some(contractor => contractor.toString() === auth.userId) && (
+                
+                {event?.acceptedContractors?.some(contractor => contractor._id.toString() === auth.userId.toString()) && (
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="col-span-2">
                         <div className='flex justify-between items-center mt-8'>
@@ -500,23 +500,10 @@ export default function EventDetails() {
                             className="w-full p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors h-32 mt-1"
                         />
                     </div>
-
-                    
-
-                    {/* Submit Button */}
-                    {/*<div className="col-span-2 flex justify-center space-x-4">
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="px-6 py-2.5 rounded-lg bg-black text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                            {loading ? 'Saving...' : 'Save Comment'}
-                        </button>
-                    </div> */}
                 </form>
                 )}
 
-                {event?.approvedContractors?.some(contractor => contractor.toString() === auth.userId) && (
+                {event?.approvedContractors?.some(contractor => contractor._id.toString() === auth.userId.toString()) && (
                 <div className="flex items-center justify-between mb-0 mt-8">
                     <h2 className="text-xl font-semibold text-white">Correction Reports:</h2>
                     <Link to={`/user/corrections/create?eventID=${eventID}`}>
@@ -529,7 +516,7 @@ export default function EventDetails() {
                     </Link>
                 </div>
                 )}
-                {event?.approvedContractors?.some(contractor => contractor.toString() === auth.userId) && (
+                {event?.approvedContractors?.some(contractor => contractor._id.toString() === auth.userId.toString()) && (
                 <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-0'>
                 <div className="mt-2">
                     <div className="w-full h-full overflow-auto px-5">

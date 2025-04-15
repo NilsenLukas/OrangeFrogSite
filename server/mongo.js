@@ -105,6 +105,7 @@ const correctionReportCollection = mongoose.model('correctionReportCollection', 
 
 const notificationSchema = new mongoose.Schema({
     userID: { type: String, default: '' },
+    subject: { type: String, default: '' },
     text0: { type: String, default: '' },
     linkPath1: { type: String, default: '' },
     linkText1: { type: String, default: '' },

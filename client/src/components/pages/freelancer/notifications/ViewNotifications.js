@@ -161,6 +161,11 @@ export default function ViewNotifications() {
                 description: (
                     <div className="space-y-4">
                         <div className="space-y-2 space-x-2">
+                            <span className="text-neutral-400 font-medium">Subject:</span>
+                            <span className="ml-2 text-white">{notification.subject}</span>
+                        </div>
+                        <div className="space-y-2 space-x-2">
+                            <span className="text-neutral-400 font-medium">Created:</span>
                             <span className="ml-2 text-white">{new Date(notification.createdAt).toLocaleString()}</span>
                         </div>
                     </div>
@@ -331,6 +336,15 @@ export default function ViewNotifications() {
                                     </th>
                                     <th 
                                         className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('subject')}
+                                    >
+                                        <div className="flex items-center">
+                                            Subject
+                                            <span className="ml-2">{getSortIcon('subject')}</span>
+                                        </div>
+                                    </th>
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
                                         onClick={() => handleSort('createdAt')}
                                     >
                                         <div className="flex items-center">
@@ -363,6 +377,9 @@ export default function ViewNotifications() {
                                                     <u>{notification.linkText2}</u>
                                                 </Link>
                                                 {notification.text2}
+                                            </td>
+                                            <td className="p-4 text-white">
+                                                {notification.subject}
                                             </td>
                                             <td className="p-4 text-white">
                                                 {new Date(notification.createdAt).toLocaleString()}

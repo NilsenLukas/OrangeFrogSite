@@ -4,7 +4,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-const { userCollection } = require('../mongo');
+const { userCollection, notificationCollection } = require('../mongo');
 
 const generateTempPassword = () => {
     return Math.random().toString(36).slice(-8); 
@@ -87,6 +87,15 @@ router.post('/', async (req, res) => {
                 </div>
             `
         };
+
+        const newNotification = new notificationCollection({
+            userID: newUser?._id,
+            subject: "User",
+            text0: `New User ${name} has been created`,
+            forAdmin: true
+        });
+
+        await newNotification.save();
 
         // Send email
         await transporter.sendMail(mailOptions);

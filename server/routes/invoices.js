@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require("mongoose");
-const { invoiceCollection, userCollection, eventCollection } = require('../mongo');
+const { invoiceCollection, userCollection, eventCollection, notificationCollection } = require('../mongo');
 const router = express.Router();
 const { parseDate } = require("../utils/dateUtils"); 
 
@@ -281,6 +281,16 @@ router.post("/", async (req, res) => {
       });
 
       await newInvoice.save();
+
+      const newNotification = new notificationCollection({
+        userID: userID,
+        subject: "Invoice",
+        linkPath1: `/admin/corrections/${newInvoice?._id}`,
+        linkText1: `New invoice`,
+        text1: ` by ${user?.name}`,
+        forAdmin: true
+      });
+      await newNotification.save();
 
       // ✅ Update the event to mark invoice as generated
       await eventCollection.findByIdAndUpdate(eventId, { invoiceGenerated: true });

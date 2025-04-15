@@ -1,7 +1,7 @@
 /*NEW STUFF*/
 require('dotenv').config();
 const express = require("express");
-const { userCollection } = require('../mongo');
+const { userCollection, notificationCollection } = require('../mongo');
 const router = express.Router();
 
 
@@ -28,6 +28,16 @@ router.post('/', async (req, res) => {
         user.status = 'active';
 
         await user.save();
+
+        const newNotification = new notificationCollection({
+            userID: user._id,
+            subject: "User Profile",
+            text0: `User ${user.name} has completed his profile`,
+            forAdmin: true
+        });
+
+        await newNotification.save();
+
         console.log("User profile updated successfully for:", email); // Log success
         return res.status(200).json({ message: 'Profile completed successfully' });
     } catch (error) {

@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const router = express.Router();
-const { eventCollection, userCollection, correctionReportCollection } = require('../mongo');
+const { eventCollection, userCollection, correctionReportCollection, notificationCollection } = require('../mongo');
 // const UserDashboard = require('../../client/src/components/pages/freelancer/UserDashboard').default;
 
 // Nodemailer transporter setup
@@ -81,6 +81,18 @@ router.delete('/:id([0-9a-fA-F]{24})', async (req, res) => {
         await event.save();
 
         await correctionReportCollection.findByIdAndDelete(req.params.id);
+
+        const newNotification = new notificationCollection({
+            userID: userID,
+            subject: "Correction Report",
+            text0: `Correction report ${correction.correctionName}`,
+            text1: ` by ${user?.name} for event `,
+            linkPath2: `/admin/events/${event?._id}`,
+            linkText2: `${event?.eventName}`,
+            text2: " has been deleted",
+            forAdmin: true
+          });
+          await newNotification.save();
         res.status(200).json({ message: 'Correction deleted successfully' });
     } catch (error) {
         console.error('Error deleting correction:', error);

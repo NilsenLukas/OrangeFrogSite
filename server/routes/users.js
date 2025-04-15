@@ -2,7 +2,7 @@
 require('dotenv').config();
 const express = require("express");
 const router = express.Router();
-const { userCollection } = require('../mongo');
+const { userCollection, notificationCollection } = require('../mongo');
 
 
 // Fetch users (pending and active)

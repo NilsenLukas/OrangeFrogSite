@@ -8,144 +8,6 @@ import { HoverEffect } from "../../../ui/card-hover-effect";
 import CreateUsers from './CreateUsers';
 import { useNavigate } from 'react-router-dom';
 
-const EditPopup = ({ user, onSave, onCancel }) => {
-    const [isEmailEditable, setIsEmailEditable] = useState(false);
-
-    return (
-        <Modal>
-            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                <div className="bg-neutral-900/90 p-4 md:p-8 rounded-lg shadow-lg w-full max-w-2xl border border-neutral-700/50">
-                    <h2 className="text-xl md:text-2xl mb-4 text-white">Edit User</h2>
-                    <form onSubmit={onSave} className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-                        <div className="col-span-1">
-                            <label className="block text-neutral-300 text-sm md:text-base mb-2">Name</label>
-                            <p className="text-white text-sm md:text-base p-2.5 md:p-3 bg-neutral-800 rounded-md">{user.name}</p>
-                        </div>
-                        <div className="col-span-1">
-                            <label className="block text-neutral-300 text-sm md:text-base mb-2">Email</label>
-                            <div className="relative">
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={user.email}
-                                    onChange={(e) => user.onChange(e)}
-                                    className="w-full p-2.5 md:p-3 rounded-md bg-neutral-800 text-white text-sm md:text-base border border-neutral-700 focus:border-neutral-500 focus:outline-none"
-                                    disabled={!isEmailEditable}
-                                    maxLength={50}
-                                    required
-                                />
-                                <FaEdit 
-                                    onClick={() => setIsEmailEditable(!isEmailEditable)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-blue-500 hover:text-blue-400 text-base md:text-lg"
-                                    title='Edit User'
-                                />
-                            </div>
-                        </div>
-                        <div className="col-span-1">
-                            <label className="block text-neutral-300 text-sm md:text-base mb-2">Hourly Rate</label>
-                            <input
-                                type="number"
-                                name="hourlyRate"
-                                defaultValue={user.hourlyRate}
-                                className="w-full p-2.5 md:p-3 bg-neutral-800 rounded-md text-white text-sm md:text-base"
-                                step="0.01"
-                                min="0"
-                                max={999.99}
-                                maxLength={5}
-                            />
-                        </div>
-                        <div className="col-span-1 md:col-span-2">
-                            <label className="block text-neutral-300 text-sm md:text-base mb-2">Address</label>
-                            <p className="text-white text-sm md:text-base p-2.5 md:p-3 bg-neutral-800 rounded-md">{user.address || 'Not provided'}</p>
-                        </div>
-                        <div className="col-span-1">
-                            <label className="block text-neutral-300 text-sm md:text-base mb-2">Phone</label>
-                            <p className="text-white text-sm md:text-base p-2.5 md:p-3 bg-neutral-800 rounded-md">{user.phone || 'Not provided'}</p>
-                        </div>
-                        <div className="col-span-1">
-                            <label className="block text-neutral-300 text-sm md:text-base mb-2">Date of Birth</label>
-                            <p className="text-white text-sm md:text-base p-2.5 md:p-3 bg-neutral-800 rounded-md">{user.dob || 'Not provided'}</p>
-                        </div>
-                        <div className="col-span-1">
-                            <label className="block text-neutral-300 text-sm md:text-base mb-2">T-Shirt Size</label>
-                            <p className="text-white text-sm md:text-base p-2.5 md:p-3 bg-neutral-800 rounded-md">{user.shirtSize || 'Not provided'}</p>
-                        </div>
-                        <div className="col-span-1">
-                            <label className="block text-neutral-300 text-sm md:text-base mb-2">First Aid Certified</label>
-                            <p className="text-white text-sm md:text-base p-2.5 md:p-3 bg-neutral-800 rounded-md">{user.firstAidCert || 'Not provided'}</p>
-                        </div>
-                        <div className="col-span-1 md:col-span-2">
-                            <label className="block text-neutral-300 text-sm md:text-base mb-2">Allergies</label>
-                            {user.allergies?.length > 0 ? (
-                                <ul className="list-disc list-inside text-white text-sm md:text-base p-2.5 md:p-3 bg-neutral-800 rounded-md">
-                                    {user.allergies.map((allergy, index) => (
-                                        <li key={index}>{allergy}</li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p className="text-white text-sm md:text-base p-2.5 md:p-3 bg-neutral-800 rounded-md">No allergies listed</p>
-                            )}
-                        </div>
-                        <div className="col-span-1 md:col-span-2 flex flex-col md:flex-row justify-center mt-4 space-y-2 md:space-y-0 md:space-x-4">
-                            <button 
-                                type="button" 
-                                onClick={onCancel} 
-                                className="w-full md:w-auto px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white text-sm md:text-base rounded-full transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button 
-                                type="submit" 
-                                className="w-full md:w-auto px-4 py-2 bg-black text-white text-sm md:text-base rounded-full transition-colors"
-                            >
-                                Save Changes
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </Modal>
-    );
-};
-
-const UserRow = ({ name, email, status, hourlyRate, onEdit, onDelete, onResendEmail, className }) => (
-    <article className={`grid grid-cols-5 items-center w-full border-b-[1px] border-b-white/40 relative text-sm md:text-base ${className}`}>
-        <div className="col-span-1 py-2 px-2 md:py-4 md:px-4 text-white truncate">
-            {name}
-        </div>
-        <div className="col-span-1 py-2 px-2 md:py-4 md:px-4 text-white truncate">
-            {email}
-        </div>
-        <div className="col-span-1 py-2 px-2 md:py-4 md:px-4 text-white">
-            <span className={`${status === 'Pending' ? 'text-yellow-500' : 'text-green-500'}`}>
-                {status}
-            </span>
-        </div>
-        <div className="col-span-1 py-2 px-2 md:py-4 md:px-4 text-white">
-            ${hourlyRate}/hr
-        </div>
-        <div className="col-span-1 py-2 px-2 md:py-4 md:px-4 flex items-center justify-end gap-2 md:gap-4">
-            {status === 'Pending' && (
-                <FaEnvelope 
-                    onClick={onResendEmail} 
-                    className="text-base md:text-xl text-white cursor-pointer hover:text-blue-400 transition-colors" 
-                    title='Resend Email'
-                />
-            )}
-            <FaEdit 
-                onClick={onEdit} 
-                className="text-base md:text-xl text-blue-500 cursor-pointer hover:text-blue-400 transition-colors" 
-                title='Edit User'
-            />
-            <FaTrashAlt 
-                onClick={onDelete} 
-                className="text-base md:text-xl text-red-500 cursor-pointer hover:text-red-400 transition-colors" 
-                title='Delete User'
-            />
-        </div>
-    </article>
-);
-
 const ConfirmationPopup = ({ user, onConfirm, onCancel }) => (
     <Modal>
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -178,11 +40,7 @@ const ConfirmationPopup = ({ user, onConfirm, onCancel }) => (
 export default function ViewUsers() {
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
-    // const [showForm, setShowForm] = useState(false);
-    // const [isLoading, setIsLoading] = useState(false);
-    const [editingUser, setEditingUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [editFormData, setEditFormData] = useState({ name: "", email: "" });
     const [showPopup, setShowPopup] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isGridView, setIsGridView] = useState(true);
@@ -223,8 +81,6 @@ export default function ViewUsers() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
     
-    
-
     const handleResendEmail = async (userId) => {
         if (!userId) {
             console.error("User ID is undefined");
@@ -257,50 +113,17 @@ export default function ViewUsers() {
             toast.error('Failed to delete user. Please try again.');
         }
     };
+
     const getSortIcon = (key) => {
         if (sortField === key) {
             return sortDirection === 'asc' ? <FaSortUp /> : <FaSortDown />;
         }
         return <FaSort />;
     };
-    
 
     const handleEdit = (user) => {
-        setEditingUser(user);
-        setEditFormData({
-            name: user.name,
-            email: user.email,
-            hourlyRate: user.hourlyRate || '',
-            address: user.address || '',
-            phone: user.phone || '',
-            dob: user.dob || '',
-            shirtSize: user.shirtSize || '',
-            firstAidCert: user.firstAidCert || '',
-            allergies: user.allergies || [],
-        });
+        navigate(`/admin/users/edit/${user._id}`, { state: { from: '/admin/manage-users' } });
     };
-    
-
-    const handleEditInputChange = (e) => {
-        const { name, value } = e.target;
-        setEditFormData({ ...editFormData, [name]: value });
-    };
-
-    const handleEditSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.put(`${process.env.REACT_APP_BACKEND}/update-user/${editingUser._id}`, editFormData);
-            if (response.status === 200) {
-                setUsers(users.map(user => (user._id === editingUser._id ? response.data : user)));
-                setEditingUser(null);
-                toast.success('User updated successfully!');
-            }
-        } catch (error) {
-            console.error("Error updating user:", error);
-            toast.error('Failed to update user. Please try again.');
-        }
-    };
-    
 
     if (loading) {
         return (
@@ -322,7 +145,6 @@ export default function ViewUsers() {
             setSortDirection('asc');
         }
     };
-
 
     const getFilteredAndSortedUsers = () => {
         // Filter users by search text
@@ -405,7 +227,6 @@ export default function ViewUsers() {
                             {user.temporaryPassword ? 'Pending' : 'Active'}
                         </span>
                     </div>
-                    
                 </div>
             ),
             _id: user._id,
@@ -656,17 +477,6 @@ export default function ViewUsers() {
                     user={users.find(user => user._id === selectedUser)}
                     onConfirm={confirmDelete} 
                     onCancel={() => setShowPopup(false)} 
-                />
-            )}
-
-            {editingUser && (
-                <EditPopup
-                    user={{
-                        ...editFormData,
-                        onChange: handleEditInputChange
-                    }}
-                    onSave={handleEditSubmit}
-                    onCancel={() => setEditingUser(null)}
                 />
             )}
         </div>

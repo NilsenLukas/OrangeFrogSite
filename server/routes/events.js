@@ -597,7 +597,6 @@ router.get('/contractor/corrections/:email', async (req, res) => {
     }
 });
 
-
 router.get('/approved-events/:userId', async (req, res) => {
     try {
         const userId = req.params.userId;
@@ -606,6 +605,26 @@ router.get('/approved-events/:userId', async (req, res) => {
     } catch (error) {
         console.error('Error fetching approved events:', error);
         res.status(500).json({ message: 'Error fetching approved events' });
+    }
+});
+
+router.get("/eligible-events/:userId", async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const fiftyDaysAgo = new Date();
+        fiftyDaysAgo.setDate(fiftyDaysAgo.getDate() - 50);
+
+        // Find events within the last 50 days, without an invoice, and assigned to the user
+        const eligibleEvents = await eventCollection.find({
+            eventLoadIn: { $gte: fiftyDaysAgo }, // Only events within last 50 days
+            invoiceGenerated: false, // No invoice has been generated yet
+            assignedContractors: userId, // Ensure the user was part of the event
+        }).sort({ eventLoadIn: -1 }); // Sort by latest events first
+
+        res.status(200).json(eligibleEvents);
+    } catch (error) {
+        console.error("Error fetching eligible events:", error);
+        res.status(500).json({ message: "Server error while fetching eligible events." });
     }
 });
 

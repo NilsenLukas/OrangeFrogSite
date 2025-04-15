@@ -81,7 +81,10 @@ export default function EventDetails() {
                 setFormData({ jobComments: response.data.jobComments || '' }); // Pre-fill the textarea or set to empty string
             } 
         } catch (error) {
-            setFormData({ jobComments: '' }); // Set an empty string for jobComments
+            if (error.response?.status !== 404) {
+                console.error('Error fetching job comment:', error);
+            }
+            setFormData({ jobComments: '' }); // fallback to empty comment
         }
     };
 

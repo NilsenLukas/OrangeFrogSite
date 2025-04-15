@@ -138,13 +138,13 @@ export default function EditEvent() {
     }
 
     return (
-        <div className="min-h-screen bg-neutral-900 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-neutral-900 py-6 md:py-12 px-3 sm:px-6 lg:px-8">
             <Link 
                 to="/admin/manage-events"
-                className="mb-8 flex items-center text-neutral-400 hover:text-white transition-colors"
+                className="mb-4 md:mb-8 flex items-center text-neutral-400 hover:text-white transition-colors"
             >
                 <svg 
-                    className="w-5 h-5 mr-2" 
+                    className="w-4 h-4 md:w-5 md:h-5 mr-2" 
                     fill="none" 
                     strokeLinecap="round" 
                     strokeLinejoin="round" 
@@ -154,17 +154,17 @@ export default function EditEvent() {
                 >
                     <path d="M15 19l-7-7 7-7" />
                 </svg>
-                Return to Manage Events
+                <span className="text-sm md:text-base">Return to Manage Events</span>
             </Link>
 
             <div className="max-w-4xl mx-auto">
-                <div className="flex items-center mb-8">
-                    <h1 className="text-3xl font-bold text-white ml-4">Edit Event</h1>
+                <div className="flex items-center mb-4 md:mb-8">
+                    <h1 className="text-2xl md:text-3xl font-bold text-white ml-2 md:ml-4">Edit Event</h1>
                 </div>
 
-                <form onSubmit={handleSubmit} className="bg-neutral-800 rounded-lg shadow-xl p-8 space-y-8">
+                <form onSubmit={handleSubmit} className="bg-neutral-800 rounded-lg shadow-xl p-4 md:p-8 space-y-6 md:space-y-8">
                     <div>
-                        <label className="block text-neutral-200 text-lg font-bold mb-2">
+                        <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                             Event Name <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -173,17 +173,17 @@ export default function EditEvent() {
                             value={formData.eventName}
                             onChange={handleInputChange}
                             maxLength={40}
-                            className="w-full px-4 py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
+                            className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors text-sm md:text-base"
                             required
                         />
-                        <p className="text-sm text-neutral-400 mt-1">
+                        <p className="text-xs md:text-sm text-neutral-400 mt-1">
                             {formData.eventName.length}/40 characters
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
-                            <label className="block text-neutral-200 text-lg font-bold mb-2">
+                            <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                                 Load In <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -191,13 +191,12 @@ export default function EditEvent() {
                                 name="eventLoadIn"
                                 value={formData.eventLoadIn}
                                 onChange={handleInputChange}
-                                // min={getCurrentDateTime()}
-                                className="w-full px-4 py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
+                                className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors text-sm md:text-base"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-neutral-200 text-lg font-bold mb-2">
+                            <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                                 Load In Hours <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -208,15 +207,15 @@ export default function EditEvent() {
                                 min="0"
                                 step="0.5"
                                 maxLength={2}
-                                className="w-full px-4 py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
+                                className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors text-sm md:text-base"
                                 required
                             />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
-                            <label className="block text-neutral-200 text-lg font-bold mb-2">
+                            <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                                 Load Out <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -225,12 +224,12 @@ export default function EditEvent() {
                                 value={formData.eventLoadOut}
                                 onChange={handleInputChange}
                                 min={getMinLoadOutDateTime()}
-                                className="w-full px-4 py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
+                                className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors text-sm md:text-base"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-neutral-200 text-lg font-bold mb-2">
+                            <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                                 Load Out Hours <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -241,14 +240,14 @@ export default function EditEvent() {
                                 min="0"
                                 step="0.5"
                                 maxLength={2}
-                                className="w-full px-4 py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
+                                className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors text-sm md:text-base"
                                 required
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-neutral-200 text-lg font-bold mb-2">
+                        <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                             Location <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -257,16 +256,16 @@ export default function EditEvent() {
                             value={formData.eventLocation}
                             onChange={handleInputChange}
                             maxLength={50}
-                            className="w-full px-4 py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors"
+                            className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors text-sm md:text-base"
                             required
                         />
-                        <p className="text-sm text-neutral-400 mt-1">
+                        <p className="text-xs md:text-sm text-neutral-400 mt-1">
                             {formData.eventLocation.length}/50 characters
                         </p>
                     </div>
 
                     <div>
-                        <label className="block text-neutral-200 text-lg font-bold mb-2">
+                        <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                             Description
                         </label>
                         <textarea
@@ -275,15 +274,15 @@ export default function EditEvent() {
                             onChange={handleInputChange}
                             maxLength={200}
                             rows="4"
-                            className="w-full px-4 py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors resize-none"
+                            className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:border-orange-500 transition-colors resize-none text-sm md:text-base"
                         />
-                        <p className="text-sm text-neutral-400 mt-1">
+                        <p className="text-xs md:text-sm text-neutral-400 mt-1">
                             {formData.eventDescription.length}/200 characters
                         </p>
                     </div>
 
                     <div>
-                        <label className="block text-neutral-200 text-lg font-bold mb-2">
+                        <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                             Contractors
                         </label>
                         <MultiSelect
@@ -304,18 +303,18 @@ export default function EditEvent() {
                         />
                     </div>
 
-                    <div className="flex justify-center space-x-4 pt-6">
+                    <div className="flex flex-col md:flex-row justify-center space-y-3 md:space-y-0 md:space-x-4 pt-4 md:pt-6">
                         <button
                             type="button"
                             onClick={() => navigate(location.state?.from)}
-                            className="px-6 py-2.5 rounded-lg bg-neutral-700 text-white hover:bg-neutral-600 transition-colors"
+                            className="w-full md:w-auto px-6 py-2.5 rounded-lg bg-neutral-700 text-white hover:bg-neutral-600 transition-colors text-sm md:text-base"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={saving}
-                            className="px-6 py-2.5 rounded-lg bg-black text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full md:w-auto px-6 py-2.5 rounded-lg bg-black text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
                         >
                             {saving ? 'Saving...' : 'Save Changes'}
                         </button>

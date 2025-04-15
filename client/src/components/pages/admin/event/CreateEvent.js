@@ -131,13 +131,13 @@ export default function CreateEvent() {
     };
 
     return (
-        <div className="w-full h-full overflow-auto flex flex-col p-8 bg-neutral-900">
+        <div className="w-full h-full overflow-auto flex flex-col p-4 md:p-8 bg-neutral-900">
             <Link 
                 to="/admin/manage-events"
-                className="mb-8 flex items-center text-neutral-400 hover:text-white transition-colors"
+                className="mb-4 md:mb-8 flex items-center text-neutral-400 hover:text-white transition-colors"
             >
                 <svg 
-                    className="w-5 h-5 mr-2" 
+                    className="w-4 h-4 md:w-5 md:h-5 mr-2" 
                     fill="none" 
                     strokeLinecap="round" 
                     strokeLinejoin="round" 
@@ -147,21 +147,21 @@ export default function CreateEvent() {
                 >
                     <path d="M15 19l-7-7 7-7" />
                 </svg>
-                Return to Manage Events
+                <span className="text-sm md:text-base">Return to Manage Events</span>
             </Link>
 
             <div className="flex flex-col items-center w-full">
                 <div className="w-full max-w-3xl">
-                    <h1 className="text-white text-2xl mb-10">Create New Event</h1>
-                    <div className="w-full max-w-3xl border border-neutral-700 rounded-lg p-8 bg-neutral-800/50 backdrop-blur-sm shadow-lg">
-                        <form className="space-y-6" onSubmit={handleFormSubmit}>
-                            <div className="flex flex-wrap -mx-3 mb-6">
-                                <div className="w-full px-3">
-                                    <label className="block text-neutral-200 text-lg font-bold mb-2">
+                    <h1 className="text-white text-xl md:text-2xl mb-6 md:mb-10">Create New Event</h1>
+                    <div className="w-full max-w-3xl border border-neutral-700 rounded-lg p-4 md:p-8 bg-neutral-800/50 backdrop-blur-sm shadow-lg">
+                        <form className="space-y-4 md:space-y-6" onSubmit={handleFormSubmit}>
+                            <div className="flex flex-wrap -mx-2 md:-mx-3 mb-4 md:mb-6">
+                                <div className="w-full px-2 md:px-3">
+                                    <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                                         Event Name <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        className="appearance-none border border-neutral-600 rounded w-full py-3 px-4 bg-neutral-700 text-white text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
+                                        className="appearance-none border border-neutral-600 rounded w-full py-2.5 md:py-3 px-3 md:px-4 bg-neutral-700 text-white text-sm md:text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
                                         type="text"
                                         name="eventName"
                                         placeholder="Enter Event Name"
@@ -170,16 +170,15 @@ export default function CreateEvent() {
                                         maxLength={40}
                                         required
                                     />
-                                    
                                 </div>
                             </div>
-                            <div className="flex flex-wrap -mx-3 mb-6">
-                                <div className="w-full md:w-1/2 px-3">
-                                    <label className="block text-neutral-200 text-lg font-bold mb-2">
+                            <div className="flex flex-wrap -mx-2 md:-mx-3 mb-4 md:mb-6">
+                                <div className="w-full px-2 md:px-3 mb-4 md:mb-0 md:w-1/2">
+                                    <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                                         Load In <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        className="appearance-none border border-neutral-600 rounded w-full py-3 px-4 bg-neutral-700 text-white text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
+                                        className="appearance-none border border-neutral-600 rounded w-full py-2.5 md:py-3 px-3 md:px-4 bg-neutral-700 text-white text-sm md:text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
                                         type="datetime-local"
                                         name="eventLoadIn"
                                         value={formData.eventLoadIn}
@@ -188,12 +187,12 @@ export default function CreateEvent() {
                                         required
                                     />
                                 </div>
-                                <div className="w-full md:w-1/2 px-3">
-                                    <label className="block text-neutral-200 text-lg font-bold mb-2">
+                                <div className="w-full px-2 md:px-3 md:w-1/2">
+                                    <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                                         Load In Hours <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        className="appearance-none border border-neutral-600 rounded w-full py-3 px-4 bg-neutral-700 text-white text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
+                                        className="appearance-none border border-neutral-600 rounded w-full py-2.5 md:py-3 px-3 md:px-4 bg-neutral-700 text-white text-sm md:text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
                                         type="number"
                                         name="eventLoadInHours"
                                         value={formData.eventLoadInHours}
@@ -205,13 +204,13 @@ export default function CreateEvent() {
                                     />
                                 </div>
                             </div>
-                            <div className="flex flex-wrap -mx-3 mb-6">
-                                <div className="w-full md:w-1/2 px-3">
-                                    <label className="block text-neutral-200 text-lg font-bold mb-2">
+                            <div className="flex flex-wrap -mx-2 md:-mx-3 mb-4 md:mb-6">
+                                <div className="w-full px-2 md:px-3 mb-4 md:mb-0 md:w-1/2">
+                                    <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                                         Load Out <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        className="appearance-none border border-neutral-600 rounded w-full py-3 px-4 bg-neutral-700 text-white text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
+                                        className="appearance-none border border-neutral-600 rounded w-full py-2.5 md:py-3 px-3 md:px-4 bg-neutral-700 text-white text-sm md:text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
                                         type="datetime-local"
                                         name="eventLoadOut"
                                         value={formData.eventLoadOut}
@@ -220,12 +219,12 @@ export default function CreateEvent() {
                                         required
                                     />
                                 </div>
-                                <div className="w-full md:w-1/2 px-3">
-                                    <label className="block text-neutral-200 text-lg font-bold mb-2">
+                                <div className="w-full px-2 md:px-3 md:w-1/2">
+                                    <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                                         Load Out Hours <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        className="appearance-none border border-neutral-600 rounded w-full py-3 px-4 bg-neutral-700 text-white text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
+                                        className="appearance-none border border-neutral-600 rounded w-full py-2.5 md:py-3 px-3 md:px-4 bg-neutral-700 text-white text-sm md:text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
                                         type="number"
                                         name="eventLoadOutHours"
                                         value={formData.eventLoadOutHours}
@@ -237,27 +236,27 @@ export default function CreateEvent() {
                                     />
                                 </div>
                             </div>
-                            <div className="flex flex-wrap -mx-3 mb-6">
-                                <div className="w-full md:w-1/2 px-3">
-                                    <label className="block text-neutral-200 text-lg font-bold mb-2">
+                            <div className="flex flex-wrap -mx-2 md:-mx-3 mb-4 md:mb-6">
+                                <div className="w-full px-2 md:px-3">
+                                    <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                                         Contractors
                                     </label>
                                     <button
                                         type="button"
                                         onClick={() => setShowContractorPopup(true)}
-                                        className="appearance-none border border-neutral-600 rounded py-3 px-4 text-white bg-neutral-700 hover:bg-neutral-600 leading-tight focus:outline-none focus:border-neutral-400 text-lg flex items-center justify-center transition-colors"
+                                        className="appearance-none border border-neutral-600 rounded w-full py-2.5 md:py-3 px-3 md:px-4 text-white bg-neutral-700 hover:bg-neutral-600 text-sm md:text-lg leading-tight focus:outline-none focus:border-neutral-400 flex items-center justify-center transition-colors"
                                     >
-                                        Select Contractors <FaUserPlus className="w-5 h-5 inline-block ml-2" />
+                                        Select Contractors <FaUserPlus className="w-4 h-4 md:w-5 md:h-5 ml-2" />
                                     </button>
                                 </div>
                             </div>
-                            <div className="flex flex-wrap -mx-3 mb-6">
-                                <div className="w-full px-3">
-                                    <label className="block text-neutral-200 text-lg font-bold mb-2">
+                            <div className="flex flex-wrap -mx-2 md:-mx-3 mb-4 md:mb-6">
+                                <div className="w-full px-2 md:px-3">
+                                    <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                                         Location <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        className="appearance-none border border-neutral-600 rounded w-full py-3 px-4 bg-neutral-700 text-white text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
+                                        className="appearance-none border border-neutral-600 rounded w-full py-2.5 md:py-3 px-3 md:px-4 bg-neutral-700 text-white text-sm md:text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
                                         type="text"
                                         name="eventLocation"
                                         placeholder="Enter Event Location"
@@ -266,16 +265,15 @@ export default function CreateEvent() {
                                         maxLength={50}
                                         required
                                     />
-                                    
                                 </div>
                             </div>
-                            <div className="flex flex-wrap -mx-3 mb-6">
-                                <div className="w-full px-3">
-                                    <label className="block text-neutral-200 text-lg font-bold mb-2">
+                            <div className="flex flex-wrap -mx-2 md:-mx-3 mb-4 md:mb-6">
+                                <div className="w-full px-2 md:px-3">
+                                    <label className="block text-neutral-200 text-base md:text-lg font-bold mb-2">
                                         Job Description
                                     </label>
                                     <textarea
-                                        className="appearance-none border border-neutral-600 rounded w-full py-3 px-4 bg-neutral-700 text-white text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
+                                        className="appearance-none border border-neutral-600 rounded w-full py-2.5 md:py-3 px-3 md:px-4 bg-neutral-700 text-white text-sm md:text-lg leading-tight focus:outline-none focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 transition-colors"
                                         name="eventDescription"
                                         placeholder="Enter Job Description"
                                         rows="4"
@@ -283,20 +281,19 @@ export default function CreateEvent() {
                                         onChange={handleInputChange}
                                         maxLength={200}
                                     />
-                                
                                 </div>
                             </div>
-                            <div className="flex justify-center">
+                            <div className="flex justify-center pt-2 md:pt-4">
                                 <HoverBorderGradient
-                                    containerClassName="rounded-full"
-                                    className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 px-8 py-2"
+                                    containerClassName="rounded-full w-full md:w-auto"
+                                    className="dark:bg-black bg-neutral-900 text-white flex items-center justify-center space-x-2 px-6 md:px-8 py-2.5 w-full md:w-auto text-sm md:text-base"
                                     type="submit"
                                     disabled={loading}
                                 >
                                     {loading ? (
-                                        <div className="flex items-center">
+                                        <div className="flex items-center justify-center">
                                             <svg
-                                                className="animate-spin h-5 w-5 text-white mr-2"
+                                                className="animate-spin h-4 w-4 md:h-5 md:w-5 text-white mr-2"
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
                                                 viewBox="0 0 24 24"
@@ -328,9 +325,9 @@ export default function CreateEvent() {
             </div>
             {/* {message && <p className="text-green-500 mt-6 text-lg">{message}</p>} */}
             {showContractorPopup && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-neutral-900 p-8 rounded-lg shadow-lg w-[80%] max-w-md relative border border-neutral-700">
-                        <h2 className="text-xl font-semibold text-white mb-6 text-center">Select Contractors</h2>
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+                    <div className="bg-neutral-900 p-4 md:p-8 rounded-lg shadow-lg w-full md:w-[80%] max-w-md relative border border-neutral-700">
+                        <h2 className="text-lg md:text-xl font-semibold text-white mb-4 md:mb-6 text-center">Select Contractors</h2>
                         <MultiSelect
                             options={contractors.map(contractor => ({
                                 value: contractor._id,
@@ -346,10 +343,10 @@ export default function CreateEvent() {
                             hideSelectedOptions={false}
                             className="text-neutral-900"
                         />
-                        <div className="flex justify-center mt-6">
+                        <div className="flex justify-center mt-4 md:mt-6">
                             <button
                                 onClick={() => setShowContractorPopup(false)}
-                                className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg text-lg transition-colors"
+                                className="w-full md:w-auto px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg text-sm md:text-lg transition-colors"
                             >
                                 Done
                             </button>

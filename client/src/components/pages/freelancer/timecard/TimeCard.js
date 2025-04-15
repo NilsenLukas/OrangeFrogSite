@@ -160,7 +160,17 @@ const TimeCard = () => {
         }
     
         const eventToClockIn = selectedDateEvents[0];
-    
+        const today = new Date().toDateString();
+
+        const isToday =
+            new Date(eventToClockIn.eventLoadIn).toDateString() === today ||
+            new Date(eventToClockIn.eventLoadOut).toDateString() === today;
+
+        if (!isToday) {
+            toast.error("You can only clock in for today's event.");
+            return;
+        }
+        
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/clock-in`, {
                 method: "POST",

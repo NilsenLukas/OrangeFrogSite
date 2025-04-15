@@ -258,22 +258,32 @@ const UserInvoices = () => {
                                 >
                                     Last Modified
                                 </button>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
 
-            {/* Generate Invoice Button */}
-            <div className="flex justify-center mb-6">
-                <button
-                    onClick={() => setShowModal(true)}
-                    className="px-4 py-2 rounded-lg bg-black text-white hover:bg-blue-600 transition-colors flex items-center gap-2"
-                >
-                    <FaPlus className="text-lg" />
-                    Generate Invoice
-                </button>
-            </div>
+                                
+                            </div>
+
+                            
+                        </motion.div>
+
+                        
+                    )}
+
+                    
+                </AnimatePresence>
+
+                {/* Generate Invoice Button */}
+                  <div className="flex justify-start mt-0 mb-6">
+                      <button
+                          onClick={() => setShowModal(true)}
+                          className="px-4 py-2 mt-0 rounded-lg bg-black text-white hover:bg-gray-600 transition-colors flex items-center gap-2"
+                      >
+                          <FaPlus className="text-lg" />
+                          Generate Invoice
+                      </button>
+                  </div>
+                </div>
+
+            
 
             {/* Main content area */}
             <AnimatePresence>

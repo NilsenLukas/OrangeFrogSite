@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const { Admin, notificationCollection } = require('../mongo'); // Import the Admin schema
+const { Admin, notificationCollection, userCollection } = require('../mongo'); // Import the Admin schema
 const router = express.Router();
 
 // ✅ Get Admin Profile

@@ -140,6 +140,7 @@ router.delete('/:invoiceId/item/:itemIndex', async (req, res) => {
 
       // Fetch the invoice
       const invoice = await invoiceCollection.findById(invoiceId);
+
       if (!invoice) {
           console.error("Invoice not found for ID:", invoiceId);
           return res.status(404).json({ message: "Invoice not found" });
@@ -282,12 +283,13 @@ router.post("/", async (req, res) => {
 
       await newInvoice.save();
 
+      const contractor = await userCollection.findOne({ _id: user });
+
       const newNotification = new notificationCollection({
-        userID: userID,
         subject: "Invoice",
         linkPath1: `/admin/corrections/${newInvoice?._id}`,
         linkText1: `New invoice`,
-        text1: ` by ${user?.name}`,
+        text1: ` by ${contractor?.name}`,
         forAdmin: true
       });
       await newNotification.save();

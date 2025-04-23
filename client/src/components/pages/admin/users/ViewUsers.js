@@ -373,39 +373,33 @@ export default function ViewUsers() {
                                                         <div className="font-medium">${user.hourlyRate}/hr</div>
                                                     </td>
                                                     <td className="p-4">
-                                                        <div className="flex items-center justify-end space-x-4">
+                                                        <div className="flex justify-end space-x-4">
                                                             {user.temporaryPassword && (
-                                                                <button
+                                                                <FaEnvelope
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
                                                                         handleResendEmail(user._id);
                                                                     }}
-                                                                    className="text-white hover:text-blue-400 transition-colors p-1"
+                                                                    className="text-white cursor-pointer text-xl hover:text-blue-600 transition-colors"
                                                                     title="Resend Email"
-                                                                >
-                                                                    <FaEnvelope className="text-xl" />
-                                                                </button>
+                                                                />
                                                             )}
-                                                            <button
+                                                            <FaEdit 
                                                                 onClick={(e) => {
-                                                                    e.stopPropagation();
+                                                                    e.stopPropagation(); // Prevent row click
                                                                     handleEdit(user);
-                                                                }}
-                                                                className="text-blue-500 hover:text-blue-400 transition-colors p-1"
-                                                                title="Edit User"
-                                                            >
-                                                                <FaEdit className="text-xl" />
-                                                            </button>
-                                                            <button
+                                                                }} 
+                                                                className="text-blue-500 cursor-pointer text-xl hover:text-blue-600 transition-colors" 
+                                                                title='Edit User'
+                                                            />
+                                                            <FaTrashAlt 
                                                                 onClick={(e) => {
-                                                                    e.stopPropagation();
+                                                                    e.stopPropagation(); // Prevent row click
                                                                     handleDelete(user._id);
-                                                                }}
-                                                                className="text-red-500 hover:text-red-400 transition-colors p-1"
-                                                                title="Delete User"
-                                                            >
-                                                                <FaTrashAlt className="text-xl" />
-                                                            </button>
+                                                                }} 
+                                                                className="text-red-500 cursor-pointer text-xl hover:text-red-600 transition-colors" 
+                                                                title='Delete User'
+                                                            />
                                                         </div>
                                                     </td>
                                                 </tr>

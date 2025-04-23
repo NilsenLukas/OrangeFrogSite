@@ -412,7 +412,7 @@ router.post('/:eventId/apply', async (req, res) => {
 
         const newNotification = new notificationCollection({
             subject: "Event",
-            text0: `User ${user.name} has accepted the event `,
+            text0: `User ${contractor.name} has accepted the event `,
             linkPath1: `/admin/corrections/${event?._id}`,
             linkText1: `${event?.eventName}`,
             forAdmin: true
@@ -461,9 +461,16 @@ router.post('/:eventId/approve', async (req, res) => {
         }
 
         // Deletes the job comments the user had
-        await userJobCommentCollection.findByIdAndDelete({
-            _id: contractorId.toString(),
+        const jobComment = await userJobCommentCollection.findOne({
+            userID: contractorId.toString(),
         });
+
+        if (jobComment) {
+            event.jobCommentCount -= 1;
+            await userJobCommentCollection.deleteOne({
+                _id: jobComment._id
+            });
+        }
 
         const newNotification = new notificationCollection({
             userID: contractorId,

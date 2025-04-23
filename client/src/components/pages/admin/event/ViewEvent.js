@@ -200,6 +200,18 @@ export default function ViewEvent() {
                             {event.assignedContractors?.length || 0} Contractors
                         </span>
                     </div>
+                    <div className="flex items-center pt-2 border-t border-neutral-700">
+                        <FaAddressBook className="mr-2 text-neutral-400" />
+                        <span className="text-neutral-300">
+                            {event.jobCommentCount || 0} Job Comments
+                        </span>
+                    </div>
+                    <div className="flex items-center pt-2 border-t border-neutral-700">
+                        <FaAddressBook className="mr-2 text-neutral-400" />
+                        <span className="text-neutral-300">
+                            {event.correctionCount || 0} Correction Reports
+                        </span>
+                    </div>
                 </div>
             ),
             link: `/admin/events/${event._id}`,
@@ -327,6 +339,18 @@ export default function ViewEvent() {
                                     Contractors
                                 </button>
                                 <button
+                                    onClick={() => handleSort('jobCommentCount')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Job Comments
+                                </button>
+                                <button
+                                    onClick={() => handleSort('correctionCount')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Correction Reports
+                                </button>
+                                <button
                                     onClick={() => handleSort('createdAt')}
                                     className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
                                 >
@@ -416,6 +440,24 @@ export default function ViewEvent() {
                                     </th>
                                     <th 
                                         className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('jobCommentCount')}
+                                    >
+                                        <div className="flex items-center">
+                                            Job Comments
+                                            <span className="ml-2">{getSortIcon('jobCommentCount')}</span>
+                                        </div>
+                                    </th>
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                        onClick={() => handleSort('correctionCount')}
+                                    >
+                                        <div className="flex items-center">
+                                            Correction Reports
+                                            <span className="ml-2">{getSortIcon('correctionCount')}</span>
+                                        </div>
+                                    </th>
+                                    <th 
+                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
                                         onClick={() => handleSort('createdAt')}
                                     >
                                         <div className="flex items-center">
@@ -470,6 +512,14 @@ export default function ViewEvent() {
                                                     <FaUsers className="mr-2" />
                                                     {event.assignedContractors?.length || 0} Contractors
                                                 </div>
+                                                <div className="flex items-center text-neutral-300">
+                                                    <FaUsers className="mr-2" />
+                                                    {event.jobCommentCount?.length || 0} Job Comments
+                                                </div>
+                                                <div className="flex items-center text-neutral-300">
+                                                    <FaUsers className="mr-2" />
+                                                    {event.correctionCount?.length || 0} Correction Reports
+                                                </div>
                                                 <div className="text-neutral-400">
                                                     Created: {new Date(event.createdAt).toLocaleDateString()}
                                                 </div>
@@ -485,6 +535,12 @@ export default function ViewEvent() {
                                         </td>
                                         <td className="p-4 text-white hidden md:table-cell">
                                             {event.assignedContractors?.length || 0}
+                                        </td>
+                                        <td className="p-4 text-white hidden md:table-cell">
+                                            {event.jobCommentCount || 0}
+                                        </td>
+                                        <td className="p-4 text-white hidden md:table-cell">
+                                            {event.correctionCount || 0}
                                         </td>
                                         <td className="p-4 text-white hidden md:table-cell">
                                             {event.createdAt

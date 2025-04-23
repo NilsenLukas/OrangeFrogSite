@@ -619,8 +619,8 @@ export default function FindJobs() {
                     <div className="p-4 sm:p-6">
                         <p className="text-sm sm:text-base text-neutral-300 mb-6">
                             {confirmationType === "apply"
-                                ? "By applying to this event, you acknowledge that if approved, you will be required to work this event and cannot reject it later. Are you sure you want to apply?"
-                                : "Once you reject this event, it will be permanently removed from your available jobs. Are you sure you want to reject this event?"}
+                                ? "Are you sure you want to apply?"
+                                : "Are you sure you want to reject this event?"}
                         </p>
 
                         <div className="flex justify-end space-x-3 sm:space-x-4">

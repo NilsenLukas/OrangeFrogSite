@@ -561,10 +561,7 @@ router.get('/contractor/corrections/:email', async (req, res) => {
         // Find events where contractor is in any of the relevant arrays
         const events = await eventCollection.find({
             $or: [
-                { assignedContractors: contractor._id },
-                { acceptedContractors: contractor._id },    // Applied events
                 { approvedContractors: contractor._id },    // Approved events
-                { rejectedContractors: contractor._id }     // Denied events
             ]
         });
 

@@ -205,7 +205,7 @@ export default function ViewCorrections() {
         return corrections.map((correction) => {
             // Ensure events and correction.eventID exist before accessing properties
             const event = events?.find(e => e._id === correction.eventID);
-    
+            
             return {
                 title: (
                     <div className="flex justify-between items-center">
@@ -321,6 +321,17 @@ export default function ViewCorrections() {
 
             {/* Control Bar */}
             <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <div className="flex items-center gap-4">
+                        <Link to="/user/corrections/create" className='mt-0 bg-none'>
+                            <HoverBorderGradient
+                                containerClassName="rounded-full"
+                                className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0"
+                            >
+                                <span className="text-lg mr-1">+</span> 
+                                <span>Create Correction Report</span>
+                            </HoverBorderGradient>
+                        </Link>
+                    </div>
                 <div className="flex items-center gap-2">
                     {/* Search Toggle */}
                     <button

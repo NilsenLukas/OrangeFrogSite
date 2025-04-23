@@ -82,7 +82,12 @@ export default function JobCommentDetails() {
                         className="text-4xl font-bold text-white "
                         {...fadeIn}
                     >
-                        {event.eventName}
+                        <Link 
+                            to={`/admin/events/${event._id}`}
+                            className="hover:text-blue-500 transition-colors group"
+                        >
+                            <u>{event.eventName}</u>
+                        </Link>
                     </motion.h1>
                 </div>
                 

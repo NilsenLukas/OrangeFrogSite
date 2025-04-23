@@ -2,7 +2,7 @@
 require('dotenv').config();
 const express = require("express");
 const router = express.Router();
-const { userCollection } = require('../mongo');
+const { userCollection, eventCollection, userJobCommentCollection, TimeTracking, correctionReportCollection, invoiceCollection, notificationCollection } = require('../mongo');
 
 // Delete user by ID
 router.delete('/:id', async (req, res) => {
@@ -10,6 +10,31 @@ router.delete('/:id', async (req, res) => {
         const user = await userCollection.findById(req.params.id);
         const result = await userCollection.findByIdAndDelete(req.params.id);
         if (result) {
+            // Delete associated job comments
+            await userJobCommentCollection.deleteMany({ userID: userId });
+
+            // Delete time tracking entries
+            await TimeTracking.deleteMany({ userId: userId });
+
+            // Delete correction reports
+            await correctionReportCollection.deleteMany({ userID: userId });
+
+            // Delete invoices
+            await invoiceCollection.deleteMany({ user: userId });
+
+            // Optional: Remove user from event references (safer than deletion)
+            await eventCollection.updateMany(
+                {},
+                {
+                    $pull: {
+                        assignedContractors: userId,
+                        acceptedContractors: userId,
+                        rejectedContractors: userId,
+                        approvedContractors: userId,
+                    }
+                }
+            );
+            
             const newNotification = new notificationCollection({
                 userID: user?._id,
                 subject: "User",

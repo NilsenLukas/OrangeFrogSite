@@ -193,7 +193,7 @@ router.post('/', async (req, res) => {
                 forAdmin: true
             });
             await newNotification2.save();
-        }
+        
 
         res.status(200).json({ message: 'Event created and notifications sent successfully' });
     } catch (error) {

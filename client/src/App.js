@@ -13,6 +13,7 @@ import ManageEvents from "./components/pages/admin/event/ManageEvents";
 import ManageUsers from "./components/pages/admin/users/ManageUsers";
 import CreateEvent from "./components/pages/admin/event/CreateEvent";
 import EditEvent from "./components/pages/admin/event/EditEvent";
+import EditUser from "./components/pages/admin/users/EditUser";
 import AdminInvoices from "./components/pages/invoice/AdminInvoices";
 import EventDetails from "./components/pages/admin/event/EventDetails";
 // Correction Report Pages
@@ -88,6 +89,7 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
             <Route path="manage-users" element={<ManageUsers />} />
+            <Route path="users/edit/:id" element={<EditUser />} />
             <Route path="manage-events" element={<ManageEvents />} />
             <Route path="events/create" element={<CreateEvent />} />
             <Route path="events/:eventId" element={<EventDetails />} />

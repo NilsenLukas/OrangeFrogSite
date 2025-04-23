@@ -233,7 +233,7 @@ router.post('/accept', async (req, res) => {
 
         const newNotification = new notificationCollection({
             subject: "Event",
-            text0: `User ${user.name} has accepted the event `,
+            text0: `User ${contractor.name} has accepted the event `,
             linkPath1: `/admin/corrections/${event?._id}`,
             linkText1: `${event?.eventName}`,
             forAdmin: true
@@ -274,7 +274,7 @@ router.post('/reject', async (req, res) => {
 
         const newNotification = new notificationCollection({
             subject: "Event",
-            text0: `User ${user.name} has reject the event `,
+            text0: `User ${contractor.name} has reject the event `,
             linkPath1: `/admin/corrections/${event?._id}`,
             linkText1: `${event?.eventName}`,
             forAdmin: true
@@ -462,11 +462,11 @@ router.post('/:eventId/approve', async (req, res) => {
 
         // Deletes the job comments the user had
         await userJobCommentCollection.findByIdAndDelete({
-            userID: contractorId.toString(),
+            _id: contractorId.toString(),
         });
 
         const newNotification = new notificationCollection({
-            userID: userID,
+            userID: contractorId,
             subject: "Event",
             text0: `You have been approved for `,
             linkPath1: `/user/corrections/${event?._id}`,

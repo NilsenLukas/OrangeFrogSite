@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { FaList, FaEdit, FaTrashAlt, FaUsers, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaAddressBook } from 'react-icons/fa';
+import { FaList, FaEdit, FaTrashAlt, FaUsers, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaAddressBook, FaTimes } from 'react-icons/fa';
 import { toast } from 'sonner';
 import Modal from "../../../Modal";
 import { HoverEffect } from "../../../ui/card-hover-effect";
@@ -29,6 +29,9 @@ export default function ViewEvent() {
 
     // Single filter: name only
     const [nameFilter, setNameFilter] = useState('');
+
+    // Mobile search modal
+    const [showSearchModal, setShowSearchModal] = useState(false);
 
     useEffect(() => {
         fetchEvents();
@@ -151,7 +154,7 @@ export default function ViewEvent() {
         return events.map((event) => ({
             title: (
                 <div className="flex justify-between items-center">
-                    <span className="text-lg font-semibold">{event.eventName}</span>
+                    <span className="text-lg md:text-xl font-semibold">{event.eventName}</span>
                     <div 
                         className="flex space-x-3"
                         onClick={(e) => e.preventDefault()}
@@ -162,7 +165,7 @@ export default function ViewEvent() {
                                 e.stopPropagation();
                                 handleEdit(event);
                             }} 
-                            className="text-blue-500 cursor-pointer text-xl hover:text-blue-600 transition-colors" 
+                            className="text-blue-500 cursor-pointer text-xl md:text-2xl hover:text-blue-600 transition-colors" 
                         />
                         <FaTrashAlt 
                             onClick={(e) => {
@@ -170,55 +173,31 @@ export default function ViewEvent() {
                                 e.stopPropagation();
                                 handleDelete(event);
                             }} 
-                            className="text-red-500 cursor-pointer text-xl hover:text-red-600 transition-colors" 
+                            className="text-red-500 cursor-pointer text-xl md:text-2xl hover:text-red-600 transition-colors" 
                         />
                     </div>
                 </div>
             ),
             description: (
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <p className="text-neutral-400 font-medium">Load In</p>
-                        <div className="pl-2 border-l-2 border-neutral-700">
-                            <p className="text-white">{new Date(event.eventLoadIn).toLocaleString()}</p>
-                            <p className="text-neutral-300">Hours: {event.eventLoadInHours}h</p>
+                <div className="space-y-6 py-2">
+                    <div className="space-y-4">
+                        <p className="text-neutral-400 font-medium text-base md:text-lg">Load In</p>
+                        <div className="pl-3 border-l-2 border-neutral-700 space-y-2">
+                            <p className="text-white text-sm md:text-base">{new Date(event.eventLoadIn).toLocaleString()}</p>
+                            <p className="text-neutral-300 text-sm md:text-base">Hours: {event.eventLoadInHours}h</p>
                         </div>
                     </div>
-                    <div className="space-y-2">
-                        <p className="text-neutral-400 font-medium">Load Out</p>
-                        <div className="pl-2 border-l-2 border-neutral-700">
-                            <p className="text-white">{new Date(event.eventLoadOut).toLocaleString()}</p>
-                            <p className="text-neutral-300">Hours: {event.eventLoadOutHours}h</p>
+                    <div className="space-y-4">
+                        <p className="text-neutral-400 font-medium text-base md:text-lg">Load Out</p>
+                        <div className="pl-3 border-l-2 border-neutral-700 space-y-2">
+                            <p className="text-white text-sm md:text-base">{new Date(event.eventLoadOut).toLocaleString()}</p>
+                            <p className="text-neutral-300 text-sm md:text-base">Hours: {event.eventLoadOutHours}h</p>
                         </div>
                     </div>
-                    <div className="space-y-2">
-                        <p className="text-neutral-400 font-medium">Created</p>
-                        <div className="pl-2 border-l-2 border-neutral-700">
-                            <p className="text-white">{new Date(event.createdAt).toLocaleString()}</p>
-                        </div>
-                    </div>
-                    <div className="space-y-2">
-                        <p className="text-neutral-400 font-medium">Last Modified</p>
-                        <div className="pl-2 border-l-2 border-neutral-700">
-                            <p className="text-white">{new Date(event.updatedAt).toLocaleString()}</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center pt-2 border-t border-neutral-700">
-                        <FaUsers className="mr-2 text-neutral-400" />
-                        <span className="text-neutral-300">
+                    <div className="flex items-center pt-3 border-t border-neutral-700">
+                        <FaUsers className="mr-2 text-neutral-400 text-lg md:text-xl" />
+                        <span className="text-neutral-300 text-sm md:text-base">
                             {event.assignedContractors?.length || 0} Contractors
-                        </span>
-                    </div>
-                    <div className="flex items-center pt-2 border-t border-neutral-700">
-                        <FaAddressBook className="mr-2 text-neutral-400" />
-                        <span className="text-neutral-300">
-                            {event.jobCommentCount || 0} Job Comments
-                        </span>
-                    </div>
-                    <div className="flex items-center pt-2 border-t border-neutral-700">
-                        <FaAddressBook className="mr-2 text-neutral-400" />
-                        <span className="text-neutral-300">
-                            {event.correctionCount || 0} Correction Reports
                         </span>
                     </div>
                 </div>
@@ -229,7 +208,10 @@ export default function ViewEvent() {
                 if (!e.defaultPrevented) {
                     handleEventClick(event._id);
                 }
-            }
+            },
+            // Keep these for filtering but don't display them
+            createdAt: event.createdAt,
+            updatedAt: event.updatedAt
         }));
     };
 
@@ -246,161 +228,154 @@ export default function ViewEvent() {
     
 
     return (
-        <div className="w-full h-full overflow-auto px-5">
-            <div className="flex justify-between items-center mb-2 sticky top-0 bg-neutral-900 py-4 z-50">
-                
-                {/* Left section: Filter & Sort */}
-                <div className="flex items-center gap-3 mt-2">
-                    {/* Right section: Create Event button */}
-                    
-                    
-                    <div className='flex items-center gap-3 mt-3'>
-                        {/* Name filter input */}
-                        <div className="relative flex items-center mt-1">
-                            <input
-                                type="text"
-                                placeholder="Search by name"
-                                value={nameFilter}
-                                onChange={(e) => setNameFilter(e.target.value)}
-                                className="w-40 md:w-54 lg:w-64 px-4 pr-10 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40"
-                                style={{
-                                    transition: 'width 0.3s ease',
-                                    height: '2.5rem', 
-                                }}
-                            />
-                            <FaSearch className="absolute right-3 text-white/50" />
-                        </div>
+        <div className="w-full h-full overflow-auto px-4 sm:px-6 md:px-8">
+            {/* Control Bar */}
+            <div className="flex items-center justify-between mb-4 sticky top-0 bg-neutral-900 py-4 z-50">
+                {/* Left section: Controls */}
+                <div className="flex items-center gap-2">
+                    {/* Search Toggle */}
+                    <button
+                        onClick={() => setShowSearchModal(!showSearchModal)}
+                        className={`p-2 rounded-full transition-colors ${
+                            showSearchModal ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                        } text-white`}
+                    >
+                        <FaSearch className="text-lg sm:text-xl" />
+                    </button>
 
-                        {/* Sort dropdown */}
-                        <div className="flex items-center gap-3 mt-2">
-                            <AnimatePresence>
-                                {!showSortOptions && (
-                                    <motion.button
-                                        initial={{ opacity: 0, x: -20 }}      
-                                        animate={{ opacity: 1, x: 0 }}         
-                                        exit={{ opacity: 0, x: -20 }}         
-                                        transition={{ duration: 0.3 }}
-                                        onClick={() => setShowSortOptions(true)}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded transition-colors mt-0 ${
-                                            showSortOptions
-                                                ? 'bg-neutral-700 text-white'
-                                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                                        }`}
-                                    >
-                                        <FaSort className="text-xl" />
-                                        <span className="whitespace-nowrap">Filter by</span>
-                                    </motion.button>
-                                )}
-                            </AnimatePresence>
-
-                            <AnimatePresence>
-                                {showSortOptions && (
-                                    <motion.div
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: 20 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="flex items-center gap-2"
-                                    >
-                                        <span className="text-white text-sm whitespace-nowrap">Sort by:</span>
-
-                                        <button
-                                            className="px-3 py-1.5 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0"
-                                            onClick={() => handleSort('eventName')}
-                                        >
-                                            Name
-                                        </button>
-
-                                        <button
-                                            className="px-3 py-1.5 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0"
-                                            onClick={() => handleSort('contractors')}
-                                        >
-                                            Contractors
-                                        </button>
-
-                                        <button
-                                            className="px-3 py-1.5 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0"
-                                            onClick={() => handleSort('jobComments')}
-                                        >
-                                            Comments
-                                        </button>
-
-                                        <button
-                                            className="px-3 py-1.5 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0"
-                                            onClick={() => handleSort('correctionReports')}
-                                        >
-                                            Reports
-                                        </button>
-
-                                        <button
-                                            className="px-3 py-1.5 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
-                                            onClick={() => handleSort('createdAt')}
-                                        >
-                                            Creation Date
-                                        </button>
-
-                                        <button
-                                            className="px-3 py-1.5 bg-neutral-800 text-white text-sm rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
-                                            onClick={() => handleSort('updatedAt')}
-                                        >
-                                            Last Modified
-                                        </button>
-
-                                        <motion.button
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: -20 }}
-                                            transition={{ delay: 0.2 }}
-                                            type="button"
-                                            onClick={() => setShowSortOptions(false)}
-                                            className="h-7 px-3 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-white text-sm rounded-full transition-colors mt-0"
-                                        >
-                                            Cancel
-                                        </motion.button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </div>
-                    
+                    {/* Sort Toggle */}
+                    <button
+                        onClick={() => setShowSortOptions(!showSortOptions)}
+                        className={`p-2 rounded-full transition-colors ${
+                            showSortOptions ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                        } text-white`}
+                    >
+                        <FaSort className="text-lg sm:text-xl" />
+                    </button>
                 </div>
 
-                
-                {/* View toggles (hidden on smaller screens if desired) */}
-                <div className="hidden md:flex gap-2">
-                        <button
-                            onClick={() => setView('grid')}
-                            className={`p-2 rounded transition-colors ${
-                                view === 'grid' 
-                                    ? 'bg-neutral-700 text-white' 
-                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                            }`}
-                        >
-                            <FaTh className="text-xl" />
-                        </button>
-                        <button
-                            onClick={() => setView('list')}
-                            className={`p-2 rounded transition-colors ${
-                                view === 'list' 
-                                    ? 'bg-neutral-700 text-white' 
-                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                            }`}
-                        >
-                            <FaList className="text-xl" />
-                        </button>
+                {/* Right section: View Toggle */}
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setView('grid')}
+                        className={`p-2 rounded-full transition-colors ${
+                            view === 'grid' 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                        }`}
+                    >
+                        <FaTh className="text-lg sm:text-xl" />
+                    </button>
+                    <button
+                        onClick={() => setView('list')}
+                        className={`p-2 rounded-full transition-colors ${
+                            view === 'list' 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                        }`}
+                    >
+                        <FaList className="text-lg sm:text-xl" />
+                    </button>
                 </div>
             </div>
 
-            <Link to="/admin/events/create" className=''>
+            {/* Control Panels */}
+            <div className="mb-4">
+                {/* Search Panel */}
+                <AnimatePresence>
+                    {showSearchModal && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mb-4 overflow-hidden"
+                        >
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    placeholder="Search by name"
+                                    value={nameFilter}
+                                    onChange={(e) => setNameFilter(e.target.value)}
+                                    className="w-full px-4 pr-10 py-2 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 border border-white/20 focus:border-white/40"
+                                />
+                                <FaSearch className="absolute right-3 text-white/50" />
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Sort Options Panel */}
+                <AnimatePresence>
+                    {showSortOptions && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mb-4 overflow-hidden"
+                        >
+                            <div className="flex flex-wrap gap-2 p-4 bg-neutral-800 rounded-lg">
+                                <button
+                                    onClick={() => handleSort('eventName')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Name
+                                </button>
+                                <button
+                                    onClick={() => handleSort('contractors')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Contractors
+                                </button>
+                                <button
+                                    onClick={() => handleSort('createdAt')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Creation Date
+                                </button>
+                                <button
+                                    onClick={() => handleSort('updatedAt')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Last Modified
+                                </button>
+                                <button
+                                    onClick={() => setShowSortOptions(false)}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-600 text-white rounded-full hover:bg-neutral-500 transition-colors text-sm sm:text-base"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            {/* Filter Summary */}
+            {nameFilter && (
+                <div className="mb-4 text-xs sm:text-sm text-neutral-400">
+                    Search: "{nameFilter}"
+                </div>
+            )}
+
+            {/* Create Event Button - Desktop */}
+            <Link to="/admin/events/create" className="hidden md:block mb-6">
                 <HoverBorderGradient
-                    containerClassName="rounded-full mt-0"
-                    className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2 mt-0"
+                    containerClassName="rounded-full"
+                    className="dark:bg-black bg-neutral-900 text-white flex items-center space-x-2"
                 >
                     <span className="text-lg mr-1">+</span> 
                     <span>Create Event</span>
                 </HoverBorderGradient>
             </Link>
 
+            {/* Create Event Button - Mobile */}
+            <Link to="/admin/events/create" className="md:hidden fixed bottom-4 right-4 z-50">
+                <button className="p-4 rounded-full bg-neutral-900 text-white shadow-lg hover:bg-neutral-800 transition-colors flex items-center justify-center w-14 h-14">
+                    <span className="text-2xl font-light">+</span>
+                </button>
+            </Link>
+
+            {/* Content Area */}
             <div className="relative z-0 pb-8">
                 {getFilteredAndSortedEvents().length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-[50vh] text-neutral-400">
@@ -418,7 +393,8 @@ export default function ViewEvent() {
                 ) : (
                     <div className="overflow-x-auto mt-4">
                         <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
-                            <thead className="bg-neutral-700">
+                            {/* Desktop Header */}
+                            <thead className="bg-neutral-700 hidden md:table-header-group">
                                 <tr>
                                     <th 
                                         className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
@@ -436,24 +412,6 @@ export default function ViewEvent() {
                                         <div className="flex items-center">
                                             Contractors
                                             <span className="ml-2">{getSortIcon('contractors')}</span>
-                                        </div>
-                                    </th>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('jobComments')}
-                                    >
-                                        <div className="flex items-center">
-                                            Job Comments
-                                            <span className="ml-2">{getSortIcon('jobComments')}</span>
-                                        </div>
-                                    </th>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('correctionReports')}
-                                    >
-                                        <div className="flex items-center">
-                                            Correction Reports
-                                            <span className="ml-2">{getSortIcon('correctionReports')}</span>
                                         </div>
                                     </th>
                                     <th 
@@ -483,36 +441,66 @@ export default function ViewEvent() {
                                 {getFilteredAndSortedEvents().map((event) => (
                                     <tr 
                                         key={event._id} 
-                                        className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
+                                        className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer md:table-row flex flex-col"
                                         onClick={() => handleEventClick(event._id)}
                                     >
-                                        <td className="p-4 text-white">
+                                        {/* Mobile View */}
+                                        <td className="md:hidden block p-4 bg-neutral-800">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-white font-medium">{event.eventName}</span>
+                                                <div className="flex space-x-3">
+                                                    <FaEdit 
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleEdit(event);
+                                                        }} 
+                                                        className="text-blue-500 cursor-pointer text-lg hover:text-blue-600 transition-colors" 
+                                                    />
+                                                    <FaTrashAlt 
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDelete(event);
+                                                        }} 
+                                                        className="text-red-500 cursor-pointer text-lg hover:text-red-600 transition-colors" 
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="mt-2 space-y-2 text-sm">
+                                                <div className="flex items-center text-neutral-300">
+                                                    <FaUsers className="mr-2" />
+                                                    {event.assignedContractors?.length || 0} Contractors
+                                                </div>
+                                                <div className="text-neutral-400">
+                                                    Created: {new Date(event.createdAt).toLocaleDateString()}
+                                                </div>
+                                                <div className="text-neutral-400">
+                                                    Modified: {new Date(event.updatedAt).toLocaleDateString()}
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        {/* Desktop View */}
+                                        <td className="p-4 text-white hidden md:table-cell">
                                             {event.eventName}
                                         </td>
-                                        <td className="p-4 text-white">
+                                        <td className="p-4 text-white hidden md:table-cell">
                                             {event.assignedContractors?.length || 0}
                                         </td>
-                                        <td className="p-4 text-white">
-                                            {event.jobCommentCount || 0}
-                                        </td>
-                                        <td className="p-4 text-white">
-                                            {event.correctionCount || 0}
-                                        </td>
-                                        <td className="p-4 text-white">
+                                        <td className="p-4 text-white hidden md:table-cell">
                                             {event.createdAt
                                                 ? new Date(event.createdAt).toLocaleString()
                                                 : 'Not modified'}
                                         </td>
-                                        <td className="p-4 text-white">
+                                        <td className="p-4 text-white hidden md:table-cell">
                                             {event.updatedAt
                                                 ? new Date(event.updatedAt).toLocaleString()
                                                 : 'Not modified'}
                                         </td>
-                                        <td className="p-4">
+                                        <td className="p-4 hidden md:table-cell">
                                             <div className="flex space-x-4">
                                                 <FaEdit 
                                                     onClick={(e) => {
-                                                        e.stopPropagation(); // Prevent row click
+                                                        e.stopPropagation();
                                                         handleEdit(event);
                                                     }} 
                                                     className="text-blue-500 cursor-pointer text-xl hover:text-blue-600 transition-colors" 
@@ -520,7 +508,7 @@ export default function ViewEvent() {
                                                 />
                                                 <FaTrashAlt 
                                                     onClick={(e) => {
-                                                        e.stopPropagation(); // Prevent row click
+                                                        e.stopPropagation();
                                                         handleDelete(event);
                                                     }} 
                                                     className="text-red-500 cursor-pointer text-xl hover:text-red-600 transition-colors" 

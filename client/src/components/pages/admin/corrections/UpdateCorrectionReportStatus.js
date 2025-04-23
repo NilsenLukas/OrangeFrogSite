@@ -96,13 +96,13 @@ const CorrectionReport = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full min-h-screen p-8 bg-neutral-900">
+    <div className="flex flex-col items-center w-full min-h-screen p-4 sm:p-8 bg-neutral-900">
       <Link
         to="/admin/manage-corrections"
-        className="mb-8 flex items-start text-neutral-400 hover:text-white transition-colors"
+        className="mb-4 sm:mb-8 flex items-start text-neutral-400 hover:text-white transition-colors text-sm sm:text-base"
       >
         <svg
-          className="w-5 h-5 mr-2"
+          className="w-4 h-4 sm:w-5 sm:h-5 mr-2"
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -115,17 +115,17 @@ const CorrectionReport = () => {
         Return to Manage Correction Reports
       </Link>
 
-      <div className="w-full max-w-4xl bg-neutral-800 p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-white mb-8 text-center">Update Correction Status</h1>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Event Selector */}
-          <div className="col-span-2">
-            <label className="block text-white mb-2">Status</label>
+      <div className="w-full max-w-4xl bg-neutral-800 p-4 sm:p-8 rounded-lg shadow-lg">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-8 text-center">Update Correction Status</h1>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 sm:gap-6">
+          {/* Status Selector */}
+          <div className="col-span-1">
+            <label className="block text-white mb-2 text-sm sm:text-base">Status</label>
             <select
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors"
+              className="w-full p-2 sm:p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors text-sm sm:text-base"
               required
             >
                 <option value="Pending">Pending</option>
@@ -136,29 +136,29 @@ const CorrectionReport = () => {
           </div>
 
           {/* Additional Comments */}
-          <div className="col-span-2">
-            <label className="block text-white mb-2">Additional Comments</label>
+          <div className="col-span-1">
+            <label className="block text-white mb-2 text-sm sm:text-base">Additional Comments</label>
             <textarea
               name="additionalComments"
               value={formData.additionalComments}
               onChange={handleChange}
-              className="w-full p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors h-32"
+              className="w-full p-2 sm:p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors h-24 sm:h-32 text-sm sm:text-base"
             />
           </div>
 
           {/* Submit Button */}
-          <div className="col-span-2 flex justify-center space-x-4 pt-6">
-          <button
+          <div className="col-span-1 flex flex-col sm:flex-row justify-center gap-4 pt-4 sm:pt-6">
+            <button
               type="button"
               onClick={() => navigate(location.state?.from)}
-              className="px-6 py-2.5 rounded-lg bg-neutral-700 text-white hover:bg-neutral-600 transition-colors"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2 rounded-lg bg-neutral-700 text-white hover:bg-neutral-600 transition-colors text-sm sm:text-base"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 rounded-lg bg-black text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2 rounded-lg bg-black text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
             >
               {loading ? 'Saving...' : 'Save Changes'}
             </button>

@@ -77,6 +77,10 @@ const MultiSelect = (props) => {
       boxShadow: state.isFocused ? '0 0 0 1px #525252' : 'none',
       '&:hover': {
         borderColor: '#525252' // neutral-600
+      },
+      minHeight: '2.5rem', // Smaller height on mobile
+      '@media (min-width: 640px)': {
+        minHeight: '3rem' // Larger height on desktop
       }
     }),
     menu: (base) => ({
@@ -84,7 +88,11 @@ const MultiSelect = (props) => {
       backgroundColor: '#262626', // neutral-800
       border: '1px solid #404040', // neutral-700
       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-      zIndex: 9999
+      zIndex: 9999,
+      maxHeight: '200px', // Limit height on mobile
+      '@media (min-width: 640px)': {
+        maxHeight: '300px' // Larger height on desktop
+      }
     }),
     option: (base, { isSelected, isFocused }) => ({
       ...base,
@@ -94,6 +102,12 @@ const MultiSelect = (props) => {
           ? '#363636' // neutral-750
           : '#262626', // neutral-800
       color: '#e5e5e5', // neutral-200
+      padding: '8px 12px', // Smaller padding on mobile
+      fontSize: '0.875rem', // Smaller text on mobile
+      '@media (min-width: 640px)': {
+        padding: '10px 16px', // Larger padding on desktop
+        fontSize: '1rem' // Larger text on desktop
+      },
       '&:active': {
         backgroundColor: '#404040' // neutral-700
       }
@@ -101,14 +115,28 @@ const MultiSelect = (props) => {
     multiValue: (base) => ({
       ...base,
       backgroundColor: '#404040', // neutral-700
+      margin: '2px', // Smaller margin on mobile
+      '@media (min-width: 640px)': {
+        margin: '4px' // Larger margin on desktop
+      }
     }),
     multiValueLabel: (base) => ({
       ...base,
       color: '#e5e5e5', // neutral-200
+      fontSize: '0.875rem', // Smaller text on mobile
+      padding: '2px 6px', // Smaller padding on mobile
+      '@media (min-width: 640px)': {
+        fontSize: '1rem', // Larger text on desktop
+        padding: '4px 8px' // Larger padding on desktop
+      }
     }),
     multiValueRemove: (base) => ({
       ...base,
       color: '#9ca3af', // neutral-400
+      padding: '2px', // Smaller padding on mobile
+      '@media (min-width: 640px)': {
+        padding: '4px' // Larger padding on desktop
+      },
       '&:hover': {
         backgroundColor: '#525252', // neutral-600
         color: '#e5e5e5' // neutral-200
@@ -117,6 +145,10 @@ const MultiSelect = (props) => {
     clearIndicator: (base) => ({
       ...base,
       color: '#9ca3af', // neutral-400
+      padding: '4px', // Smaller padding on mobile
+      '@media (min-width: 640px)': {
+        padding: '8px' // Larger padding on desktop
+      },
       '&:hover': {
         color: '#e5e5e5' // neutral-200
       }
@@ -124,28 +156,48 @@ const MultiSelect = (props) => {
     dropdownIndicator: (base) => ({
       ...base,
       color: '#9ca3af', // neutral-400
+      padding: '4px', // Smaller padding on mobile
+      '@media (min-width: 640px)': {
+        padding: '8px' // Larger padding on desktop
+      },
       '&:hover': {
         color: '#e5e5e5' // neutral-200
       }
     }),
     valueContainer: (base) => ({
       ...base,
-      maxHeight: '65px',
+      maxHeight: '120px', // Smaller height on mobile
       overflow: 'auto',
-      padding: '2px 6px',
-      color: '#e5e5e5' // neutral-200
+      padding: '2px 4px', // Smaller padding on mobile
+      color: '#e5e5e5', // neutral-200
+      '@media (min-width: 640px)': {
+        maxHeight: '150px', // Larger height on desktop
+        padding: '2px 6px' // Larger padding on desktop
+      }
     }),
     placeholder: (base) => ({
       ...base,
-      color: '#9ca3af' // neutral-400
+      color: '#9ca3af', // neutral-400
+      fontSize: '0.875rem', // Smaller text on mobile
+      '@media (min-width: 640px)': {
+        fontSize: '1rem' // Larger text on desktop
+      }
     }),
     noOptionsMessage: (base) => ({
       ...base,
-      color: '#9ca3af' // neutral-400
+      color: '#9ca3af', // neutral-400
+      fontSize: '0.875rem', // Smaller text on mobile
+      '@media (min-width: 640px)': {
+        fontSize: '1rem' // Larger text on desktop
+      }
     }),
     loadingMessage: (base) => ({
       ...base,
-      color: '#9ca3af' // neutral-400
+      color: '#9ca3af', // neutral-400
+      fontSize: '0.875rem', // Smaller text on mobile
+      '@media (min-width: 640px)': {
+        fontSize: '1rem' // Larger text on desktop
+      }
     }),
   };
 

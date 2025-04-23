@@ -358,7 +358,7 @@ export default function EventDetails() {
         <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex flex-col w-full min-h-screen p-8 bg-gradient-to-b from-neutral-900 to-neutral-800"
+            className="flex flex-col w-full min-h-screen p-4 sm:p-6 md:p-8 bg-gradient-to-b from-neutral-900 to-neutral-800"
         >
             <motion.div
                 initial={{ x: -20, opacity: 0 }}
@@ -368,7 +368,7 @@ export default function EventDetails() {
             >
                 <Link 
                     to="/user/current-jobs"
-                    className="mb-8 flex items-center text-neutral-400 hover:text-white transition-colors group"
+                    className="mb-4 sm:mb-6 md:mb-8 flex items-center text-neutral-400 hover:text-white transition-colors group text-sm sm:text-base"
                 >
                     <FaArrowLeft className="mr-2 transform group-hover:-translate-x-1 transition-transform" />
                     Back to Current Jobs
@@ -376,59 +376,59 @@ export default function EventDetails() {
             </motion.div>
 
             <motion.div 
-                className="bg-neutral-800 rounded-lg p-8 shadow-2xl backdrop-blur-sm bg-opacity-90"
+                className="bg-neutral-800 rounded-lg p-4 sm:p-6 md:p-8 shadow-2xl backdrop-blur-sm bg-opacity-90"
                 {...fadeIn}
             >   
-                <div className='mb-8 border-b border-neutral-700 pb-4 flex justify-between items-center'>
+                <div className='mb-6 sm:mb-8 border-b border-neutral-700 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0'>
                     <motion.h1 
-                        className="text-4xl font-bold text-white "
+                        className="text-2xl sm:text-3xl md:text-4xl font-bold text-white"
                         {...fadeIn}
                     >
                         {event.eventName}
                     </motion.h1>
 
-                <div className='flex space-x-4 -mt-6 '>
-                    {isInvoiceEligible && (
-                        <button
-                            onClick={() => navigate(`/user/invoices/new?eventId=${event._id}`)}
-                            className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors "
-                        >
-                            <span className="text-lg">+</span>
-                            <span className='w-36'>Generate Invoice</span>
-                        </button>
+                    <div className='flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto'>
+                        {isInvoiceEligible && (
+                            <button
+                                onClick={() => navigate(`/user/invoices/new?eventId=${event._id}`)}
+                                className="flex items-center justify-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm sm:text-base"
+                            >
+                                <span className="text-lg">+</span>
+                                <span>Generate Invoice</span>
+                            </button>
                         )}
-                    <button
-                        onClick={(e) => {
-                        e.preventDefault();
-                            openConfirmModal('reject', event._id);
-                        }}
-                        className="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors "
-                    >
-                        ✖ End Application
-                    </button>
-                </div>
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                openConfirmModal('reject', event._id);
+                            }}
+                            className="flex items-center justify-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors text-sm sm:text-base"
+                        >
+                            ✖ End Application
+                        </button>
+                    </div>
                 </div>
                 
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
                     <motion.div 
-                        className="space-y-6"
+                        className="space-y-4 sm:space-y-6"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2 }}
                     >
-                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-4 sm:p-6">
+                            <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 flex items-center">
                                 <FaInfoCircle className="mr-2 text-blue-400" />
                                 Event Details
                             </h2>
-                            <div className="space-y-3 text-neutral-300">
+                            <div className="space-y-3 text-neutral-300 text-sm sm:text-base">
                                 <p className="flex items-center">
-                                    <FaMapMarkerAlt className="mr-2 text-red-400" />
+                                    <FaMapMarkerAlt className="mr-2 text-red-400 flex-shrink-0" />
                                     <span className="font-medium">Location:</span>
-                                    <span className="ml-2">{event.eventLocation}</span>
+                                    <span className="ml-2 break-words">{event.eventLocation}</span>
                                 </p>
-                                <div className="flex items-center">
-                                    <FaClock className="mr-2 text-green-400" />
+                                <div className="flex items-start sm:items-center flex-col sm:flex-row">
+                                    <FaClock className="mr-2 text-green-400 mt-1 sm:mt-0" />
                                     <div className="flex-1">
                                         <div className="mb-2">
                                             <span className="font-medium">Load In:</span>
@@ -437,8 +437,8 @@ export default function EventDetails() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center">
-                                    <FaClock className="mr-2 text-yellow-400" />
+                                <div className="flex items-start sm:items-center flex-col sm:flex-row">
+                                    <FaClock className="mr-2 text-yellow-400 mt-1 sm:mt-0" />
                                     <div className="flex-1">
                                         <div>
                                             <span className="font-medium">Load Out:</span>
@@ -452,17 +452,17 @@ export default function EventDetails() {
                     </motion.div>
 
                     <motion.div 
-                        className="space-y-6"
+                        className="space-y-4 sm:space-y-6"
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4 }}
                     >
-                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+                        <div className="bg-neutral-700 bg-opacity-40 rounded-lg p-4 sm:p-6">
+                            <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 flex items-center">
                                 <FaInfoCircle className="mr-2 text-blue-400" />
                                 Description
                             </h2>
-                            <p className="text-neutral-300 leading-relaxed">
+                            <p className="text-neutral-300 leading-relaxed text-sm sm:text-base">
                                 {event.eventDescription || 'No description provided'}
                             </p>
                         </div>
@@ -470,183 +470,173 @@ export default function EventDetails() {
                 </div>
                 
                 {event?.acceptedContractors?.some(contractor => contractor._id.toString() === auth.userId.toString()) && (
-                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="col-span-2">
-                        <div className='flex justify-between items-center mt-8'>
-                            <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-                                Job Comments:
-                            </h2>
-                            <div className="flex space-x-4 -mt-6">
-                                <button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    <FaSave />
-                                    <span>{loading ? 'Saving...' : 'Save'}</span>
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={handleDelete}
-                                    className="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-                                >
-                                    <FaTrashAlt />
-                                    <span>Delete</span>
-                                </button>
+                    <form onSubmit={handleSubmit} className="mt-6 sm:mt-8">
+                        <div className="flex flex-col space-y-4">
+                            <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0'>
+                                <h2 className="text-lg sm:text-xl font-semibold text-white">
+                                    Job Comments:
+                                </h2>
+                                <div className="flex gap-2 sm:gap-4 w-full sm:w-auto">
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                                    >
+                                        <FaSave />
+                                        <span>{loading ? 'Saving...' : 'Save'}</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleDelete}
+                                        className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors text-sm sm:text-base"
+                                    >
+                                        <FaTrashAlt />
+                                        <span>Delete</span>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <textarea
-                            name="jobComments"
-                            type="text"
-                            value={formData?.jobComments || ''}
-                            onChange={handleChange}
-                            className="w-full p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors h-32 mt-1"
-                        />
-                    </div>
-                </form>
-                )}
-
-                {event?.approvedContractors?.some(contractor => contractor._id.toString() === auth.userId.toString()) && (
-                <div className="flex items-center justify-between mb-0 mt-8">
-                    <h2 className="text-xl font-semibold text-white">Correction Reports:</h2>
-                    <Link to={`/user/corrections/create?eventID=${eventID}`}>
-                        <button
-                        className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
-                        >
-                        <span className="text-lg">+</span>
-                        <span className="whitespace-nowrap">Create Correction Report</span>
-                        </button>
-                    </Link>
-                </div>
-                )}
-                {event?.approvedContractors?.some(contractor => contractor._id.toString() === auth.userId.toString()) && (
-                <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-0'>
-                <div className="mt-2">
-                    <div className="w-full h-full overflow-auto px-5">
-                <div className="flex items-center gap-2 relative">
-                
-                <div className="hidden md:flex gap-2 mt-4">
-                    <button
-                        onClick={() => setView('grid')}
-                        className={`p-2 mt-0 rounded transition-colors ${
-                            view === 'grid' 
-                                ? 'bg-neutral-700 text-white' 
-                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                        }`}
-                    >
-                        <FaTh className="text-xl" />
-                    </button>
-                    <button
-                        onClick={() => setView('list')}
-                        className={`p-2 mt-0 rounded transition-colors ${
-                            view === 'list' 
-                                ? 'bg-neutral-700 text-white' 
-                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                        }`}
-                    >
-                        <FaList className="text-xl" />
-                    </button>
-                </div>
-                </div>
-            </div>
-
-            <div className="relative z-0 pb-8">
-                {getFilteredAndSortedCorrections().length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-[50vh] text-neutral-400">
-                        <span className="text-6xl mb-4">😢</span>
-                        <p className="text-xl">No corrections found</p>
-                    </div>
-                ) : (
-                    view === 'grid' ? (
-                        <div className="max-w-full mx-auto">
-                            <HoverEffect 
-                                items={formatEventsForHoverEffect(getFilteredAndSortedCorrections())} 
-                                className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-auto"
+                            <textarea
+                                name="jobComments"
+                                value={formData?.jobComments || ''}
+                                onChange={handleChange}
+                                className="w-full p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors h-32 text-sm sm:text-base"
                             />
                         </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
-                            <thead className="bg-neutral-700">
-                                <tr>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('correctionName')}
-                                    >
-                                        <div className="flex items-center">
-                                            Correction Name
-                                            <span className="ml-2">{getSortIcon('correctionName')}</span>
-                                        </div>
-                                    </th>
-
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('status')}
-                                    >
-                                        <div className="flex items-center">
-                                            Status
-                                            <span className="ml-2">{getSortIcon('status')}</span>
-                                        </div>
-                                    </th>
-
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('requestType')}
-                                    >
-                                        <div className="flex items-center">
-                                            Correction Type
-                                            <span className="ml-2">{getSortIcon('requestType')}</span>
-                                        </div>
-                                    </th>
-                                </tr>
-                            </thead>
-                                <tbody>
-                                    {getFilteredAndSortedCorrections().map((correction) => (
-                                        <tr 
-                                            key={correction._id} 
-                                            className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
-                                            onClick={() => handleEventClick(correction._id)}
-                                        >
-                                            <td className="p-4 text-white">
-                                                {correction.correctionName}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {correction.status}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {correction.requestType}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )
+                    </form>
                 )}
-                
-            </div>
-            </div>
-            </div>
-            )}
+
+                {event?.approvedContractors?.some(contractor => contractor._id.toString() === auth.userId.toString()) && (
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mt-8">
+                        <h2 className="text-lg sm:text-xl font-semibold text-white">Correction Reports:</h2>
+                        <Link to={`/user/corrections/create?eventID=${eventID}`}>
+                            <button className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm sm:text-base">
+                                <span className="text-lg">+</span>
+                                <span>Create Correction Report</span>
+                            </button>
+                        </Link>
+                    </div>
+                )}
+
+                {event?.approvedContractors?.some(contractor => contractor._id.toString() === auth.userId.toString()) && (
+                    <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-4 sm:p-6 mt-4 sm:mt-6'>
+                        <div className="mt-2">
+                            <div className="w-full overflow-auto px-2 sm:px-5">
+                                <div className="flex items-center gap-2 relative">
+                                    <div className="hidden md:flex gap-2 mt-4">
+                                        <button
+                                            onClick={() => setView('grid')}
+                                            className={`p-2 rounded transition-colors ${
+                                                view === 'grid' 
+                                                    ? 'bg-neutral-700 text-white' 
+                                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                                            }`}
+                                        >
+                                            <FaTh className="text-lg sm:text-xl" />
+                                        </button>
+                                        <button
+                                            onClick={() => setView('list')}
+                                            className={`p-2 rounded transition-colors ${
+                                                view === 'list' 
+                                                    ? 'bg-neutral-700 text-white' 
+                                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                                            }`}
+                                        >
+                                            <FaList className="text-lg sm:text-xl" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="relative z-0 pb-8">
+                                {getFilteredAndSortedCorrections().length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center h-[40vh] sm:h-[50vh] text-neutral-400">
+                                        <span className="text-4xl sm:text-6xl mb-4">😢</span>
+                                        <p className="text-base sm:text-xl">No corrections found</p>
+                                    </div>
+                                ) : (
+                                    view === 'grid' ? (
+                                        <div className="max-w-full mx-auto">
+                                            <HoverEffect 
+                                                items={formatEventsForHoverEffect(getFilteredAndSortedCorrections())} 
+                                                className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-auto"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="overflow-x-auto">
+                                            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
+                                                <thead className="bg-neutral-700">
+                                                    <tr>
+                                                        <th className="p-3 sm:p-4 text-left text-white cursor-pointer whitespace-nowrap text-sm sm:text-base">
+                                                            <div className="flex items-center">
+                                                                Correction Name
+                                                                <span className="ml-2">{getSortIcon('correctionName')}</span>
+                                                            </div>
+                                                        </th>
+                                                        <th className="p-3 sm:p-4 text-left text-white cursor-pointer whitespace-nowrap hidden sm:table-cell text-sm sm:text-base">
+                                                            <div className="flex items-center">
+                                                                Status
+                                                                <span className="ml-2">{getSortIcon('status')}</span>
+                                                            </div>
+                                                        </th>
+                                                        <th className="p-3 sm:p-4 text-left text-white cursor-pointer whitespace-nowrap hidden md:table-cell text-sm sm:text-base">
+                                                            <div className="flex items-center">
+                                                                Correction Type
+                                                                <span className="ml-2">{getSortIcon('requestType')}</span>
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {getFilteredAndSortedCorrections().map((correction) => (
+                                                        <tr 
+                                                            key={correction._id} 
+                                                            className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
+                                                            onClick={() => handleEventClick(correction._id)}
+                                                        >
+                                                            <td className="p-3 sm:p-4 text-white text-sm sm:text-base">
+                                                                <div className="flex flex-col">
+                                                                    <span>{correction.correctionName}</span>
+                                                                    <span className="text-neutral-400 text-xs mt-1 sm:hidden">
+                                                                        {correction.status} - {correction.requestType}
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td className="p-3 sm:p-4 text-white hidden sm:table-cell text-sm sm:text-base">
+                                                                {correction.status}
+                                                            </td>
+                                                            <td className="p-3 sm:p-4 text-white hidden md:table-cell text-sm sm:text-base">
+                                                                {correction.requestType}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </motion.div>
 
             {showDeletePopup && (
                 <Modal>
-                    <div className="bg-neutral-900 p-8 rounded-md shadow-lg w-full max-w-md border border-neutral-700">
-                        <h2 className="text-red-500 text-2xl mb-4">Are you sure you want to delete this comment?</h2>
-                        <p className="text-neutral-300 mb-6">
+                    <div className="bg-neutral-900 p-4 sm:p-8 rounded-md shadow-lg w-full max-w-md border border-neutral-700">
+                        <h2 className="text-xl sm:text-2xl text-red-500 mb-4">Are you sure you want to delete this comment?</h2>
+                        <p className="text-sm sm:text-base text-neutral-300 mb-6">
                             This action cannot be undone. Once deleted, this comment's data will be permanently removed from the system.
                         </p>
                         <div className="flex justify-end gap-4">
                             <button 
                                 onClick={() => setShowDeletePopup(false)} 
-                                className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors"
+                                className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors text-sm sm:text-base"
                             >
                                 Cancel
                             </button>
                             <button 
                                 onClick={confirmDelete} 
-                                className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-full transition-colors"
+                                className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-full transition-colors text-sm sm:text-base"
                             >
                                 Delete
                             </button>
@@ -655,47 +645,44 @@ export default function EventDetails() {
                 </Modal>
             )}
 
-            {/* Confirmation Modal */}
-        {showConfirmModal && (
-            <Modal>
-                <div className="bg-neutral-800 rounded-lg shadow-xl max-w-md w-full mx-4">
-                    <div className="p-6 border-b border-neutral-700">
-                        <h3 className="text-xl font-semibold text-white">
-                            {confirmationType === "apply"
-                                ? "Confirm Application"
-                                : "End Job Application"}
-                        </h3>
-                    </div>
+            {showConfirmModal && (
+                <Modal>
+                    <div className="bg-neutral-800 rounded-lg shadow-xl max-w-md w-full mx-4">
+                        <div className="p-4 sm:p-6 border-b border-neutral-700">
+                            <h3 className="text-lg sm:text-xl font-semibold text-white">
+                                {confirmationType === "apply" ? "Confirm Application" : "End Job Application"}
+                            </h3>
+                        </div>
 
-                    <div className="p-6">
-                        <p className="text-neutral-300 mb-6">
-                            {confirmationType === "apply"
-                                ? "By applying to this event, you acknowledge that if approved, you will be required to work this event and cannot reject it later. Are you sure you want to apply?"
-                                : "Are you sure you want to end your application to this event?"}
-                        </p>
+                        <div className="p-4 sm:p-6">
+                            <p className="text-sm sm:text-base text-neutral-300 mb-6">
+                                {confirmationType === "apply"
+                                    ? "By applying to this event, you acknowledge that if approved, you will be required to work this event and cannot reject it later. Are you sure you want to apply?"
+                                    : "Are you sure you want to end your application to this event?"}
+                            </p>
 
-                        <div className="flex justify-end space-x-4">
-                            <button
-                                onClick={() => setShowConfirmModal(false)}
-                                className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleConfirm}
-                                className={`px-4 py-2 rounded-lg transition-colors ${
-                                    confirmationType === "apply"
-                                        ? "bg-green-500 hover:bg-green-600 text-white"
-                                        : "bg-red-500 hover:bg-red-600 text-white"
-                                }`}
-                            >
-                                {confirmationType === "apply" ? "Apply" : "Reject"}
-                            </button>
+                            <div className="flex justify-end gap-4">
+                                <button
+                                    onClick={() => setShowConfirmModal(false)}
+                                    className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors text-sm sm:text-base"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleConfirm}
+                                    className={`px-4 py-2 rounded-lg transition-colors text-sm sm:text-base ${
+                                        confirmationType === "apply"
+                                            ? "bg-green-500 hover:bg-green-600 text-white"
+                                            : "bg-red-500 hover:bg-red-600 text-white"
+                                    }`}
+                                >
+                                    {confirmationType === "apply" ? "Apply" : "Reject"}
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </Modal>
-        )}
+                </Modal>
+            )}
         </motion.div>
     );
 }

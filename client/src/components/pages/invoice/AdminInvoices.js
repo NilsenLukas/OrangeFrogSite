@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { FaTh, FaList, FaSortDown, FaSortUp, FaSort, FaSearch } from "react-icons/fa";
+import { FaTh, FaList, FaSortDown, FaSortUp, FaSort, FaSearch, FaArrowLeft } from 'react-icons/fa';
 import { useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from 'framer-motion';
 import { HoverEffect } from "../../ui/card-hover-effect";
 
 const AdminInvoices = () => {
@@ -11,6 +11,7 @@ const AdminInvoices = () => {
   const [sortDirection, setSortDirection] = useState("asc");
   const [nameFilter, setNameFilter] = useState("");
   const [showSortOptions, setShowSortOptions] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,6 +41,16 @@ const AdminInvoices = () => {
     }
   };
 
+  const toggleSortOptions = () => {
+    setShowSortOptions((prev) => !prev);
+    setShowSearch(false);
+  };
+
+  const toggleSearch = () => {
+    setShowSearch((prev) => !prev);
+    setShowSortOptions(false);
+  };
+
   const filteredInvoices = invoices.filter(invoice =>
     invoice.show.toLowerCase().includes(nameFilter.toLowerCase())
   );
@@ -54,145 +65,140 @@ const AdminInvoices = () => {
   });
 
   return (
-    <div className="p-8 bg-gray-100 dark:bg-neutral-900 min-h-screen">
+    <div className="p-4 sm:p-8 bg-gray-100 dark:bg-neutral-900 min-h-screen">
       <Link
         to="/admin/dashboard"
-        className="mb-8 flex items-center text-neutral-400 hover:text-white transition-colors"
+        className="mb-4 sm:mb-8 flex items-center text-neutral-400 hover:text-white transition-colors text-sm sm:text-base"
       >
-        <svg
-          className="w-5 h-5 mr-2"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path d="M15 19l-7-7 7-7" />
-        </svg>
+        <FaArrowLeft className="w-4 h-4 mr-2" />
         Return to Dashboard
       </Link>
 
-      <div className="flex flex-col items-center mb-8">
-        <h1 className="text-3xl font-bold text-white text-center">Manage Invoices</h1>
-        <div className="flex justify-between items-center w-full mt-5">
-          <div className="relative flex items-center">
-            <input
-              type="text"
-              placeholder="Search by name"
-              value={nameFilter}
-              onChange={(e) => setNameFilter(e.target.value)}
-              className="w-40 md:w-54 lg:w-64 px-4 pr-10 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40"
-              style={{
-                transition: 'width 0.3s ease',
-                height: '2.5rem', 
-              }}
-            />
-            <FaSearch className="absolute right-3 text-white/50" />
-          </div>
-          <div className="flex items-center gap-3  ml-3">
-            <AnimatePresence>
-              {!showSortOptions && (
-                <motion.button
-                  initial={{ opacity: 0, x: -20 }}      
-                  animate={{ opacity: 1, x: 0 }}         
-                  exit={{ opacity: 0, x: -20 }}         
-                  transition={{ duration: 0.3 }}
-                  onClick={() => setShowSortOptions(true)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded transition-colors mt-0 ${
-                    showSortOptions
-                      ? 'bg-neutral-700 text-white'
-                      : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                  }`}
-                >
-                  <FaSort className="text-xl" />
-                  <span className="whitespace-nowrap">Sort by</span>
-                </motion.button>
-              )}
-            </AnimatePresence>
+      <h1 className="text-2xl sm:text-3xl font-bold text-white text-center mb-6">Manage Invoices</h1>
 
-            <AnimatePresence>
-              {showSortOptions && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}        // Start hidden & to the right
-                  animate={{ opacity: 1, x: 0 }}          // Fade in from the right
-                  exit={{ opacity: 0, x: 20 }}            // Fade out to the right when hidden
-                  transition={{ duration: 0.3 }}
-                  className="flex items-center gap-3"
-                >
-                  <span className="text-white whitespace-nowrap">Sort by:</span>
+      {/* Control Bar */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          {/* Search Toggle */}
+          <button
+            onClick={toggleSearch}
+            className={`p-2 rounded-full transition-colors ${
+              showSearch ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+            } text-white`}
+          >
+            <FaSearch className="text-lg sm:text-xl" />
+          </button>
 
-                  <button
-                    className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0"
-                    onClick={() => handleSort('show')}
-                  >
-                    Name
-                  </button>
+          {/* Sort Toggle */}
+          <button
+            onClick={toggleSortOptions}
+            className={`p-2 rounded-full transition-colors ${
+              showSortOptions ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+            } text-white`}
+          >
+            <FaSort className="text-lg sm:text-xl" />
+          </button>
+        </div>
 
-                  <button
-                    className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0"
-                    onClick={() => handleSort('createdAt')}
-                  >
-                    Date
-                  </button>
-
-                  <button
-                    className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0"
-                    onClick={() => handleSort('assignedContractors')}
-                  >
-                    Freelancer
-                  </button>
-
-                  <motion.button
-                    initial={{ opacity: 0, x: -20 }}    // Fade in from the left
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}       // Fade out to the left when hiding
-                    transition={{ delay: 0.2 }}
-                    type="button"
-                    onClick={() => setShowSortOptions(false)}
-                    className="h-9 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors mt-0"
-                  >
-                    Cancel
-                  </motion.button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-          <div className="hidden md:flex gap-2 ml-auto">
-            <button
-              onClick={() => setView('grid')}
-              className={`p-2 rounded transition-colors ${
-                view === 'grid' 
-                  ? 'bg-neutral-700 text-white' 
-                  : 'bg-neutral-800 text-white hover:bg-neutral-700'
-              }`}
-            >
-              <FaTh className="text-xl" />
-            </button>
-            <button
-              onClick={() => setView('list')}
-              className={`p-2 rounded transition-colors ${
-                view === 'list' 
-                  ? 'bg-neutral-700 text-white' 
-                  : 'bg-neutral-800 text-white hover:bg-neutral-700'
-              }`}
-            >
-              <FaList className="text-xl" />
-            </button>
-          </div>
+        {/* View Toggle Buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setView('grid')}
+            className={`p-2 rounded-full transition-colors ${
+              view === 'grid' 
+                ? 'bg-neutral-700 text-white' 
+                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+            }`}
+          >
+            <FaTh className="text-lg sm:text-xl" />
+          </button>
+          <button
+            onClick={() => setView('list')}
+            className={`p-2 rounded-full transition-colors ${
+              view === 'list' 
+                ? 'bg-neutral-700 text-white' 
+                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+            }`}
+          >
+            <FaList className="text-lg sm:text-xl" />
+          </button>
         </div>
       </div>
 
+      {/* Control Panels Container */}
+      <div className="mb-4">
+        {/* Search Panel */}
+        <AnimatePresence>
+          {showSearch && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-4 overflow-hidden"
+            >
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  placeholder="Search by name"
+                  value={nameFilter}
+                  onChange={(e) => setNameFilter(e.target.value)}
+                  className="w-full px-4 pr-10 py-2 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 border border-white/20 focus:border-white/40"
+                />
+                <FaSearch className="absolute right-3 text-white/50" />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Sort Options */}
+        <AnimatePresence>
+          {showSortOptions && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-4 overflow-hidden"
+            >
+              <div className="flex flex-wrap gap-2 p-4 bg-neutral-800 rounded-lg">
+                <button
+                  onClick={() => handleSort('show')}
+                  className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                >
+                  Name
+                </button>
+                <button
+                  onClick={() => handleSort('venue')}
+                  className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                >
+                  Venue
+                </button>
+                <button
+                  onClick={() => setShowSortOptions(false)}
+                  className="px-3 sm:px-4 py-2 bg-neutral-600 text-white rounded-full hover:bg-neutral-500 transition-colors text-sm sm:text-base"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Filter Summary */}
+      {nameFilter && (
+        <div className="mb-4 text-xs sm:text-sm text-neutral-400">
+          Search: "{nameFilter}"
+        </div>
+      )}
+
+      {/* Content Area */}
       {view === 'list' ? (
         <div className="w-full flex justify-center">
           <div className="overflow-x-auto w-full max-w-full">
-            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden mt-4">
+            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
               <thead className="bg-neutral-700">
                 <tr>
-                  <th
-                    className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                    onClick={() => handleSort('show')}
-                  >
+                  <th className="p-3 sm:p-4 text-left text-white cursor-pointer whitespace-nowrap text-sm sm:text-base">
                     <div className="flex items-center">
                       Show
                       <span className="ml-2">
@@ -200,10 +206,7 @@ const AdminInvoices = () => {
                       </span>
                     </div>
                   </th>
-                  <th
-                    className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                    onClick={() => handleSort('venue')}
-                  >
+                  <th className="p-3 sm:p-4 text-left text-white cursor-pointer whitespace-nowrap hidden sm:table-cell text-sm sm:text-base">
                     <div className="flex items-center">
                       Venue
                       <span className="ml-2">
@@ -211,9 +214,8 @@ const AdminInvoices = () => {
                       </span>
                     </div>
                   </th>
-                  <th className="p-4 text-left text-white whitespace-nowrap">
+                  <th className="p-3 sm:p-4 text-left text-white whitespace-nowrap hidden md:table-cell text-sm sm:text-base">
                     Invoice #
-                    
                   </th>
                 </tr>
               </thead>
@@ -224,9 +226,16 @@ const AdminInvoices = () => {
                     className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
                     onClick={() => navigate(`/admin/invoices/${invoice._id}`)}
                   >
-                    <td className="p-4 text-white">{invoice.show}</td>
-                    <td className="p-4 text-white">{invoice.venue}</td>
-                    <td className="p-4 text-white">{invoice._id}</td>
+                    <td className="p-3 sm:p-4 text-white text-sm sm:text-base">
+                      <div className="flex flex-col">
+                        <span>{invoice.show}</span>
+                        <span className="text-neutral-400 text-xs mt-1 sm:hidden">
+                          {invoice.venue}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="p-3 sm:p-4 text-white hidden sm:table-cell text-sm sm:text-base">{invoice.venue}</td>
+                    <td className="p-3 sm:p-4 text-white hidden md:table-cell text-sm sm:text-base">{invoice._id}</td>
                   </tr>
                 ))}
               </tbody>
@@ -238,12 +247,12 @@ const AdminInvoices = () => {
           <HoverEffect
             items={sortedInvoices.map((invoice) => ({
               title: (
-                <div className="text-lg font-bold flex justify-between items-center mt-0">
+                <div className="text-base sm:text-lg font-bold flex justify-between items-center mt-0">
                   <span className="mt-0">{invoice.show}</span>
                 </div>
               ),
               description: (
-                <div className="flex flex-col text-sm mt-0 space-y-1">
+                <div className="flex flex-col text-xs sm:text-sm mt-0 space-y-1">
                   <p className="text-gray-300">Venue: {invoice.venue}</p>
                   <p className="text-gray-400">Invoice #: {invoice._id}</p>
                 </div>
@@ -252,7 +261,7 @@ const AdminInvoices = () => {
               _id: invoice._id,
               onClick: () => navigate(`/admin/invoices/${invoice._id}`)
             }))}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-0"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mt-0"
           />
         </div>
       )}

@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import axios from 'axios';
-import { FaList, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch } from 'react-icons/fa';
+import { FaList, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaArrowLeft, FaFilter, FaRegSadTear } from 'react-icons/fa';
 // import MultiSelect from './MultiSelect';
 import { toast } from 'sonner';
 import Modal from "../../../Modal";
 import { HoverEffect } from "../../../ui/card-hover-effect";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from "../../../../AuthContext";
 // import { HoverBorderGradient } from '../../../ui/hover-border-gradient';
@@ -34,6 +34,8 @@ export default function ViewJobComments() {
     // const [error, setError] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [showSortOptions, setShowSortOptions] = useState(false);
+    const [showSearch, setShowSearch] = useState(false);
+    const [showFilterPanel, setShowFilterPanel] = useState(false);
     const { auth } = useContext(AuthContext);
 
     useEffect(() => {
@@ -209,209 +211,294 @@ export default function ViewJobComments() {
     };
 
     const handleSort = (key) => {
-        setSortConfig(prevConfig => ({
-            key,
-            direction: prevConfig.key === key && prevConfig.direction === 'ascending' 
-                ? 'descending' 
-                : 'ascending'
-        }));
+        setSortConfig(prevConfig => {
+            const direction = prevConfig.key === key && prevConfig.direction === 'ascending'
+                ? 'descending'
+                : 'ascending';
+            return { key, direction };
+        });
+    };
+
+    const toggleSortOptions = () => {
+        setShowSortOptions((prev) => !prev);
+        setShowFilterPanel(false);
+        setShowSearch(false);
+    };
+
+    const toggleSearch = () => {
+        setShowSearch((prev) => !prev);
+        setShowFilterPanel(false);
+        setShowSortOptions(false);
+    };
+
+    const toggleFilterPanel = () => {
+        setShowFilterPanel((prev) => !prev);
+        setShowSearch(false);
+        setShowSortOptions(false);
     };
 
     return (
-        <div className="w-full h-full overflow-auto px-5">
+        <div className="flex flex-col w-full min-h-screen h-full p-4 sm:p-6 md:p-8 bg-neutral-900">
+            <Link 
+                to="/user/dashboard"
+                className="mb-4 sm:mb-6 md:mb-8 flex items-center text-neutral-400 hover:text-white transition-colors text-sm sm:text-base"
+            >
+                <FaArrowLeft className="w-4 h-4 mr-2" />
+                Return to Dashboard
+            </Link>
+
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4 sm:mb-6 text-center">
+                Manage Job Comments
+            </h1>
+
+            {/* Control Bar */}
             <div className="flex justify-between items-center mb-5 sticky top-0 bg-neutral-900 py-4 z-50">
                 <div className="flex items-center gap-4">
-                    <div className='flex items-center gap-3 mt-3'>
-                        {/* Name filter input */}
-                        <div className="relative flex items-center">
-                            <input
-                                type="text"
-                                placeholder="Search by keyword"
-                                value={nameFilter}
-                                onChange={(e) => setNameFilter(e.target.value)}
-                                className="w-40 md:w-54 lg:w-64 px-4 pr-10 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40"
-                                style={{
-                                    transition: 'width 0.3s ease',
-                                    height: '2.5rem', 
-                                }}
-                            />
-                            <FaSearch className="absolute right-3 text-white/50" />
-                        </div>
+                    <div className='flex items-center gap-3'>
+                        {/* Search Toggle */}
+                        <button
+                            onClick={toggleSearch}
+                            className={`p-2 rounded-full transition-colors ${
+                                showSearch ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                            } text-white`}
+                        >
+                            <FaSearch className="text-lg sm:text-xl" />
+                        </button>
 
-                        {/* Sort dropdown */}
-                        <div className="flex items-center gap-3 mt-2">
-                            <AnimatePresence>
-                                {!showSortOptions && (
-                                    <motion.button
-                                        initial={{ opacity: 0, x: -20 }}      
-                                        animate={{ opacity: 1, x: 0 }}         
-                                        exit={{ opacity: 0, x: -20 }}         
-                                        transition={{ duration: 0.3 }}
-                                        onClick={() => setShowSortOptions(true)}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded transition-colors mt-0 ${
-                                            showSortOptions
-                                                ? 'bg-neutral-700 text-white'
-                                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                                        }`}
-                                    >
-                                        <FaSort className="text-xl" />
-                                        <span className="whitespace-nowrap">Filter by</span>
-                                    </motion.button>
-                                )}
-                            </AnimatePresence>
+                        {/* Filter Toggle */}
+                        <button
+                            onClick={toggleFilterPanel}
+                            className={`p-2 rounded-full transition-colors ${
+                                showFilterPanel ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                            } text-white`}
+                        >
+                            <FaFilter className="text-lg sm:text-xl" />
+                        </button>
 
-                            <AnimatePresence>
-                                {showSortOptions && (
-                                    <motion.div
-                                        initial={{ opacity: 0, x: 20 }}        // Start hidden & to the right
-                                        animate={{ opacity: 1, x: 0 }}          // Fade in from the right
-                                        exit={{ opacity: 0, x: 20 }}            // Fade out to the right when hidden
-                                        transition={{ duration: 0.3 }}
-                                        className="flex items-center gap-3"
-                                    >
-                                        <span className="text-white whitespace-nowrap">Sort by:</span>
-
-                                        <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0"
-                                            onClick={() => handleSort('correctionName')}
-                                        >
-                                            Name
-                                        </button>
-
-                                        <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
-                                            onClick={() => handleSort('createdAt')}
-                                        >
-                                            Creation Date
-                                        </button>
-
-                                        <button
-                                            className="px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors mt-0 whitespace-nowrap"
-                                            onClick={() => handleSort('updatedAt')}
-                                        >
-                                            Last Modified Date
-                                        </button>
-
-                                        <motion.button
-                                            initial={{ opacity: 0, x: -20 }}    // Fade in from the left
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: -20 }}       // Fade out to the left when hiding
-                                            transition={{ delay: 0.2 }}
-                                            type="button"
-                                            onClick={() => setShowSortOptions(false)}
-                                            className="h-9 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors mt-0"
-                                        >
-                                            Cancel
-                                        </motion.button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
+                        {/* Sort Toggle */}
+                        <button
+                            onClick={toggleSortOptions}
+                            className={`p-2 rounded-full transition-colors ${
+                                showSortOptions ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                            } text-white`}
+                        >
+                            <FaSort className="text-lg sm:text-xl" />
+                        </button>
                     </div>
                 </div>
-                <div className="flex items-center gap-2 relative">
 
-                    <div className="hidden md:flex gap-2 mt-5">
-                        <button
-                            onClick={() => setView('grid')}
-                            className={`p-2 mt-0 rounded transition-colors ${
-                                view === 'grid' 
-                                    ? 'bg-neutral-700 text-white' 
-                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                            }`}
-                        >
-                            <FaTh className="text-xl" />
-                        </button>
-                        <button
-                            onClick={() => setView('list')}
-                            className={`p-2 mt-0 rounded transition-colors ${
-                                view === 'list' 
-                                    ? 'bg-neutral-700 text-white' 
-                                    : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                            }`}
-                        >
-                            <FaList className="text-xl" />
-                        </button>
-                    </div>
+                {/* View Toggle Buttons */}
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setView('grid')}
+                        className={`p-2 rounded-full transition-colors ${
+                            view === 'grid' 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                        }`}
+                    >
+                        <FaTh className="text-lg sm:text-xl" />
+                    </button>
+                    <button
+                        onClick={() => setView('list')}
+                        className={`p-2 rounded-full transition-colors ${
+                            view === 'list' 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                        }`}
+                    >
+                        <FaList className="text-lg sm:text-xl" />
+                    </button>
                 </div>
             </div>
 
-            
+            {/* Control Panels Container */}
+            <div className="mb-4">
+                {/* Search Panel */}
+                <AnimatePresence>
+                    {showSearch && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="mb-4 overflow-hidden"
+                        >
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    placeholder="Search by keyword"
+                                    value={nameFilter}
+                                    onChange={(e) => setNameFilter(e.target.value)}
+                                    className="w-full px-4 pr-10 py-2 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 border border-white/20 focus:border-white/40"
+                                />
+                                <FaSearch className="absolute right-3 text-white/50" />
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
-            <div className="relative z-0 pb-8">
-                {getFilteredAndSortedJobComments().length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-[50vh] text-neutral-400">
-                        <span className="text-6xl mb-4">😢</span>
-                        <p className="text-xl">No job comments found</p>
-                        <p className="text-sm mt-2">Try adjusting your filters</p>
-                    </div>
-                ) : (
-                    view === 'grid' ? (
-                        <div className="max-w-full mx-auto">
-                            <HoverEffect 
-                                items={formatEventsForHoverEffect(getFilteredAndSortedJobComments())} 
-                                className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-auto"
-                            />
+                {/* Sort Options */}
+                <AnimatePresence>
+                    {showSortOptions && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="mb-4 overflow-hidden"
+                        >
+                            <div className="flex flex-wrap gap-2 p-4 bg-neutral-800 rounded-lg">
+                                <button
+                                    onClick={() => handleSort('correctionName')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Name
+                                </button>
+                                <button
+                                    onClick={() => handleSort('createdAt')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Creation Date
+                                </button>
+                                <button
+                                    onClick={() => handleSort('updatedAt')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Last Modified
+                                </button>
+                                <button
+                                    onClick={() => setShowSortOptions(false)}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-600 text-white rounded-full hover:bg-neutral-500 transition-colors text-sm sm:text-base"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Filter Panel */}
+                <AnimatePresence>
+                    {showFilterPanel && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="mb-4 overflow-hidden"
+                        >
+                            <div className="flex flex-wrap gap-3 p-4 bg-neutral-800 rounded-lg">
+                                <select
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                                >
+                                    <option value="all">All Statuses</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                                <button
+                                    onClick={() => setShowFilterPanel(false)}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-600 text-white rounded-full hover:bg-neutral-500 transition-colors text-sm sm:text-base"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            {/* Content Area */}
+            <div className="flex-1">
+                <AnimatePresence>
+                    {loading ? (
+                        <div className="flex justify-center items-center h-64">
+                            <p className="text-white">Loading job comments...</p>
                         </div>
+                    ) : getFilteredAndSortedJobComments().length === 0 ? (
+                        <motion.div
+                            className="flex flex-col items-center justify-center flex-1 min-h-[300px] sm:min-h-[400px] text-center p-4 sm:p-6"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <FaRegSadTear className="w-12 h-12 sm:w-16 sm:h-16 text-neutral-400 dark:text-neutral-600 mb-4" />
+                            <h2 className="text-lg sm:text-xl font-semibold text-neutral-300 mb-2">
+                                No job comments found
+                            </h2>
+                            <p className="text-sm sm:text-base text-neutral-400 max-w-md">
+                                {nameFilter 
+                                    ? `No comments found matching "${nameFilter}"`
+                                    : "No job comments available at the moment."}
+                            </p>
+                        </motion.div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
-                            <thead className="bg-neutral-700">
-                                <tr>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('eventID')}
-                                    >
-                                        <div className="flex items-center">
-                                            Event
-                                            <span className="ml-2">{getSortIcon('eventID')}</span>
-                                        </div>
-                                    </th>
-
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('createdAt')}
-                                    >
-                                        <div className="flex items-center">
-                                            Created
-                                            <span className="ml-2">{getSortIcon('createdAt')}</span>
-                                        </div>
-                                    </th>
-                                    <th 
-                                        className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
-                                        onClick={() => handleSort('updatedAt')}
-                                    >
-                                        <div className="flex items-center">
-                                            Last Modified
-                                            <span className="ml-2">{getSortIcon('updatedAt')}</span>
-                                        </div>
-                                    </th>
-                                
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    {getFilteredAndSortedJobComments().map((jobComment) => (
-                                        <tr 
-                                            key={jobComment._id} 
-                                            className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
-                                            onClick={() => handleEventClick(jobComment._id)}
-                                        >
-                                            <td className="p-4 text-white">
-                                                {events?.find(event => event._id === jobComment.eventID)?.eventName}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {new Date(jobComment.createdAt).toLocaleString()}
-                                            </td>
-                                            <td className="p-4 text-white">
-                                                {new Date(jobComment.updatedAt).toLocaleString()}
-                                            </td>
+                        view === 'grid' ? (
+                            <div className="w-full">
+                                <HoverEffect 
+                                    items={formatEventsForHoverEffect(getFilteredAndSortedJobComments())} 
+                                    className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-auto"
+                                />
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
+                                    <thead className="bg-neutral-700">
+                                        <tr>
+                                            <th 
+                                                className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                                onClick={() => handleSort('eventID')}
+                                            >
+                                                <div className="flex items-center">
+                                                    Event
+                                                    <span className="ml-2">{getSortIcon('eventID')}</span>
+                                                </div>
+                                            </th>
+                                            <th 
+                                                className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                                onClick={() => handleSort('createdAt')}
+                                            >
+                                                <div className="flex items-center">
+                                                    Created
+                                                    <span className="ml-2">{getSortIcon('createdAt')}</span>
+                                                </div>
+                                            </th>
+                                            <th 
+                                                className="p-4 text-left text-white cursor-pointer whitespace-nowrap"
+                                                onClick={() => handleSort('updatedAt')}
+                                            >
+                                                <div className="flex items-center">
+                                                    Last Modified
+                                                    <span className="ml-2">{getSortIcon('updatedAt')}</span>
+                                                </div>
+                                            </th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )
-                )}
+                                    </thead>
+                                    <tbody>
+                                        {getFilteredAndSortedJobComments().map((jobComment) => (
+                                            <tr 
+                                                key={jobComment._id} 
+                                                className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer"
+                                                onClick={() => handleEventClick(jobComment._id)}
+                                            >
+                                                <td className="p-4 text-white">
+                                                    {events?.find(event => event._id === jobComment.eventID)?.eventName}
+                                                </td>
+                                                <td className="p-4 text-white">
+                                                    {new Date(jobComment.createdAt).toLocaleString()}
+                                                </td>
+                                                <td className="p-4 text-white">
+                                                    {new Date(jobComment.updatedAt).toLocaleString()}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )
+                    )}
+                </AnimatePresence>
             </div>
 
             {/* Delete Confirmation Popup */}

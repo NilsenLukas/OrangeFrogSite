@@ -2,20 +2,20 @@ import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../../../AuthContext";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import { FaTh, FaList, FaRegSadTear, FaSort, FaSearch, FaFilter, FaSortUp, FaSortDown } from 'react-icons/fa';
+import { FaTh, FaList, FaRegSadTear, FaSort, FaSearch, FaFilter, FaSortUp, FaSortDown, FaArrowLeft } from 'react-icons/fa';
 import { HoverEffect } from "../../../ui/card-hover-effect";
 import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
 const LoadingSpinner = () => (
-    <div className="flex flex-col items-center justify-center min-h-[400px]">
+    <div className="flex flex-col items-center justify-center min-h-[300px] sm:min-h-[400px]">
         <motion.div
-            className="w-16 h-16 border-4 border-neutral-600 border-t-blue-500 rounded-full"
+            className="w-12 h-12 sm:w-16 sm:h-16 border-4 border-neutral-600 border-t-blue-500 rounded-full"
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
         />
-        <p className="mt-4 text-neutral-400">Loading jobs...</p>
+        <p className="mt-4 text-sm sm:text-base text-neutral-400">Loading jobs...</p>
     </div>
 );
 
@@ -31,6 +31,8 @@ const CurrentJobs = () => {
     const [showSortOptions, setShowSortOptions] = useState(false);
     const [animateSortOptions, setAnimateSortOptions] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
+    const [showSearch, setShowSearch] = useState(false);
+    const [showFilterPanel, setShowFilterPanel] = useState(false);
     const navigate = useNavigate();
 
     // const fetchJobs = async () => {
@@ -245,292 +247,289 @@ const CurrentJobs = () => {
     };
 
     return (
-        <div className="flex flex-col w-full min-h-screen h-full p-8 bg-neutral-900">
+        <div className="flex flex-col w-full min-h-screen h-full p-4 sm:p-6 md:p-8 bg-neutral-900">
             <Link 
                 to="/user/dashboard"
-                className="mb-8 flex items-center text-neutral-400 hover:text-white transition-colors"
+                className="mb-4 sm:mb-6 md:mb-8 flex items-center text-neutral-400 hover:text-white transition-colors text-sm sm:text-base"
             >
-                <svg 
-                    className="w-5 h-5 mr-2" 
-                    fill="none" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth="2" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                >
-                    <path d="M15 19l-7-7 7-7" />
-                </svg>
+                <FaArrowLeft className="w-4 h-4 mr-2" />
                 Return to Dashboard
             </Link>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6 text-center">
+
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4 sm:mb-6 text-center">
                 Current Jobs
             </h1>
-            <div className="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <div className="relative flex items-center mt-5">
-                        <input
-                            type="text"
-                            placeholder="Search by name"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-40 md:w-54 lg:w-64 px-4 pr-10 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 overflow-hidden border border-white/20 focus:border-white/40"
-                            style={{
-                                transition: 'width 0.3s ease',
-                                height: '2.5rem', 
-                            }}
-                        />
-                        <FaSearch className="absolute right-3 text-white/50" />
-                    </div>
-                    <AnimatePresence>
-                        {!showSortOptions && (
-                            <motion.button
-                                initial={{ opacity: 0, x: -20 }}      
-                                animate={{ opacity: 1, x: 0 }}         
-                                exit={{ opacity: 0, x: -20 }}         
-                                transition={{ duration: 0.3 }}
-                                onClick={toggleSortOptions}
-                                className={`flex items-center gap-2 px-4 py-2 rounded transition-colors mt-5 ${
-                                    showSortOptions
-                                        ? 'bg-neutral-700 text-white'
-                                        : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                                }`}
-                            >
-                                <FaSort className="text-xl" />
-                                <span className="whitespace-nowrap">Sort by</span>
-                            </motion.button>
-                        )}
-                    </AnimatePresence>
 
-                    <AnimatePresence>
-                        {showSortOptions && (
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}        
-                                animate={{ opacity: 1, x: 0 }}          
-                                exit={{ opacity: animateSortOptions ? 0 : 1, x: 20 }}
-                                transition={{ duration: 0.3 }}
-                                className="flex items-center gap-3 mt-5"
-                            >
-                                <span className="text-white whitespace-nowrap">Sort by:</span>
+            {/* Control Bar */}
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <div className="flex items-center gap-2">
+                    {/* Search Toggle */}
+                    <button
+                        onClick={() => setShowSearch(!showSearch)}
+                        className={`p-2 rounded-full transition-colors ${
+                            showSearch ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                        } text-white`}
+                    >
+                        <FaSearch className="text-lg sm:text-xl" />
+                    </button>
 
-                                <button
-                                    className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
-                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm whitespace-nowrap"
-                                    onClick={() => handleSort('eventName')}
-                                >
-                                    Name
-                                </button>
+                    {/* Filter Toggle */}
+                    <button
+                        onClick={() => setShowFilterPanel(!showFilterPanel)}
+                        className={`p-2 rounded-full transition-colors ${
+                            showFilterPanel ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                        } text-white`}
+                    >
+                        <FaFilter className="text-lg sm:text-xl" />
+                    </button>
 
-                                <button
-                                    className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
-                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm whitespace-nowrap"
-                                    onClick={() => handleSort('eventLoadIn')}
-                                >
-                                    In Date
-                                </button>
-
-                                <button
-                                    className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
-                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm whitespace-nowrap"
-                                    onClick={() => handleSort('eventLoadOut')}
-                                >
-                                    Out Date
-                                </button>
-
-                                <button
-                                    className="inline-flex items-center justify-center px-6 py-2 bg-neutral-800 text-white 
-                                    rounded hover:bg-neutral-700 transition-colors mt-0 text-sm whitespace-nowrap"
-                                    onClick={() => handleSort('totalHours')}
-                                >
-                                    Total Hours
-                                </button>
-
-                                <motion.button
-                                    initial={{ opacity: 0, x: -20 }}    
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -20 }}       
-                                    transition={{ delay: 0.2 }}
-                                    type="button"
-                                    onClick={cancelSortOptions}
-                                    className="h-9 px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-full transition-colors mt-0 whitespace-nowrap"
-                                >
-                                    Cancel
-                                </motion.button>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                    {/* Sort Toggle */}
+                    <button
+                        onClick={toggleSortOptions}
+                        className={`p-2 rounded-full transition-colors ${
+                            showSortOptions ? 'bg-neutral-700' : 'bg-neutral-800 hover:bg-neutral-700'
+                        } text-white`}
+                    >
+                        <FaSort className="text-lg sm:text-xl" />
+                    </button>
                 </div>
-                <div className="hidden md:flex gap-2 mt-5">
+
+                {/* View Toggle Buttons */}
+                <div className="flex items-center gap-2">
                     <button
                         onClick={() => setIsGridView(true)}
-                        className={`p-2 mt-0 rounded transition-colors ${
-                            isGridView ? 'bg-neutral-700 text-white' : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                        className={`p-2 rounded-full transition-colors ${
+                            isGridView 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
                         }`}
-                        title="Grid View"
                     >
-                        <FaTh className="text-xl" />
+                        <FaTh className="text-lg sm:text-xl" />
                     </button>
                     <button
                         onClick={() => setIsGridView(false)}
-                        className={`p-2 mt-0 rounded transition-colors ${
-                            !isGridView ? 'bg-neutral-700 text-white' : 'bg-neutral-800 text-white hover:bg-neutral-700'
+                        className={`p-2 rounded-full transition-colors ${
+                            !isGridView 
+                                ? 'bg-neutral-700 text-white' 
+                                : 'bg-neutral-800 text-white hover:bg-neutral-700'
                         }`}
-                        title="List View"
                     >
-                        <FaList className="text-xl" />
+                        <FaList className="text-lg sm:text-xl" />
                     </button>
                 </div>
             </div>
 
-            {showFilters && (
-                <motion.div 
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="mb-6 p-4 bg-neutral-800 rounded-lg"
-                >
-                    <div className="flex flex-wrap gap-4">
-                        <select
-                            value={timeFilter}
-                            onChange={(e) => setTimeFilter(e.target.value)}
-                            className="px-4 py-2 bg-neutral-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            {/* Control Panels Container */}
+            <div className="mb-4">
+                {/* Search Panel */}
+                <AnimatePresence>
+                    {showSearch && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mb-4 overflow-hidden"
                         >
-                            <option value="future">Future Events</option>
-                            <option value="all">All Events</option>
-                            <option value="past">Past Events</option>
-                        </select>
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className="px-4 py-2 bg-neutral-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="all">All Statuses</option>
-                            <option value="applied">Applied</option>
-                            <option value="approved">Approved</option>
-                            <option value="denied">Denied</option>
-                        </select>
-                    </div>
-                </motion.div>
-            )}
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    placeholder="Search by name"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full px-4 pr-10 py-2 rounded-full bg-white/10 text-white placeholder:text-white/50 outline-none transition-all duration-300 border border-white/20 focus:border-white/40"
+                                />
+                                <FaSearch className="absolute right-3 text-white/50" />
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
-            <div className="mb-4 text-sm text-neutral-400">
+                {/* Filter Panel */}
+                <AnimatePresence>
+                    {showFilterPanel && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mb-4 overflow-hidden"
+                        >
+                            <div className="flex flex-wrap gap-3 p-4 bg-neutral-800 rounded-lg">
+                                <select
+                                    value={timeFilter}
+                                    onChange={(e) => setTimeFilter(e.target.value)}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                                >
+                                    <option value="future">Future Events</option>
+                                    <option value="all">All Events</option>
+                                    <option value="past">Past Events</option>
+                                </select>
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                                >
+                                    <option value="all">All Statuses</option>
+                                    <option value="applied">Applied</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="denied">Denied</option>
+                                </select>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Sort Options */}
+                <AnimatePresence>
+                    {showSortOptions && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mb-4 overflow-hidden"
+                        >
+                            <div className="flex flex-wrap gap-2 p-4 bg-neutral-800 rounded-lg">
+                                <button
+                                    onClick={() => handleSort('eventName')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Name
+                                </button>
+                                <button
+                                    onClick={() => handleSort('eventLoadIn')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    In Date
+                                </button>
+                                <button
+                                    onClick={() => handleSort('eventLoadOut')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Out Date
+                                </button>
+                                <button
+                                    onClick={() => handleSort('totalHours')}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-700 text-white rounded-full hover:bg-neutral-600 transition-colors text-sm sm:text-base"
+                                >
+                                    Hours
+                                </button>
+                                <button
+                                    onClick={cancelSortOptions}
+                                    className="px-3 sm:px-4 py-2 bg-neutral-600 text-white rounded-full hover:bg-neutral-500 transition-colors text-sm sm:text-base"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            {/* Filter Summary */}
+            <div className="mb-4 text-xs sm:text-sm text-neutral-400">
                 Showing {timeFilter === 'future' ? 'upcoming' : timeFilter === 'past' ? 'past' : 'all'} events
                 {statusFilter !== 'all' && ` • ${statusFilter} status`}
                 {searchTerm && ` • Search: "${searchTerm}"`}
             </div>
 
-            {isLoading ? (
-                <LoadingSpinner />
-            ) : getFilteredJobs().length === 0 ? (
-                <div className="flex flex-col items-center justify-center flex-1 min-h-[400px] text-center">
-                    <FaRegSadTear className="w-16 h-16 text-neutral-400 dark:text-neutral-600 mb-4" />
-                    <h2 className="text-xl font-semibold text-neutral-700 dark:text-neutral-300 mb-2">
-                        No Events Found
-                    </h2>
-                    <p className="text-neutral-600 dark:text-neutral-400">
-                        {searchTerm 
-                            ? `No events found matching "${searchTerm}"`
-                            : timeFilter === 'future' 
-                                ? "You don't have any upcoming events."
-                                : timeFilter === 'past'
-                                    ? "No past events found."
-                                    : "No events match your current filters."}
-                    </p>
-                    {/* {timeFilter !== 'future' && (
-                        <button 
-                            onClick={() => setTimeFilter('future')}
-                            className="mt-4 px-4 py-2 bg-neutral-800 rounded-lg text-white hover:bg-neutral-700 transition-colors"
-                        >
-                            Show Future Events
-                        </button>
-                    )}
-                    {timeFilter !== 'all' && (
-                        <button 
-                            onClick={() => setTimeFilter('all')}
-                            className="mt-4 px-4 py-2 bg-neutral-800 rounded-lg text-white hover:bg-neutral-700 transition-colors ml-3"
-                        >
-                            Clear Time Filter
-                        </button>
-                    )} */}
-                </div>
-            ) : (
-                <>
-                    {isGridView ? (
-                        <div className="w-full">
-                            <HoverEffect 
-                                items={formatJobsForHoverEffect(getFilteredJobs())} 
-                                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
-                            />
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full bg-neutral-800/50 rounded-lg overflow-hidden">
-                                <thead className="bg-neutral-700">
-                                    <tr>
-                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('eventName')}>
-                                            <div className="flex items-center">
-                                                Event Name
-                                                <span className="ml-2">{getSortIcon('eventName')}</span>
-                                            </div>
-                                        </th>
-                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('eventLoadIn')}>
-                                            <div className="flex items-center">
-                                                Load In Date
-                                                <span className="ml-2">{getSortIcon('eventLoadIn')}</span>
-                                            </div>
-                                        </th>
-                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('eventLoadInHours')}>
-                                            <div className="flex items-center">
-                                                Load In Hours
-                                                <span className="ml-2">{getSortIcon('eventLoadInHours')}</span>
-                                            </div>
-                                        </th>
-                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('eventLoadOut')}>
-                                            <div className="flex items-center">
-                                                Load Out Date
-                                                <span className="ml-2">{getSortIcon('eventLoadOut')}</span>
-                                            </div>
-                                        </th>
-                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('eventLoadOutHours')}>
-                                            <div className="flex items-center">
-                                                Load Out Hours
-                                                <span className="ml-2">{getSortIcon('eventLoadOutHours')}</span>
-                                            </div>
-                                        </th>
-                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('totalHours')}>
-                                            <div className="flex items-center">
-                                                Total Hours
-                                                <span className="ml-2">{getSortIcon('totalHours')}</span>
-                                            </div>
-                                        </th>
-                                        <th className="p-4 text-left text-white cursor-pointer" onClick={() => handleSort('status')}>
-                                            <div className="flex items-center">
-                                                Status
-                                                <span className="ml-2">{getSortIcon('status')}</span>
-                                            </div>
-                                        </th>
-                                        
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {getFilteredJobs().map((job) => (
-                                        <tr key={job._id} className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors cursor-pointer">
-                                            <td className="p-4 text-white">{job.eventName}</td>
-                                            <td className="p-4 text-white">{new Date(job.eventLoadIn).toLocaleString()}</td>
-                                            <td className="p-4 text-white">{job.eventLoadInHours}</td>
-                                            <td className="p-4 text-white">{new Date(job.eventLoadOut).toLocaleString()}</td>
-                                            <td className="p-4 text-white">{job.eventLoadOutHours}</td>
-                                            <td className="p-4 text-white">{job.eventLoadInHours + job.eventLoadOutHours}</td>
-                                            <td className="p-4 text-white">{getStatusBadge(job.status)}</td>
-                                            
+            {/* Content Area */}
+            <div className="flex-1">
+                {isLoading ? (
+                    <LoadingSpinner />
+                ) : getFilteredJobs().length === 0 ? (
+                    <motion.div
+                        className="flex flex-col items-center justify-center flex-1 min-h-[300px] sm:min-h-[400px] text-center p-4 sm:p-6"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <FaRegSadTear className="w-12 h-12 sm:w-16 sm:h-16 text-neutral-400 dark:text-neutral-600 mb-4" />
+                        <h2 className="text-lg sm:text-xl font-semibold text-neutral-300 mb-2">
+                            No Events Found
+                        </h2>
+                        <p className="text-sm sm:text-base text-neutral-400 max-w-md">
+                            {searchTerm 
+                                ? `No events found matching "${searchTerm}"`
+                                : timeFilter === 'future' 
+                                    ? "You don't have any upcoming events."
+                                    : timeFilter === 'past'
+                                        ? "No past events found."
+                                        : "No events match your current filters."}
+                        </p>
+                    </motion.div>
+                ) : (
+                    <>
+                        {isGridView ? (
+                            <div className="w-full">
+                                <HoverEffect 
+                                    items={formatJobsForHoverEffect(getFilteredJobs())} 
+                                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+                                />
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto rounded-lg">
+                                <table className="min-w-full bg-neutral-800/50">
+                                    <thead className="bg-neutral-700">
+                                        <tr>
+                                            <th className="p-3 sm:p-4 text-left text-white cursor-pointer" onClick={() => handleSort('eventName')}>
+                                                <div className="flex items-center text-sm sm:text-base">
+                                                    Event Name
+                                                    <span className="ml-2">{getSortIcon('eventName')}</span>
+                                                </div>
+                                            </th>
+                                            <th className="p-3 sm:p-4 text-left text-white cursor-pointer hidden sm:table-cell" onClick={() => handleSort('eventLoadIn')}>
+                                                <div className="flex items-center text-sm sm:text-base">
+                                                    Load In
+                                                    <span className="ml-2">{getSortIcon('eventLoadIn')}</span>
+                                                </div>
+                                            </th>
+                                            <th className="p-3 sm:p-4 text-left text-white cursor-pointer hidden md:table-cell" onClick={() => handleSort('eventLoadOut')}>
+                                                <div className="flex items-center text-sm sm:text-base">
+                                                    Load Out
+                                                    <span className="ml-2">{getSortIcon('eventLoadOut')}</span>
+                                                </div>
+                                            </th>
+                                            <th className="p-3 sm:p-4 text-left text-white cursor-pointer hidden lg:table-cell" onClick={() => handleSort('totalHours')}>
+                                                <div className="flex items-center text-sm sm:text-base">
+                                                    Hours
+                                                    <span className="ml-2">{getSortIcon('totalHours')}</span>
+                                                </div>
+                                            </th>
+                                            <th className="p-3 sm:p-4 text-left text-white text-sm sm:text-base">Status</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </>
-            )}
+                                    </thead>
+                                    <tbody>
+                                        {sortedJobs.map((job) => (
+                                            <tr key={job._id} className="border-t border-neutral-700 hover:bg-neutral-700/50 transition-colors">
+                                                <td className="p-3 sm:p-4 text-white text-sm sm:text-base">
+                                                    <div className="flex flex-col">
+                                                        <span className="font-medium">{job.eventName}</span>
+                                                        <span className="text-neutral-400 text-xs sm:hidden">
+                                                            {new Date(job.eventLoadIn).toLocaleDateString()}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="p-3 sm:p-4 text-white text-sm sm:text-base hidden sm:table-cell">
+                                                    {new Date(job.eventLoadIn).toLocaleString()}
+                                                </td>
+                                                <td className="p-3 sm:p-4 text-white text-sm sm:text-base hidden md:table-cell">
+                                                    {new Date(job.eventLoadOut).toLocaleString()}
+                                                </td>
+                                                <td className="p-3 sm:p-4 text-white text-sm sm:text-base hidden lg:table-cell">
+                                                    {job.eventLoadInHours + job.eventLoadOutHours}h
+                                                </td>
+                                                <td className="p-3 sm:p-4 text-white">
+                                                    {getStatusBadge(job.status)}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
         </div>
     );
 };

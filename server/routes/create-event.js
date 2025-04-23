@@ -187,12 +187,13 @@ router.post('/', async (req, res) => {
             await newNotification.save();
         }
 
-        const newNotification2 = new notificationCollection({
-            subject: "Event",
-            text0: `Event ${newEvent?.eventName} has been created`,
-            forAdmin: true
-        });
-        await newNotification2.save();
+            const newNotification2 = new notificationCollection({
+                subject: "Event",
+                text0: `Event ${newEvent?.eventName} has been created`,
+                forAdmin: true
+            });
+            await newNotification2.save();
+        }
 
         res.status(200).json({ message: 'Event created and notifications sent successfully' });
     } catch (error) {

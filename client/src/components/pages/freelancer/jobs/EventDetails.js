@@ -472,11 +472,11 @@ export default function EventDetails() {
                 {event?.acceptedContractors?.some(contractor => contractor._id.toString() === auth.userId.toString()) && (
                     <form onSubmit={handleSubmit} className="mt-6 sm:mt-8">
                         <div className="flex flex-col space-y-4">
-                            <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0'>
+                            <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 w-full'>
                                 <h2 className="text-lg sm:text-xl font-semibold text-white">
                                     Job Comments:
                                 </h2>
-                                <div className="flex gap-2 sm:gap-4 w-full sm:w-auto">
+                                <div className="flex flex-wrap justify-end gap-2 sm:gap-4 w-full max-w-full">
                                     <button
                                         type="submit"
                                         disabled={loading}

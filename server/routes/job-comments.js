@@ -111,7 +111,7 @@ router.put('/:id', async (req, res) => {
 
     try {
         const updatedData = {
-            ...req.body,
+            jobComments: req.body.jobComments,
             updatedAt: new Date()
         };
 
@@ -129,10 +129,10 @@ router.put('/:id', async (req, res) => {
             return res.status(404).json({ message: 'Event not found' });
         }
 
-        const event = await eventCollection.findById({eventID: updatedComment.eventID})
+        const event = await eventCollection.findById({ _id: updatedComment.eventID})
+        const user = await userCollection.findOne({ _id: updatedComment.userID });
 
         const newNotification = new notificationCollection({
-            userID: userID,
             subject: "Job Comment",
             linkPath1: `/admin/job-comments/${updatedComment?._id}`,
             linkText1: `Job Comment`,
@@ -164,8 +164,9 @@ router.delete('/:id', async (req, res) => {
         event.jobCommentCount -= 1;
         await event.save();
 
+        const user = await userCollection.findOne({ _id: jobComment.userID });
+
         const newNotification = new notificationCollection({
-            userID: userID,
             subject: "Job Comment",
             text1: `Job comment by ${user?.name} for event `,
             linkPath2: `/admin/events/${event?._id}`,

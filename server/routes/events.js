@@ -462,11 +462,11 @@ router.post('/:eventId/approve', async (req, res) => {
 
         // Deletes the job comments the user had
         await userJobCommentCollection.findByIdAndDelete({
-            userID: contractorId.toString(),
+            _id: contractorId.toString(),
         });
 
         const newNotification = new notificationCollection({
-            userID: userID,
+            userID: contractorId,
             subject: "Event",
             text0: `You have been approved for `,
             linkPath1: `/user/corrections/${event?._id}`,

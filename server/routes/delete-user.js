@@ -11,26 +11,26 @@ router.delete('/:id', async (req, res) => {
         const result = await userCollection.findByIdAndDelete(req.params.id);
         if (result) {
             // Delete associated job comments
-            await userJobCommentCollection.deleteMany({ userID: userId });
+            await userJobCommentCollection.deleteMany({ userID: req.params.id });
 
             // Delete time tracking entries
-            await TimeTracking.deleteMany({ userId: userId });
+            await TimeTracking.deleteMany({ userId: req.params.id });
 
             // Delete correction reports
-            await correctionReportCollection.deleteMany({ userID: userId });
+            await correctionReportCollection.deleteMany({ userID: req.params.id });
 
             // Delete invoices
-            await invoiceCollection.deleteMany({ user: userId });
+            await invoiceCollection.deleteMany({ user: req.params.id });
 
             // Optional: Remove user from event references (safer than deletion)
             await eventCollection.updateMany(
                 {},
                 {
                     $pull: {
-                        assignedContractors: userId,
-                        acceptedContractors: userId,
-                        rejectedContractors: userId,
-                        approvedContractors: userId,
+                        assignedContractors: req.params.id,
+                        acceptedContractors: req.params.id,
+                        rejectedContractors: req.params.id,
+                        approvedContractors: req.params.id,
                     }
                 }
             );

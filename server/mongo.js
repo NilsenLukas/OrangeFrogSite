@@ -12,6 +12,8 @@ mongoose.connect(mongoURI)
         console.error("Failed to connect to MongoDB");
     });
 
+
+// Stores user info
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -37,6 +39,7 @@ const userSchema = new mongoose.Schema({
 
 const userCollection = mongoose.model('userCollection', userSchema);
 
+// Stores event info
 const eventSchema = new mongoose.Schema({
     eventName: { type: String, required: true },
     eventLoadIn: { type: Date, required: true },
@@ -59,6 +62,7 @@ const eventSchema = new mongoose.Schema({
 
 const eventCollection = mongoose.model('eventCollection', eventSchema);
 
+// Stores job comment info
 const userJobCommentSchema = new mongoose.Schema({
     userID: { type: String, required: true },
     eventID: { type: String, required: true },
@@ -88,6 +92,7 @@ const timeTrackingSchema = new mongoose.Schema({
 // Create the Model
 const TimeTracking = mongoose.model("TimeTracking", timeTrackingSchema);
 
+// Stores corrrection report info
 const correctionReportSchema = new mongoose.Schema({
     correctionName: { type: String, required: true },
     eventID: { type: String, required: true },
@@ -102,6 +107,7 @@ const correctionReportSchema = new mongoose.Schema({
 
 const correctionReportCollection = mongoose.model('correctionReportCollection', correctionReportSchema);
 
+// Stores notification info
 const notificationSchema = new mongoose.Schema({
     userID: { type: String, default: '' },
     subject: { type: String, default: '' },
@@ -119,6 +125,7 @@ const notificationSchema = new mongoose.Schema({
 
 const notificationCollection = mongoose.model('notificationCollection', notificationSchema);
 
+// Stores invoice info
 const invoiceSchema = new mongoose.Schema({
     invoiceNumber: { type: Number, required: true, unique: true },
     lpoNumber: { type: String, default: '' },
@@ -141,6 +148,7 @@ const invoiceSchema = new mongoose.Schema({
 
 const invoiceCollection = mongoose.model('invoiceCollection', invoiceSchema);
 
+// Stores admin info
 const adminSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -164,6 +172,7 @@ adminSchema.pre('save', async function (next) {
 
 const Admin = mongoose.model('Admin', adminSchema);
 
+// Compiles collections
 const collection = {
     userCollection,
     eventCollection,

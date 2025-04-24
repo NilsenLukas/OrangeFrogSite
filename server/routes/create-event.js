@@ -33,6 +33,7 @@ router.get('/:eventId', async (req, res) => {
     }
 });
 
+// Creates event
 router.post('/', async (req, res) => {
     const { 
         eventName, 

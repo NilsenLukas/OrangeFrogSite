@@ -5,21 +5,6 @@ const nodemailer = require('nodemailer');
 const router = express.Router();
 const { eventCollection, userCollection, userJobCommentCollection, notificationCollection } = require('../mongo');
 
-// Nodemailer transporter setup
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD
-    },
-    tls: {
-        rejectUnauthorized: false
-    }
-});
-
 // Creates Job Comment
 router.post('/:eventID/:email', async (req, res) => {
     const { jobComments } = req.body;
@@ -152,6 +137,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// Deletes job comment
 router.delete('/:id', async (req, res) => {
     try {
         jobComment = await userJobCommentCollection.findById(req.params.id);
@@ -235,7 +221,7 @@ router.get('/:eventID/:email', async (req, res) => {
 });
 
 
-// Route to get a single event
+// Route to get a single job comment
 router.get('/:id([0-9a-fA-F]{24})', async (req, res) => {
     try {
         const jobComment = await userJobCommentCollection.findById(req.params.id)
@@ -260,7 +246,7 @@ router.get('/:id([0-9a-fA-F]{24})', async (req, res) => {
 });
 
 
-// Route to get all corrections of that user
+// Route to get all comments of that user
 router.get('/:email', async (req, res) => {
     try {
         

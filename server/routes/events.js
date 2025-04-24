@@ -331,7 +331,7 @@ router.post('/reject-application', async (req, res) => {
         event.acceptedContractors.pull(userId);
         event.approvedContractors.pull(userId);
 
-        const comment = await jobComment.findOne({ eventID: event._id, userID: user._id });
+        const comment = await userJobCommentCollection.findOne({ eventID: event._id, userID: user._id });
         if (comment) {
             event.jobCommentCount -= 1;
             await jobComment.findOneAndDelete({ eventID: event._id, userID: user._id });

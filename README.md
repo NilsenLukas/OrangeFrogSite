@@ -16,7 +16,7 @@ Frameworks:
 Running The Project Locally:
 1. In a command terminal open both the client and server folders
 2. In client folder create a .env file with the var "REACT_APP_BACKEND" giving the value of the localhost such as "http://localhost:4000"
-3. In client folder create a .env file with following vars: 
+3. In client folder create a .env file with following vars and update to match your user information for each: 
     - ADMIN_EMAIL=
     - ADMIN_PASSWORD=
     - MONGO_USERNAME=
@@ -29,5 +29,8 @@ Running The Project Locally:
 5. Run npm start in both folder to properly start project
 
 Deployment Instructions:
+1. Create a repo of the project on github
+2. Create a deployment of the project using https://vercel.com/
+
 Issues:
 - Users can easily bypass login if they have valid JWT token of another user or admin and paste as their own, it allows them to access unintended areas of the site

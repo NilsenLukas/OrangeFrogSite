@@ -17,6 +17,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// Creates correction
 router.post('/', async (req, res) => {
   const { correctionName, eventID, userID, requestType, description } = req.body;
 

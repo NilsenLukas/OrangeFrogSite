@@ -38,7 +38,6 @@ router.post('/', async (req, res) => {
       userID,
       requestType,
       description,
-      files: req.files ? req.files.map((file) => file.path) : [],
       status: 'Pending',
       submittedAt: new Date(),
     });
@@ -87,9 +86,9 @@ router.put('/:id([0-9a-fA-F]{24})', async (req, res) => {
       );
 
       // Fetch the user' details
-      const user = await userCollection.findById({ _id: updatedCorrection.userID });
-
-      const event = await eventCollection.findById({ _id: updatedCorrection.eventID });
+      const user = await userCollection.findById(updatedCorrection.userID );
+      console.log(updatedCorrection.eventID)
+      const event = await eventCollection.findById( updatedCorrection.eventID );
 
       // Send email to each new contractor
           const correctionUrl = `http://yourfrontendurl.com/user/corrections/correctionId=${updatedCorrection._id}}`;
@@ -147,7 +146,7 @@ router.put('/:id([0-9a-fA-F]{24})', async (req, res) => {
 
       const newNotification = new notificationCollection({
         userID: user?._id,
-        subject: "Corrrection Report",
+        subject: "Correction Report",
         text0: `Update to correction report `,
         linkPath1: `/admin/corrections/${updatedCorrection?._id}`,
         linkText1: `${updatedCorrection?.correctionName}`,

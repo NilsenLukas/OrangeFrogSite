@@ -94,7 +94,6 @@ const correctionReportSchema = new mongoose.Schema({
     userID: { type: String, required: true },
     requestType: { type: String, required: true },
     description: { type: String, required: true },
-    files: [{ type: String }],
     status: { type: String, default: 'Pending' },
     additionalComments: { type: String, default: '' },
     submittedAt: { type: Date, default: Date.now },

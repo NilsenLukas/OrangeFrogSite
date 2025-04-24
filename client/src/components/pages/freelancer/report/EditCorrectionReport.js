@@ -30,7 +30,6 @@ const EditCorrectionReport = () => {
     });
     const [loading, setLoading] = useState(false);
     const [events, setEvents] = useState([]);
-    const [files, setFiles] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -87,10 +86,6 @@ const EditCorrectionReport = () => {
         Object.keys(formData).forEach(key => {
             formDataToSend.append(key, formData[key]);
         });
-
-        if (files) {
-            Array.from(files).forEach(file => formDataToSend.append('files', file));
-        }
 
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/correction-report/${id}`, {
@@ -200,18 +195,6 @@ const EditCorrectionReport = () => {
                                     rows={4}
                                     className="w-full px-4 py-2 rounded-lg bg-neutral-700 text-white border border-neutral-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors resize-none"
                                     required
-                                />
-                            </div>
-
-                            <div className="col-span-2">
-                                <label className="block text-sm sm:text-base font-medium text-neutral-400 mb-2">
-                                    Attach Files
-                                </label>
-                                <input
-                                    type="file"
-                                    multiple
-                                    onChange={(e) => setFiles(e.target.files)}
-                                    className="w-full px-4 py-2 rounded-lg bg-neutral-700 text-white border border-neutral-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
                                 />
                             </div>
                         </div>

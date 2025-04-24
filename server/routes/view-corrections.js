@@ -73,6 +73,7 @@ router.delete('/:id([0-9a-fA-F]{24})', async (req, res) => {
         correction = await correctionReportCollection.findById(req.params.id);
 
         const event = await eventCollection.findOne({ _id: correction.eventID });
+        const user = await userCollection.findOne({ _id: correction.userID });
         if (!event) {
             console.error('Event not found');
             return res.status(404).json({ message: 'Event not found' });
@@ -83,7 +84,6 @@ router.delete('/:id([0-9a-fA-F]{24})', async (req, res) => {
         await correctionReportCollection.findByIdAndDelete(req.params.id);
 
         const newNotification = new notificationCollection({
-            userID: userID,
             subject: "Correction Report",
             text0: `Correction report ${correction.correctionName}`,
             text1: ` by ${user?.name} for event `,

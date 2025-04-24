@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const router = express.Router();
-const { eventCollection, userCollection, userJobCommentCollection, notificationCollection } = require('../mongo');
+const { eventCollection, userCollection, userJobCommentCollection, notificationCollection, correctionReportCollection } = require('../mongo');
 
 // Nodemailer transporter setup
 const transporter = nodemailer.createTransport({
@@ -271,6 +271,18 @@ router.post('/reject', async (req, res) => {
         if (!event.rejectedContractors.includes(userId)) {
             event.rejectedContractors.push(userId);
         }
+        const comment = await jobComment.findOne({ eventID: event._id, userID: user._id });
+        if (comment) {
+            event.jobCommentCount -= 1;
+            await jobComment.findOneAndDelete({ eventID: event._id, userID: user._id });
+        }
+        const deletedResult = await correctionReportCollection.deleteMany({ eventID: event._id, userID: user._id });
+
+        if (deletedResult.deletedCount > 0) {
+            event.correctionCount -= deletedResult.deletedCount;
+            await event.save();
+        }
+
 
         const newNotification = new notificationCollection({
             subject: "Event",
@@ -318,6 +330,18 @@ router.post('/reject-application', async (req, res) => {
 
         event.acceptedContractors.pull(userId);
         event.approvedContractors.pull(userId);
+
+        const comment = await jobComment.findOne({ eventID: event._id, userID: user._id });
+        if (comment) {
+            event.jobCommentCount -= 1;
+            await jobComment.findOneAndDelete({ eventID: event._id, userID: user._id });
+        }
+        const deletedResult = await correctionReportCollection.deleteMany({ eventID: event._id, userID: user._id });
+
+        if (deletedResult.deletedCount > 0) {
+            event.correctionCount -= deletedResult.deletedCount;
+            await event.save();
+        }
 
         await event.save();
         res.status(200).json({ message: 'Job rejected successfully' });

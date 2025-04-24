@@ -20,7 +20,6 @@ const CorrectionReport = () => {
   });
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState([]);
-  const [files, setFiles] = useState(null);
 
   useEffect(() => {
     // Fetch events
@@ -81,10 +80,6 @@ const CorrectionReport = () => {
     Object.keys(formattedData).forEach(key => {
       formDataToSend.append(key, formattedData[key]);
     });
-
-    if (files) {
-      Array.from(files).forEach((file) => formDataToSend.append('files', file));
-    }
 
     try {
       await axios.post(
@@ -189,17 +184,6 @@ const CorrectionReport = () => {
               onChange={handleChange}
               className="w-full p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors h-32"
               required
-            />
-          </div>
-
-          {/* File Upload */}
-          <div className="col-span-2">
-            <label className="block text-white mb-2">Upload Files</label>
-            <input
-              type="file"
-              multiple
-              onChange={(e) => setFiles(e.target.files)}
-              className="w-full p-3 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:outline-none focus:border-orange-500 transition-colors"
             />
           </div>
 

@@ -1,10 +1,9 @@
-/*NEW STUFF*/
+// Delete user route
 require('dotenv').config();
 const express = require("express");
 const router = express.Router();
 const { userCollection, eventCollection, userJobCommentCollection, TimeTracking, correctionReportCollection, invoiceCollection, notificationCollection } = require('../mongo');
 
-// Delete user by ID
 // Delete user by ID
 router.delete('/:id', async (req, res) => {
     try {
@@ -73,6 +72,5 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ message: 'Error deleting user' });
     }
 });
-
 
 module.exports = router;

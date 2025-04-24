@@ -1,4 +1,4 @@
-/*NEW STUFF*/
+// Reset password route
 require('dotenv').config();
 const express = require("express");
 const router = express.Router();
@@ -33,4 +33,3 @@ router.post('/', async (req, res) => {
 });
 
 module.exports = router;
-/*END OF NEW STUFF*/

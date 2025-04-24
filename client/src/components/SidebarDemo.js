@@ -1,3 +1,4 @@
+// Side bar info
 "use client";
 import React, { useState, useContext, useEffect } from "react";
 import { Sidebar, SidebarBody } from "./ui/sidebar";

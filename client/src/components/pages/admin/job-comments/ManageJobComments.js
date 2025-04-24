@@ -27,6 +27,7 @@ const ManageJobComments = () => {
         Manage Job Comments
       </h1>
       
+      {/* Displays View Job Comments Page */}
       <ViewJobComments />
     </div>
   );

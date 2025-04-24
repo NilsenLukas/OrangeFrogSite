@@ -6,7 +6,7 @@ const ManageJobComments = () => {
   return (
     <div className="flex flex-col w-full h-full min-h-screen p-8 bg-gray-100 dark:bg-neutral-900">
 
-      
+      {/* Displays View Job Comments Page */}
       <ViewJobComments />
     </div>
   );

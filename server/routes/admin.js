@@ -1,3 +1,4 @@
+// Admin routes
 const express = require('express');
 const bcrypt = require('bcrypt');
 const { Admin, notificationCollection, userCollection } = require('../mongo'); // Import the Admin schema

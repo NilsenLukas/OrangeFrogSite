@@ -27,6 +27,7 @@ const ManageEvents = () => {
         Manage Events
       </h1>
       
+      {/* Displays View Events Page */}
       <ViewEvent />
     </div>
   );

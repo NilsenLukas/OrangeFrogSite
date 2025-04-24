@@ -1,9 +1,8 @@
-/*NEW STUFF*/
+// User complete profile route
 require('dotenv').config();
 const express = require("express");
 const { userCollection, notificationCollection } = require('../mongo');
 const router = express.Router();
-
 
 // Complete profile route
 router.post('/', async (req, res) => {
@@ -47,4 +46,3 @@ router.post('/', async (req, res) => {
 });
 
 module.exports = router;
-/*END OF NEW STUFF*/

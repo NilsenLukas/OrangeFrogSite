@@ -1,3 +1,4 @@
+// Admin View/Manage Users Page
 import React, { useState, useEffect, useRef } from 'react';
 import { FaTh, FaList, FaEdit, FaSort, FaTrashAlt, FaSortUp, FaSortDown, FaEnvelope, FaSortAlphaDown, FaSortAlphaUp, FaSearch } from 'react-icons/fa';
 import autoAnimate from '@formkit/auto-animate';

@@ -26,7 +26,7 @@ const ManageNotifications = () => {
       <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-6 text-center">
         Notifications
       </h1>
-      
+      {/* Displays View Notifications Page */}
       <ViewNotifications />
     </div>
   );

@@ -30,6 +30,7 @@ const ManageUsers = () => {
       </div>
       
       <div className="flex-1 overflow-y-auto">
+        {/* Displays View Users Page */}
         <ViewUsers />
       </div>
     </div>

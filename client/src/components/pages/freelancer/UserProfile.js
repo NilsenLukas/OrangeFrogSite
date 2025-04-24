@@ -1,9 +1,11 @@
+// User Profile Page
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { toast } from 'sonner';
 import { HoverBorderGradient } from "../../ui/hover-border-gradient";
 import { AuthContext } from "../../../AuthContext";
 
 export default function Profile() {
+    // Sets value to blank
     const [profileData, setProfileData] = useState({
         name: '',
         email: '',
@@ -26,11 +28,12 @@ export default function Profile() {
     const [isLoading, setIsLoading] = useState(false);
     const { auth } = useContext(AuthContext);
     const [originalProfileData, setOriginalProfileData] = useState({});
-
+    // Allergy options
     const allergyOptions = ["Vegetarian", "Vegan", "Halal", "Kosher", "Gluten-free", "Food Allergy", "Other", "None"];
     const addressInputRef = useRef(null);
 
     useEffect(() => {
+        // Gets user information and displays it
         const fetchUserProfile = async () => {
             try {
                 const response = await fetch(`${process.env.REACT_APP_BACKEND}/user-profile/${auth.email}`);

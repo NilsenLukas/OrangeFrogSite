@@ -1,4 +1,4 @@
-// src/components/admin/CreateEvent.js
+// Admin Create Event Page
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaUserPlus } from 'react-icons/fa';

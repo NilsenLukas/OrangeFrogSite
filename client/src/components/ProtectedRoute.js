@@ -16,6 +16,7 @@ export default function ProtectedRoute() {
         }
 
         let decodedToken;
+        // Checks to see if the user has the proper credentials to enter the site
         try {
             decodedToken = jwt_decode(token);
             const currentTime = Date.now() / 1000; // Current time in seconds

@@ -1,3 +1,4 @@
+// Admin View/Manage Events Page
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { FaList, FaEdit, FaTrashAlt, FaUsers, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaAddressBook, FaTimes } from 'react-icons/fa';
@@ -13,8 +14,6 @@ export default function ViewEvent() {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showSortOptions, setShowSortOptions] = useState(false);
-    // const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
-
 
     // View toggle
     const [view, setView] = useState('grid');

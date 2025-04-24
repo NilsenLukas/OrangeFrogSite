@@ -1,3 +1,4 @@
+// User Event Detailed View Page
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -8,8 +9,6 @@ import { HoverBorderGradient } from '../../../ui/hover-border-gradient';
 import { AuthContext } from "../../../../AuthContext";
 import Modal from '../../../Modal';
 import { HoverEffect } from "../../../ui/card-hover-effect";
-// import { HoverBorderGradient } from '../../ui/hover-border-gradient';
-// import { useNavigate } from "react-router-dom";
 
 export default function EventDetails() {
     const { auth } = useContext(AuthContext); // Get user authentication context

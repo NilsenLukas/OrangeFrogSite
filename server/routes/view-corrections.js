@@ -176,5 +176,4 @@ router.get('/event/:email/:eventID', async (req, res) => {
     }
 });
 
-
 module.exports = router;

@@ -1,3 +1,4 @@
+// Events route
 require('dotenv').config();
 const express = require("express");
 const mongoose = require('mongoose');
@@ -78,24 +79,47 @@ router.delete('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
+
+        // Get the current event before update
+        const currentEvent = await eventCollection.findById(id);
+        if (!currentEvent) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
         const updatedData = {
             ...req.body,
             updatedAt: new Date()
         };
 
+        // Compare old and new assignedContractors
+        if (req.body.assignedContractors) {
+            const oldContractors = currentEvent.assignedContractors.map(String);
+            const newContractors = req.body.assignedContractors.map(String);
+
+            const newlyAssigned = newContractors.filter(id => !oldContractors.includes(id));
+
+            for (const contractorId of newlyAssigned) {
+                const newNotification = new notificationCollection({
+                    userID: contractorId,
+                    subject: "Job",
+                    text0: `New job `,
+                    linkPath1: `/user/events/${currentEvent?._id}`,
+                    linkText1: `${currentEvent?.eventName}`,
+                });
+    
+                await newNotification.save();
+            }
+        }
+
         const updatedEvent = await eventCollection.findByIdAndUpdate(
             id,
             updatedData,
-            { 
+            {
                 new: true,
                 overwrite: false,
                 returnDocument: 'after'
             }
         );
-
-        if (!updatedEvent) {
-            return res.status(404).json({ message: 'Event not found' });
-        }
 
         res.status(200).json(updatedEvent);
     } catch (error) {
@@ -192,6 +216,7 @@ router.post('/send-notifications', async (req, res) => {
     }
 });
 
+// Get user's jobs for the find jobs page
 router.get('/assigned/:email', async (req, res) => {
     try {
         const contractor = await userCollection.findOne({ email: req.params.email });
@@ -301,7 +326,7 @@ router.post('/reject', async (req, res) => {
     }
 });
 
-// Route to reject an event application
+// Route to reject an event application after applying for an event
 router.post('/reject-application', async (req, res) => {
     const { eventId, userEmail } = req.body;
 
@@ -330,7 +355,8 @@ router.post('/reject-application', async (req, res) => {
 
         event.acceptedContractors.pull(userId);
         event.approvedContractors.pull(userId);
-
+        
+        // Delete user's comment or corrections for that event
         const comment = await userJobCommentCollection.findOne({ eventID: event._id, userID: user._id });
         if (comment) {
             event.jobCommentCount -= 1;
@@ -388,6 +414,7 @@ router.put('/assign-contractor/:eventId', async (req, res) => {
     }
 });
 
+// Gets events within a certain date range
 router.get("/eligible-events/:userId", async (req, res) => {
     try {
         const { userId } = req.params;

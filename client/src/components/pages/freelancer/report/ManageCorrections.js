@@ -7,7 +7,7 @@ const ManageCorrections = () => {
   return (
     <div className="flex flex-col w-full min-h-screen h-full p-4 sm:p-6 md:p-8 bg-neutral-900">
 
-      
+      {/* Displays View Corrections Page */}
       <ViewCorrections />
     </div>
   );

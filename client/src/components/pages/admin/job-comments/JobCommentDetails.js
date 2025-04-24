@@ -1,10 +1,9 @@
+// Admin Job Comment Detailed View Page
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaInfoCircle, FaEdit } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { toast } from 'sonner';
-import Modal from '../../../Modal';
 
 export default function JobCommentDetails() {
     const { jobCommentId } = useParams();

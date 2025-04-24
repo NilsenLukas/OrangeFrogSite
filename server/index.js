@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors());
 
 
-/*NEW STUFF*/
+// Gets routes 
 const usersRoute = require("./routes/users");
 const createUserRoute = require("./routes/create-user");
 const loginRoute = require("./routes/login");

@@ -1,3 +1,4 @@
+// time-tracking routes
 const express = require("express");
 const router = express.Router();
 const { TimeTracking } = require("../mongo");
@@ -29,8 +30,6 @@ router.post("/clock-in", async (req, res) => {
     }
 });
 
-// ✅ 2. Clock Out
-// ✅ 2. Clock Out (Handles 24-Hour Limit)
 // ✅ 2. Clock Out (Handles 24-Hour Limit)
 router.put("/clock-out/:userId", async (req, res) => {
     try {
@@ -95,7 +94,7 @@ router.put("/start-break/:userId", async (req, res) => {
     }
 });
 
-//  End the Most Recent Break
+// Ends the Most Recent Break
 router.put("/end-break/:userId", async (req, res) => {
     try {
         const { userId } = req.params;
@@ -156,6 +155,7 @@ router.get("/event/:eventId/:userId", async (req, res) => {
     }
 });
 
+// Gets clock in and out history
 router.get('/history/:userId', async (req, res) => {
     const { userId } = req.params;
     const { date } = req.query;

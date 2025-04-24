@@ -7,14 +7,16 @@ import Login from "./components/pages/login/Login";
 import { Toaster } from "sonner";
 
 // Admin Pages
+// Dashboard Page
 import Dashboard from "./components/pages/admin/adminDashboard";
+// Profile Page
 import Profile from "./components/pages/admin/AdminProfile";
+// Event Pages
 import ManageEvents from "./components/pages/admin/event/ManageEvents";
 import ManageUsers from "./components/pages/admin/users/ManageUsers";
 import CreateEvent from "./components/pages/admin/event/CreateEvent";
 import EditEvent from "./components/pages/admin/event/EditEvent";
 import EditUser from "./components/pages/admin/users/EditUser";
-import AdminInvoices from "./components/pages/invoice/AdminInvoices";
 import EventDetails from "./components/pages/admin/event/EventDetails";
 // Correction Report Pages
 import ManageCorrections from "./components/pages/admin/corrections/ManageCorrections";
@@ -24,17 +26,24 @@ import UpdateCorrectionReportStatus from "./components/pages/admin/corrections/U
 // Job Comment Pages
 import AdminManageJobComments from "./components/pages/admin/job-comments/ManageJobComments";
 import AdminJobCommentDetails from "./components/pages/admin/job-comments/JobCommentDetails";
-// Notifications
+// Notifications Page
 import AdminNotifications from "./components/pages/admin/notifications/ManageNotifications";
+// Invoice Page
+import AdminInvoices from "./components/pages/invoice/AdminInvoices";
 
 
 // User Pages
+// Dashboard Page
 import UserDashboard from "./components/pages/freelancer/UserDashboard";
+// Profile Page
 import UserProfile from "./components/pages/freelancer/UserProfile";
+// Event Pages
 import FindJobs from "./components/pages/freelancer/jobs/FindJobs";
 import CurrentJobs from "./components/pages/freelancer/jobs/CurrentJobs";
 import UserEventDetails from "./components/pages/freelancer/jobs/EventDetails";
+// Time Card Page
 import TimeCard from "./components/pages/freelancer/timecard/TimeCard";
+// Invoice Page
 import UserInvoices from "./components/pages/invoice/UserInvoices";
 // Correction Report Pages
 import CorrectionReport from "./components/pages/freelancer/report/CorrectionReport";
@@ -46,7 +55,7 @@ import FreelancerManageJobComments from "./components/pages/freelancer/job-comme
 // Notifications
 import FreelancerNotifications from "./components/pages/freelancer/notifications/ManageNotifications";
 
-// Invoice Page
+// Invoice Detail Page
 import Invoice from "./components/pages/invoice/Invoice";
 
 // Set Profile Pages

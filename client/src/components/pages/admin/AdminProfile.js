@@ -1,3 +1,4 @@
+// Admin Profile Page
 import React, { useState, useEffect, useContext } from 'react';
 import { toast } from 'sonner';
 import { HoverBorderGradient } from "../../ui/hover-border-gradient";
@@ -9,7 +10,6 @@ export default function AdminProfile() {
         address: '',
     });
 
-    // const [originalProfileData, setOriginalProfileData] = useState({});
     const [showPasswordPopup, setShowPasswordPopup] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');

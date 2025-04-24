@@ -1,35 +1,23 @@
+// User View Notification Page
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import axios from 'axios';
 import { FaList, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaArrowLeft, FaFilter, FaRegSadTear } from 'react-icons/fa';
-// import MultiSelect from './MultiSelect';
 import { toast } from 'sonner';
 import Modal from "../../../Modal";
 import { HoverEffect } from "../../../ui/card-hover-effect";
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from "../../../../AuthContext";
-// import { HoverBorderGradient } from '../../../ui/hover-border-gradient';
 
 export default function ViewNotifications() {
     const { auth } = useContext(AuthContext);
-    const navigate = useNavigate();
     const [notifications, setNotifications] = useState([]);
-    // const [contractors, setContractors] = useState([]);
-    // const [selectedContractors, setSelectedContractors] = useState([]);
     const [loading, setLoading] = useState(true);
-    // const [setSaving] = useState(false);
     const [view, setView] = useState('grid');
     const [nameFilter, setNameFilter] = useState('');
     const selectRef = useRef(null);
-    // const [sortField, setSortField] = useState(null);
-    // const [sortDirection, setSortDirection] = useState('asc');
     const [setShowFilterDropdown] = useState(false);
-    // const [setFilterField] = useState(null);
-    // const [setFilterValues] = useState({ name: '', location: '', startDate: '', endDate: '', contractor: [] });
     const filterDropdownRef = useRef(null);
-    // const [selectedEvent] = useState(null);
-    // const [selectedContractor, setSelectedContractor] = useState([]);
-    // const [error, setError] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [showSortOptions, setShowSortOptions] = useState(false);
     const [showSearch, setShowSearch] = useState(false);

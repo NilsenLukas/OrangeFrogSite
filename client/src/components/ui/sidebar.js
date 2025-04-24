@@ -1,3 +1,4 @@
+// Side bar UI
 "use client";
 import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "framer-motion";

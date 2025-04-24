@@ -1,3 +1,4 @@
+// Invoice routes
 const express = require('express');
 const mongoose = require("mongoose");
 const { invoiceCollection, userCollection, eventCollection, notificationCollection } = require('../mongo');
@@ -127,9 +128,6 @@ router.get('/:id', async (req, res) => {
 router.delete('/:invoiceId/item/:itemIndex', async (req, res) => {
   try {
       const { invoiceId, itemIndex } = req.params;
-
-      // console.log("Received DELETE request for invoice:", invoiceId);
-      // console.log("Received itemIndex:", itemIndex);
 
       // Ensure itemIndex is a valid number
       const index = parseInt(itemIndex, 10);

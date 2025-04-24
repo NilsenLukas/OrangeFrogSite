@@ -1,3 +1,4 @@
+// User Current Jobs Page
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../../../AuthContext";
 import { toast } from "sonner";
@@ -34,42 +35,6 @@ const CurrentJobs = () => {
     const [showSearch, setShowSearch] = useState(false);
     const [showFilterPanel, setShowFilterPanel] = useState(false);
     const navigate = useNavigate();
-
-    // const fetchJobs = async () => {
-    //     try {
-    //         setIsLoading(true);
-    //         const response = await fetch(`${process.env.REACT_APP_BACKEND}/events/contractor/${auth.email}`);
-    //         if (response.ok) {
-    //             const data = await response.json();
-                
-    //             // Filter jobs based on status and dates
-    //             const currentDate = new Date();
-    //             const filteredJobs = data.filter(job => {
-    //                 const loadInDate = new Date(job.eventLoadIn);
-    //                 const deniedDate = job.deniedAt ? new Date(job.deniedAt) : null;
-
-    //                 if (job.status === 'approved') {
-    //                     return true;
-    //                 }
-    //                 else if (job.status === 'applied') {
-    //                     return currentDate < loadInDate;
-    //                 }
-    //                 else if (job.status === 'denied' && deniedDate) {
-    //                     const hoursSinceDenied = (currentDate - deniedDate) / (1000 * 60 * 60);
-    //                     return hoursSinceDenied < 24;
-    //                 }
-    //                 return false;
-    //             });
-
-    //             setCurrentJobs(filteredJobs);
-    //         }
-    //     } catch (error) {
-    //         console.error("Error fetching jobs:", error);
-    //         toast.error("Error fetching jobs");
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
 
     useEffect(() => {
         if (auth.email) {

@@ -1,37 +1,26 @@
+// User View Job Comments Page
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import axios from 'axios';
 import { FaList, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaArrowLeft, FaFilter, FaRegSadTear } from 'react-icons/fa';
-// import MultiSelect from './MultiSelect';
 import { toast } from 'sonner';
 import Modal from "../../../Modal";
 import { HoverEffect } from "../../../ui/card-hover-effect";
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from "../../../../AuthContext";
-// import { HoverBorderGradient } from '../../../ui/hover-border-gradient';
 
 export default function ViewJobComments() {
     const navigate = useNavigate();
     const [jobComments, setJobComments] = useState([]);
     const [events, setEvents] = useState(null);
-    // const [contractors, setContractors] = useState([]);
-    // const [selectedContractors, setSelectedContractors] = useState([]);
     const [loading, setLoading] = useState(true);
-    // const [setSaving] = useState(false);
     const [view, setView] = useState('grid');
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [jobCommentToDelete] = useState(null);
     const [nameFilter, setNameFilter] = useState('');
     const selectRef = useRef(null);
-    // const [sortField, setSortField] = useState(null);
-    // const [sortDirection, setSortDirection] = useState('asc');
     const [setShowFilterDropdown] = useState(false);
-    // const [setFilterField] = useState(null);
-    // const [setFilterValues] = useState({ name: '', location: '', startDate: '', endDate: '', contractor: [] });
     const filterDropdownRef = useRef(null);
-    // const [selectedEvent] = useState(null);
-    // const [selectedContractor, setSelectedContractor] = useState([]);
-    // const [error, setError] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [showSortOptions, setShowSortOptions] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
@@ -95,15 +84,6 @@ export default function ViewJobComments() {
     useEffect(() => {
         adjustSelectWidth(); // Set initial width
     }, []);
-
-    // const handleFilterFieldChange = (field) => {
-    //     setFilterField(field);
-    // };
-
-    // const handleFilterChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setFilterValues((prev) => ({ ...prev, [name]: value }));
-    // };
 
     const getFilteredAndSortedJobComments = () => {
         // Return empty array if data is not loaded yet

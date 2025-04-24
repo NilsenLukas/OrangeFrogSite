@@ -1,3 +1,4 @@
+// Job comment routes
 require('dotenv').config();
 const express = require("express");
 const mongoose = require('mongoose');
@@ -35,6 +36,7 @@ router.post('/:eventID/:email', async (req, res) => {
       
         await newJobComment.save();
 
+        // Increases the job comment count for that event
         const event = await eventCollection.findOne({ _id: eventID });
         if (!event) {
             console.error('Event not found');

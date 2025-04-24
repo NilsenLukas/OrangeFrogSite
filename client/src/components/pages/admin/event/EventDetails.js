@@ -1,3 +1,4 @@
+// Admin Event Detailed View Page
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';

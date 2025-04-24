@@ -1,3 +1,4 @@
+// User Time card page
 import React, { useState, useEffect, useContext } from "react";
 import Calendar from 'react-calendar';
 import { Link } from "react-router-dom";
@@ -14,14 +15,9 @@ const TimeCard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedDateEvents, setSelectedDateEvents] = useState([]);
-    // const [isClockedIn, setIsClockedIn] = useState(false);
-    // const [isOnBreak, setIsOnBreak] = useState(false);
-    // const [lastActivity, setLastActivity] = useState('');
-    // const [setTimeline] = useState([]);
     const [isClockedIn, setIsClockedIn] = useState(false);
     const [isOnBreak, setIsOnBreak] = useState(false);
-    const [clockInTime, setClockInTime] = useState(null);    // 
-    // const [breakStartTime, setBreakStartTime] = useState(null);
+    const [clockInTime, setClockInTime] = useState(null);   
     const [breaks, setBreaks] = useState([]); 
     const [clockHistory, setClockHistory] = useState([]);
 
@@ -114,17 +110,6 @@ const TimeCard = () => {
             setBreaks([]);
         }
     };
-
-    // const formatDateTime = (date) => {
-    //     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-    // };
-    
-    // const addToTimeline = (activity, time) => {
-    //     setTimeline((prevTimeline) => [
-    //         ...prevTimeline,
-    //         { activity, time: formatDateTime(time) }
-    //     ]);
-    // };
 
     useEffect(() => {
         const fetchClockInStatus = async () => {

@@ -1,3 +1,4 @@
+// User Dashboard Page
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconCalendarEvent, IconUsers } from "@tabler/icons-react";
@@ -28,6 +29,7 @@ const UserDashboard = () => {
   // Split welcome text into individual characters
   const welcomeText = "Welcome,".split("");
 
+  // User page options
   const menuItems = [
     { path: "/user/find-jobs", icon: IconCalendarEvent, title: "Find Jobs", description: "Browse and apply for available job opportunities." },
     { path: "/user/current-jobs", icon: IconUsers, title: "Current Jobs", description: "View and manage your current job assignments." },
@@ -107,6 +109,7 @@ const UserDashboard = () => {
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8 w-full max-w-7xl mx-auto">
+          {/* Each menu option */}
           {menuItems.map((item, index) => (
             <MenuCard key={index} item={item} />
           ))}

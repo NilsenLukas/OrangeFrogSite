@@ -1,4 +1,4 @@
-/*NEW STUFF*/
+// User routes
 require('dotenv').config();
 const express = require("express");
 const router = express.Router();
@@ -44,4 +44,3 @@ router.get('/:id', async (req, res) => {
 });
 
 module.exports = router;
-/*END OF NEW STUFF*/

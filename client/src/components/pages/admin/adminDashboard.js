@@ -8,7 +8,7 @@ const AdminDashboard = () => {
   
   // Split welcome text into individual characters
   const welcomeText = "Welcome,".split("");
-
+  // User page options
   const menuItems = [
     { path: "/admin/manage-events", icon: IconCalendarEvent, title: "Manage Events", description: "Create and manage events, assign contractors, and track progress." },
     { path: "/admin/manage-users", icon: IconUsers, title: "Manage Users", description: "Manage user accounts, permissions, and access levels." },
@@ -87,6 +87,7 @@ const AdminDashboard = () => {
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+          {/* Displays each menu option */}
           {menuItems.map((item, index) => (
             <MenuCard key={index} item={item} />
           ))}

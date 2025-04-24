@@ -509,7 +509,7 @@ export default function EventDetails() {
             <div className='bg-neutral-700 bg-opacity-40 rounded-lg p-6 pt-0 mt-2'>
                 <div className="mt-8">
                         <div className="w-full h-full overflow-auto px-5">
-                    <div className="flex items-center gap-2 relative">
+                    <div className="flex items-center gap-2 relative ">
                     
                     <div className="hidden md:flex gap-2">
                         <button

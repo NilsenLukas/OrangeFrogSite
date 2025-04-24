@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const { userCollection } = require('../mongo');
 
+// Updates user info
 router.put('/:email', async (req, res) => {
     const { email } = req.params;
     const { name, address, dob, phone, shirtSize, firstAidCert, allergies, foodAllergyDetail, currentPassword, newPassword } = req.body;
@@ -53,6 +54,7 @@ router.put('/:email', async (req, res) => {
     }
 });
 
+// Updates password
 router.put('/:email/password', async (req, res) => {
     const { email } = req.params;
     const { currentPassword, newPassword } = req.body;

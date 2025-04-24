@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 const { userCollection } = require('../mongo');
 
+// Gets user's info
 router.get('/:email', async (req, res) => {
     const { email } = req.params;
     try {
@@ -33,6 +34,7 @@ router.get('/:email', async (req, res) => {
     }
 });
 
+// Updates user info
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const updatedData = req.body;

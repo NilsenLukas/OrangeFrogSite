@@ -1,10 +1,10 @@
+// Routes for viewing corrections
 require('dotenv').config();
 const express = require("express");
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const router = express.Router();
 const { eventCollection, userCollection, correctionReportCollection, notificationCollection } = require('../mongo');
-// const UserDashboard = require('../../client/src/components/pages/freelancer/UserDashboard').default;
 
 // Nodemailer transporter setup
 const transporter = nodemailer.createTransport({

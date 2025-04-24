@@ -183,10 +183,10 @@ export default function SidebarDemo({ role }) {
                 "hover:text-white transition-colors",
                 "rounded-lg bg-neutral-800/50",
                 "border border-neutral-700",
-                "hover:bg-neutral-800"
+                "hover:bg-neutral-800 bg-red-500 text-white hover:bg-red-600"
               )}
             >
-              <IconArrowLeft className="h-5 w-5" />
+              <IconArrowLeft className="h-5 w-5 bg-red-500 text-white hover:bg-red-600" />
               <span>Logout</span>
             </button>
           </div>

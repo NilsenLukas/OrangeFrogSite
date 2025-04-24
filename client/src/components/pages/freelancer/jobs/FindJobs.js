@@ -410,16 +410,7 @@ export default function FindJobs() {
                                 <option value="all">All Events</option>
                                 <option value="past">Past Events</option>
                             </select>
-                            <select
-                                value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                                className="px-3 sm:px-4 py-2 bg-neutral-700 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                            >
-                                <option value="all">All Statuses</option>
-                                <option value="applied">Applied</option>
-                                <option value="approved">Approved</option>
-                                <option value="denied">Denied</option>
-                            </select>
+                            
                         </div>
                     </motion.div>
                 )}

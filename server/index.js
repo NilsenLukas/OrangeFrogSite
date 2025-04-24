@@ -31,6 +31,7 @@ const timeTrackingRoutes = require("./routes/timeTracking");
 const jobCommentRoutes = require("./routes/job-comments");
 const notificationRoutes = require("./routes/notifications");
 
+// Sets up paths for each route
 app.use("/users", usersRoute);
 app.use("/update-user", userProfileRoute);
 app.use("/create-user", createUserRoute);

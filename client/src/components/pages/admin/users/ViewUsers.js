@@ -1,4 +1,5 @@
 // Admin View/Manage Users Page
+// Allows Admins to view and manage users such as creating new user, editing user information, and deleting users
 import React, { useState, useEffect, useRef } from 'react';
 import { FaTh, FaList, FaEdit, FaSort, FaTrashAlt, FaSortUp, FaSortDown, FaEnvelope, FaSortAlphaDown, FaSortAlphaUp, FaSearch } from 'react-icons/fa';
 import autoAnimate from '@formkit/auto-animate';
@@ -58,6 +59,7 @@ export default function ViewUsers() {
 
     const fetchUsers = async () => {
         try {
+            // Fetches users
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/users`);
             setUsers(response.data);
             setLoading(false);
@@ -90,6 +92,7 @@ export default function ViewUsers() {
         }
     
         try {
+            // Resends creation of account email to user & temp password
             await axios.post(`${process.env.REACT_APP_BACKEND}/resend-email/${userId}`);
             toast.success("Email resent successfully!");
         } catch (error) {
@@ -105,6 +108,7 @@ export default function ViewUsers() {
 
     const confirmDelete = async () => {
         try {
+            // Deletes user
             await axios.delete(`${process.env.REACT_APP_BACKEND}/delete-user/${selectedUser}`);
             setUsers(users.filter(user => user._id !== selectedUser));
             setShowPopup(false);

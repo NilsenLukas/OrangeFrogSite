@@ -33,6 +33,7 @@ function CompleteProfile() {
     const handleProfileCompletion = async (e) => {
         e.preventDefault();
         try {
+            // Saves user profile to user
             const response = await axios.post(`${process.env.REACT_APP_BACKEND}/complete-profile`, {
                 email,
                 address,

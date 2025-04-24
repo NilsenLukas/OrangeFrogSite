@@ -1,4 +1,5 @@
 // Admin View/Manage Correction Reports Page
+// Allows Admin to view correction reports
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { FaList, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaTimes } from 'react-icons/fa';
@@ -41,6 +42,7 @@ export default function ViewCorrections() {
 
     const fetchCorrections = async () => {
         try {
+            // Fetches all correction reports
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections`);
             console.log(response.data); // Debug: Check what is actually returned
     
@@ -62,6 +64,7 @@ export default function ViewCorrections() {
 
     const confirmDelete = async () => {
         try {
+            // Deletes correction reports
             await axios.delete(`${process.env.REACT_APP_BACKEND}/corrections/${correctionToDelete._id}`);
             setCorrections(corrections.filter(e => e._id !== correctionToDelete._id));
             setShowDeletePopup(false);

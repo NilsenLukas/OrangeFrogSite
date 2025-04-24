@@ -1,4 +1,5 @@
 // User Profile Page
+// Displays user's information & allows them to update majority of their user details
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { toast } from 'sonner';
 import { HoverBorderGradient } from "../../ui/hover-border-gradient";
@@ -36,6 +37,7 @@ export default function Profile() {
         // Gets user information and displays it
         const fetchUserProfile = async () => {
             try {
+                // Fetches user's info
                 const response = await fetch(`${process.env.REACT_APP_BACKEND}/user-profile/${auth.email}`);
                 const data = await response.json();
                 
@@ -103,6 +105,7 @@ export default function Profile() {
 
         setIsLoading(true);
         try {
+            // Updates user's profile
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/update-profile/${profileData.email}`, {
                 method: 'PUT',
                 headers: {
@@ -132,6 +135,7 @@ export default function Profile() {
         }
 
         try {
+            // Updates password
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/update-profile/${profileData.email}/password`, {
                 method: 'PUT',
                 headers: {

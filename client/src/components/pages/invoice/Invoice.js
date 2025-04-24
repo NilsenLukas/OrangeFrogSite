@@ -1,3 +1,5 @@
+// Generate Invoice Page
+// Generates an invoice for the user and allows them to add & edit or remove information
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { useParams, Link } from "react-router-dom"; //useLocation
 import { FaDownload, FaEdit, FaSave, FaTimes, FaPlus, FaTrashAlt } from "react-icons/fa";
@@ -48,6 +50,7 @@ const Invoice = ({invoiceData}) => {
         }
 
           try {
+            // Fetches event data
             const eventRes = await fetch(`${process.env.REACT_APP_BACKEND}/events/${eventId}`);
             const eventData = await eventRes.json();
             // console.log("Fetched Event Data:", eventData);
@@ -365,6 +368,7 @@ const confirmDelete = async () => {
 
   const fetchInvoice = async () => {
     try {
+      // Fetch admin data (Company info)
       const adminRes = await fetch(`${process.env.REACT_APP_BACKEND}/admin/admin-profile`);
       const adminData = await adminRes.json();
       setAdminData(adminData);
@@ -372,6 +376,7 @@ const confirmDelete = async () => {
       console.error("Error fetching admin data:", err);
     }
     try {
+      // Feteches invoice data
       const response = await fetch(`${process.env.REACT_APP_BACKEND}/invoices/${id}`);
       if (!response.ok) {
         console.error(`Error fetching invoice: ${response.statusText}`);

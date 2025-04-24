@@ -1,4 +1,5 @@
 // Update Correction Report Page
+// Allows admin to update status of a correction report
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
@@ -21,6 +22,7 @@ const CorrectionReport = () => {
     // Fetches the correction
     const fetchCorrection = async () => {
       try {
+        // Fetches correction report data
         const correctionRes = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections/${id}`);
 
         console.log("Fetched Correction Data:", correctionRes.data);
@@ -70,6 +72,7 @@ const CorrectionReport = () => {
         console.log(`${key}: ${value}`);
       });
       await axios.put(
+        // Updates correction Report
         `${process.env.REACT_APP_BACKEND}/correction-report/${id}`,
         formattedData,
         { headers: { 'Content-Type': 'application/json' } }

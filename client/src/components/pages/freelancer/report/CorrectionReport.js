@@ -1,4 +1,5 @@
 // Create Correction Report Page
+// Allows the user to create a correction report from one of their approved event
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
@@ -26,6 +27,7 @@ const CorrectionReport = () => {
     // Fetch events
     const fetchEvents = async () => {
       try {
+        // Gets approved event
         const response = await axios.get(`${process.env.REACT_APP_BACKEND}/events/contractor/corrections/${auth.email}`);
         setEvents(response.data);
       } catch (error) {
@@ -36,6 +38,7 @@ const CorrectionReport = () => {
     // Fetch user by email from AuthContext
     const fetchUser = async () => {
       try {
+        // Fetches user data
         const response = await axios.get(`${process.env.REACT_APP_BACKEND}/user-profile/${auth.email}`);
         setFormData((prevData) => ({
           ...prevData,
@@ -84,6 +87,7 @@ const CorrectionReport = () => {
 
     try {
       await axios.post(
+        // Creates correction report
         `${process.env.REACT_APP_BACKEND}/correction-report`,
         formattedData,
         { headers: { 'Content-Type': 'application/json' } }

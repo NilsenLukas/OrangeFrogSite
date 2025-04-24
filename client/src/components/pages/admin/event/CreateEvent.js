@@ -1,4 +1,5 @@
 // Admin Create Event Page
+// Allows Admin to create a new event
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaUserPlus } from 'react-icons/fa';
@@ -26,6 +27,7 @@ export default function CreateEvent() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        // Gets users
         axios.get(`${process.env.REACT_APP_BACKEND}/users`)
             .then(response => setContractors(response.data.filter(user => user.status === 'active')))
             .catch(error => console.error('Error fetching contractors:', error));
@@ -95,6 +97,7 @@ export default function CreateEvent() {
         const updatedFormData = { ...formData, assignedContractors: selectedContractors };
         
         try {
+            // Creates new event
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/create-event`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

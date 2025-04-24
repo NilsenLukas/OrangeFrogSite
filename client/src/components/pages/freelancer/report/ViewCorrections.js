@@ -1,4 +1,5 @@
 // View/Manage User Correction Pages
+// Allows user to view and manage their correction reports
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import axios from 'axios';
 import { FaList, FaEdit, FaTrashAlt, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaFilter, FaArrowLeft } from 'react-icons/fa';
@@ -60,6 +61,7 @@ export default function ViewCorrections() {
 
     const fetchCorrections = async () => {
         try {
+            // Fetches correction information
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections/${auth.email}`);
             console.log(response.data); // Debug: Check what is actually returned
     
@@ -90,6 +92,7 @@ export default function ViewCorrections() {
 
     const confirmDelete = async () => {
         try {
+            // Delete correction report
             await axios.delete(`${process.env.REACT_APP_BACKEND}/corrections/${correctionToDelete._id}`);
             setCorrections(corrections.filter(e => e._id !== correctionToDelete._id));
             setShowDeletePopup(false);

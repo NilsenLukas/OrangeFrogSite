@@ -1,4 +1,5 @@
 // Admin view notifications
+// Allows Admin to view their notification
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { FaList, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch } from 'react-icons/fa';
@@ -35,6 +36,7 @@ export default function ViewNotifications() {
 
     const fetchNotifications = async () => {
         try {
+            // Fetches notifications
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/notifications/admin`);
             console.log(response.data); // Debug: Check what is actually returned
     

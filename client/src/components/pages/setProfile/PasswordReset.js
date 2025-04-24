@@ -1,9 +1,10 @@
+// Resets password page
+// Reset's user's password
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import '../login/loginstyle.css'; 
 import { toast } from 'sonner';
-// import { AuthContext } from '../../../AuthContext';
 
 export default function PasswordReset() {
     const [tempPassword, setTempPassword] = useState(''); 
@@ -27,7 +28,7 @@ export default function PasswordReset() {
         try {
             const email = Cookies.get('email'); 
 
-            // const response = await fetch('http://localhost:8000/reset-password', {
+            // Resets password
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/reset-password`, {
                 method: 'POST',
                 headers: {

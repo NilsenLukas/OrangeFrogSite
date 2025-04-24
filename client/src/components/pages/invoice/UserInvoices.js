@@ -1,3 +1,5 @@
+// User View Invoices Page
+// Allows the user to view their invoices or generate new ones
 import React, { useEffect, useState, useContext } from "react";
 import { FaTh, FaList, FaRegSadTear, FaSort, FaSortUp, FaSortDown, FaSearch, FaFilter, FaArrowLeft, FaPlus } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
@@ -40,6 +42,7 @@ const UserInvoices = () => {
             }
 
             try {
+                // Gets user invoices
                 const response = await fetch(`${process.env.REACT_APP_BACKEND}/invoices/user/${auth.userId}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch invoices");
@@ -59,6 +62,7 @@ const UserInvoices = () => {
 
     useEffect(() => {
         if (showModal) {
+            // Gets user's eligible invoice events
             fetch(`${process.env.REACT_APP_BACKEND}/events/eligible-events/${auth.userId}`)
                 .then((res) => {
                     if (!res.ok) {

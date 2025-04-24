@@ -1,3 +1,5 @@
+// Login Page
+// Allows the user to sign in or send a one time password to reset their password
 import React, { useState, useContext } from "react";
 import './loginstyle.css';  
 import logo from '../../../images/orange-frog-logo.png';
@@ -51,6 +53,7 @@ export default function Login() {
         setLoading(true);
 
         try {
+            // Checks login credential
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/login`, {
                 method: 'POST',
                 headers: {
@@ -94,6 +97,7 @@ export default function Login() {
         setLoading(true);
 
         try {
+            // Sends one time password to user's email 
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/forgot-password/send-otp`, {
                 method: 'POST',
                 headers: {
@@ -126,7 +130,7 @@ export default function Login() {
             // Combine OTP digits into a single string
             const otpString = otp.join(''); // Assumes `otp` is an array of individual digits
 
-            // const response = await fetch('http://localhost:8000/forgot-password/verify-otp', {
+            // Checks one time password
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/forgot-password/verify-otp`, {
                 method: 'POST',
                 headers: {
@@ -164,7 +168,7 @@ export default function Login() {
         }
 
         try {
-            // const response = await fetch('http://localhost:8000/forgot-password/reset-password', {
+            // Resets password
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/forgot-password/reset-password`, {
                 method: 'POST',
                 headers: {

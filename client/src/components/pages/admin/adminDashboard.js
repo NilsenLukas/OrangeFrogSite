@@ -1,3 +1,5 @@
+// Admin Dashboard Page
+// Display each of the Admin's accessible pages
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { IconCalendarEvent, IconUsers } from "@tabler/icons-react";

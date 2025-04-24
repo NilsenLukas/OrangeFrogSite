@@ -1,4 +1,5 @@
 // User View Job Comments Page
+// Allows the user to view and manage their job comments
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import axios from 'axios';
 import { FaList, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaArrowLeft, FaFilter, FaRegSadTear } from 'react-icons/fa';
@@ -43,6 +44,7 @@ export default function ViewJobComments() {
 
     const fetchJobComments = async () => {
         try {
+            // Fetches job comments
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/job-comments/${auth.email}`);
     
             // Ensure we're sorting the Job Comment array inside the response object
@@ -62,6 +64,7 @@ export default function ViewJobComments() {
 
     const confirmDelete = async () => {
         try {
+            // Deletes job comments
             await axios.delete(`${process.env.REACT_APP_BACKEND}/job-comments/${jobCommentToDelete._id}`);
             setJobComments(jobComments.filter(e => e._id !== jobCommentToDelete._id));
             setShowDeletePopup(false);

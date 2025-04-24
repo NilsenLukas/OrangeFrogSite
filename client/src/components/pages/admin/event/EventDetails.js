@@ -1,4 +1,5 @@
 // Admin Event Detailed View Page
+// Allows Admin to view event information in a more detailed page, displaying event information and any job comments or correction reports made for that event
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -38,6 +39,7 @@ export default function EventDetails() {
 
     const fetchEventDetails = async () => {
         try {
+            // Fetches event details
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/events/${eventId}`);
             setEvent(response.data);
             setLoading(false);
@@ -50,6 +52,7 @@ export default function EventDetails() {
 
     const fetchCorrections = async () => {
         try {
+            // Fetches corrections for event
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections/event/${eventId}`);
     
             // Ensure we're sorting the corrections array inside the response object
@@ -70,6 +73,7 @@ export default function EventDetails() {
 
     const fetchJobComments = async () => {
         try {
+            // Fetches job comments for the event
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/job-comments/event/${eventId}`);
     
             // Ensure we're sorting the Job Comment array inside the response object
@@ -101,6 +105,7 @@ export default function EventDetails() {
 
     const handleApproval = async (approved) => {
         try {
+            // Approves user for event
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/events/${event._id}/approve`, {
                 method: 'POST',
                 headers: {
@@ -134,6 +139,7 @@ export default function EventDetails() {
 
     const confirmDelete = async () => {
         try {
+            // Deletes event
             await axios.delete(`${process.env.REACT_APP_BACKEND}/events/${eventId}`);
             setShowDeletePopup(false);
             toast.success('Event deleted successfully!');

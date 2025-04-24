@@ -1,4 +1,5 @@
 // User View Notification Page
+// Allows the user to view their notifications
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import axios from 'axios';
 import { FaList, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaArrowLeft, FaFilter, FaRegSadTear } from 'react-icons/fa';
@@ -39,6 +40,7 @@ export default function ViewNotifications() {
 
     const fetchNotifications = async () => {
         try {
+            // Fetches user's notifications
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/notifications/${auth.email}`);
             console.log(response.data); // Debug: Check what is actually returned
     

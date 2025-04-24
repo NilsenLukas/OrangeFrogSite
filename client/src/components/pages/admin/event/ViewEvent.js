@@ -1,4 +1,5 @@
 // Admin View/Manage Events Page
+// Allows Admin to view & manage events such as creating new events, editing events, or deleting events
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { FaList, FaEdit, FaTrashAlt, FaUsers, FaSort, FaTh, FaSortUp, FaSortDown, FaSearch, FaAddressBook, FaTimes } from 'react-icons/fa';
@@ -38,6 +39,7 @@ export default function ViewEvent() {
 
     const fetchEvents = async () => {
         try {
+            // Fetches event information
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/events`);
             const sortedEvents = response.data.sort((a, b) => {
                 // Sort by creation date descending initially
@@ -59,6 +61,7 @@ export default function ViewEvent() {
 
     const confirmDelete = async () => {
         try {
+            // Deletes event
             await axios.delete(`${process.env.REACT_APP_BACKEND}/events/${eventToDelete._id}`);
             setEvents(events.filter(e => e._id !== eventToDelete._id));
             setShowDeletePopup(false);

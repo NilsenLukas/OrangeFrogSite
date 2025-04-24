@@ -1,4 +1,5 @@
 // User Correction Report Detailed View Page
+// Allows the user to view detailed view of their correction report
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -25,6 +26,7 @@ export default function CorrectionDetails() {
 
     const fetchCorrectionDetails = async () => {
         try {
+            // Fetches the correction report's data
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections/${correctionId}`);
             setCorrection(response.data.correction);
             setUser(response.data.userName);
@@ -51,6 +53,7 @@ export default function CorrectionDetails() {
 
     const confirmDelete = async () => {
         try {
+            // Deletes correction report
             await axios.delete(`${process.env.REACT_APP_BACKEND}/corrections/${correctionId}`);
             setShowDeletePopup(false);
             toast.success('Correction deleted successfully!');

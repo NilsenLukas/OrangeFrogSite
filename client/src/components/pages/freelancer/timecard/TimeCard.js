@@ -1,4 +1,5 @@
 // User Time card page
+// Allows user to clock in and out of events/jobs
 import React, { useState, useEffect, useContext } from "react";
 import Calendar from 'react-calendar';
 import { Link } from "react-router-dom";
@@ -24,6 +25,7 @@ const TimeCard = () => {
     useEffect(() => {
         const fetchApprovedEvents = async () => {
             try {
+                // Gets user's approved events
                 const response = await fetch(`${process.env.REACT_APP_BACKEND}/events/contractor/${auth.email}`);
                 if (response.ok) {
                     const data = await response.json();
@@ -157,6 +159,7 @@ const TimeCard = () => {
         }
         
         try {
+            // Clocks in user
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/clock-in`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -187,6 +190,7 @@ const TimeCard = () => {
     
     const handleClockOut = async () => {
         try {
+            // Clocks out user
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/clock-out/${auth.userId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -217,6 +221,7 @@ const TimeCard = () => {
     
     const handleStartBreak = async () => {
         try {
+            // Starts break
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/start-break/${auth.userId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -239,6 +244,7 @@ const TimeCard = () => {
     
     const handleEndBreak = async () => {
         try {
+            // Ends break
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/time-tracking/end-break/${auth.userId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },

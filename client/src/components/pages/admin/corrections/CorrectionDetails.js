@@ -1,4 +1,5 @@
 // Admin Correction Report Detailed View Page
+// Allow Admin to view detailed view of a correction report
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -25,6 +26,7 @@ export default function CorrectionDetails() {
 
     const fetchCorrectionDetails = async () => {
         try {
+            // Fetches correction report
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections/${correctionId}`);
             setCorrection(response.data.correction);
             setUser(response.data.userName);

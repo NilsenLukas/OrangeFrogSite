@@ -1,4 +1,5 @@
 // User Dashboard Page
+// Display each of the user's accessible pages
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconCalendarEvent, IconUsers } from "@tabler/icons-react";
@@ -109,7 +110,7 @@ const UserDashboard = () => {
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8 w-full max-w-7xl mx-auto">
-          {/* Each menu option */}
+          {/* Displays each menu option */}
           {menuItems.map((item, index) => (
             <MenuCard key={index} item={item} />
           ))}

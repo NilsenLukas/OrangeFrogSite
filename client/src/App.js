@@ -1,3 +1,5 @@
+// Route paths for each link
+// Determine what files to load with each link
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { AuthProvider } from "./AuthContext";

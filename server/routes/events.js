@@ -562,7 +562,7 @@ router.get('/approved/:email', async (req, res) => {
     }
 });
 
-// Update or add this route
+// Gets user's approved events
 router.get('/contractor/:email', async (req, res) => {
     try {
         const contractor = await userCollection.findOne({ email: req.params.email });
@@ -652,6 +652,7 @@ router.get('/contractor/corrections/:email', async (req, res) => {
     }
 });
 
+// Get's user's approved events
 router.get('/approved-events/:userId', async (req, res) => {
     try {
         const userId = req.params.userId;
@@ -663,6 +664,7 @@ router.get('/approved-events/:userId', async (req, res) => {
     }
 });
 
+// Gets user's eligible events within a certian time frame
 router.get("/eligible-events/:userId", async (req, res) => {
     try {
         const { userId } = req.params;

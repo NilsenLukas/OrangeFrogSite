@@ -1,4 +1,7 @@
 // User Event Detailed View Page
+// Allows the user to view a detailed view of the event
+// If the user has only accepted the event they can make job comments for the event
+// If the user has been approved for the event the can make correction reports for the event
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -47,6 +50,7 @@ export default function EventDetails() {
 
     const fetchEventDetails = async () => {
         try {
+            // Fetches event information
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/events/${eventID}`);
 
             
@@ -73,6 +77,7 @@ export default function EventDetails() {
 
     const fetchJobCommentDetails = async () => {
         try {
+            // Fetches job comment details
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/job-comments/${eventID}/${auth.email}`);
             
             if (response.data) {
@@ -99,6 +104,7 @@ export default function EventDetails() {
 
     const fetchCorrections = async () => {
         try {
+            // Fetches user corrections for that event
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/corrections/event/${auth.email}/${eventID}`);
     
             // Ensure we're sorting the corrections array inside the response object
@@ -160,6 +166,7 @@ export default function EventDetails() {
     
         try {
             if (!comment) {
+                // Creates a job comment if it does not already exist
                 const response = await axios.post(
                     `${process.env.REACT_APP_BACKEND}/job-comments/${eventID}/${auth.email}`,
                     formattedData,
@@ -167,6 +174,7 @@ export default function EventDetails() {
                 );
                 // Ensure the response contains the comment with _id
                 setComment(response.data); // Make sure to set the updated comment
+                // Updates job comment if a comment already exists
             } else {
                 const response = await axios.put(
                     `${process.env.REACT_APP_BACKEND}/job-comments/${comment._id}`,
@@ -202,6 +210,7 @@ export default function EventDetails() {
     const confirmDelete = async () => {
         try {
             if (comment) {
+                // Deletes job comment
                 await axios.delete(`${process.env.REACT_APP_BACKEND}/job-comments/${comment._id}`);
                 setShowDeletePopup(false);
                 setFormData({ jobComments: '' });
@@ -260,6 +269,7 @@ export default function EventDetails() {
 
     const handleReject = async (id) => {
         try {
+            // User rejects application to job
             await axios.post(`${process.env.REACT_APP_BACKEND}/events/reject-application`, {
                 eventId: id,
                 userEmail: auth.email,

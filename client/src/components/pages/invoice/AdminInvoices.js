@@ -1,3 +1,5 @@
+// Admin View Invoices Page
+// Allows the Admin to view all invoices
 import React, { useEffect, useState } from "react";
 import { FaTh, FaList, FaSortDown, FaSortUp, FaSort, FaSearch, FaArrowLeft } from 'react-icons/fa';
 import { useNavigate, Link } from "react-router-dom";
@@ -17,6 +19,7 @@ const AdminInvoices = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
+        // Fetches all invoices
         const response = await fetch(`${process.env.REACT_APP_BACKEND}/invoices/admin`);
         if (!response.ok) {
           console.error(`Failed to fetch invoices: ${response.statusText}`);

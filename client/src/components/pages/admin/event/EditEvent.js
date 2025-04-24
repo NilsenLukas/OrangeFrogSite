@@ -1,4 +1,5 @@
 // Admin Edit Event Page
+// Allows Admin to edit event
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -29,6 +30,7 @@ export default function EditEvent() {
         const fetchEventAndContractors = async () => {
             try {
                 const [eventRes, contractorsRes] = await Promise.all([
+                    // Fetches event & users
                     axios.get(`${process.env.REACT_APP_BACKEND}/events/${id}`),
                     axios.get(`${process.env.REACT_APP_BACKEND}/users`)
                 ]);
@@ -115,6 +117,7 @@ export default function EditEvent() {
 
             // Only make the API call if there are actual changes
             if (Object.keys(updatedFields).length > 0) {
+                // Updates event
                 await axios.put(`${process.env.REACT_APP_BACKEND}/events/${id}`, updatedFields);
                 toast.success('Event updated successfully');
             } else {

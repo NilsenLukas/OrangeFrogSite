@@ -1,4 +1,4 @@
-// Create new user
+// Allows Admin to create a new user
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -34,6 +34,7 @@ export default function CreateUsers({ onUserCreated }) {
         setIsLoading(true);
         
         try {
+            // Creates new user
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/create-user`, {
                 method: 'POST',
                 headers: {

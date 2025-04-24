@@ -1,4 +1,5 @@
 // User Current Jobs Page
+// Allows the user to view their accepted & approved jobs
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../../../AuthContext";
 import { toast } from "sonner";
@@ -41,6 +42,7 @@ const CurrentJobs = () => {
             const fetchJobs = async () => {
                 try {
                     setIsLoading(true);
+                    // Gets user's applied & approved jobs
                     const response = await fetch(`${process.env.REACT_APP_BACKEND}/events/contractor/${auth.email}`);
                     if (response.ok) {
                         const data = await response.json();

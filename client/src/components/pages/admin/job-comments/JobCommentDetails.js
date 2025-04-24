@@ -1,4 +1,5 @@
 // Admin Job Comment Detailed View Page
+// Allows Admin to view job comment in a more detailed view
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -23,6 +24,7 @@ export default function JobCommentDetails() {
 
     const fetchJobCommentDetails = async () => {
         try {
+            // Fetches job comment information
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/job-comments/${jobCommentId}`);
             setJobComment(response.data.jobComment);
             setUser(response.data.userName);

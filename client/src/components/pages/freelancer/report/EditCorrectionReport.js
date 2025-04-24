@@ -1,4 +1,5 @@
 // Edit Corrections Page
+// Allows user to edit their correction report
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from "../../../../AuthContext";
@@ -89,6 +90,7 @@ const EditCorrectionReport = () => {
         });
 
         try {
+            // Updates correction report
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/correction-report/${id}`, {
                 method: 'PUT',
                 body: formDataToSend,

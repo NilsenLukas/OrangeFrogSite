@@ -1,4 +1,5 @@
 // Edit user page
+// Allows Admin to edit user information
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
 import axios from "axios";
@@ -27,6 +28,7 @@ export default function EditUser() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
+                // Fetches user information
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND}/users/${id}`);
                 setFormData(response.data);
             } catch (error) {
@@ -66,6 +68,7 @@ export default function EditUser() {
 
             // Only make the API call if there are actual changes
             if (Object.keys(updatedFields).length > 0) {
+                // Updates user information
                 await axios.put(`${process.env.REACT_APP_BACKEND}/update-user/${id}`, updatedFields);
                 toast.success("User updated successfully");
             } else {

@@ -1,4 +1,5 @@
 // User Find Jobs Page
+// Allows the user to apply for jobs
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { FaTh, FaList, FaRegSadTear, FaSort, FaSortUp, FaSortDown, FaSearch, FaArrowLeft, FaFilter } from 'react-icons/fa';
@@ -29,6 +30,7 @@ export default function FindJobs() {
         const fetchAssignedJobs = async () => {
             try {
                 console.log("Fetching jobs for user:", auth.email);
+                // Fetches jobs for user
                 const response = await axios.get(
                     `${process.env.REACT_APP_BACKEND}/events/assigned/${auth.email}`
                 );
@@ -121,6 +123,7 @@ export default function FindJobs() {
 
     const handleReject = async (id) => {
         try {
+            // User rejects job
             await axios.post(`${process.env.REACT_APP_BACKEND}/events/reject`, {
                 eventId: id,
                 email: auth.email,
@@ -134,6 +137,7 @@ export default function FindJobs() {
 
     const handleApply = async (eventId) => {
         try {
+            // User applies for job
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/events/${eventId}/apply`, {
                 method: 'POST',
                 headers: {

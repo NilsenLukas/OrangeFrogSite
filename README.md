@@ -2,8 +2,8 @@ Purpose, Scope, and Objectives of The Project:
 The goal of this project was to build a website for Orange Frog Productions that makes it easier for freelance lighting technicians to find and apply for jobs alongside additional functions such as generating their invoices and creating correction reports to requests to amend information about their job during events. The website will also help admins manage users and events. Admins can add or remove freelancers, create events, and keep track of work hours and payments. Freelancers will be able to see available events and sign up for them.
 
 Technology stack:
-Languages:
-- Java Script
+-Languages:
+    - Java Script
 Frameworks:
 - React.js
 - Node.js
